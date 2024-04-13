@@ -10,9 +10,9 @@ import java.util.UUID;
  * <p>Extends {@link JpaRepository} to inherit common CRUD operations for user entities.
  *
  * <p>Provides custom query methods for retrieving user entities by email.
- *
- * <p><strong>Author:</strong> Artem Poliakov
- *
+ * Created on: 13.04.2024
+ * @author Artem Poliakov
+ * @version 1.0
  * @see User
  */
 
