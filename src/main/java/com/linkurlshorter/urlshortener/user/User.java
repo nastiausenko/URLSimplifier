@@ -11,6 +11,17 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Represents a user in the system.
+ *
+ * <p>Encapsulates user information including their unique identifier, email address, password,
+ * role, and associated links.
+ *
+ * <p><strong>Author:</strong> Artem Poliakov
+ *
+ * @see Link
+ * @see UserRole
+ */
 @Entity
 @Table(name = "users")
 @Data
@@ -19,6 +30,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
     private UUID id;
     @Column(name = "email")

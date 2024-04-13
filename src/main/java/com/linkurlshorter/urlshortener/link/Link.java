@@ -7,8 +7,21 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+/**
+ * Represents a link in the system.
+ *
+ * <p>Encapsulates information about a short link, including its unique identifier, long URL,
+ * short URL, associated user, creation time, expiration time, usage statistics, and status.
+ *
+ * <p><strong>Author:</strong> Artem Poliakov
+ *
+ * @see User
+ * @see LinkStatus
+ */
 @Entity
 @Table(name = "links")
 @Data
@@ -17,6 +30,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Link {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
     private UUID id;
     @Column(name = "long_link")
@@ -27,7 +41,8 @@ public class Link {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
     @Column(name = "created_time")
-    private LocalDateTime createdTime;
+    @Builder.Default
+    private LocalDateTime createdTime = LocalDateTime.now();
     @Column(name = "expiration_time")
     private LocalDateTime expirationTime;
     @Column(name = "statistics")
