@@ -1,7 +1,6 @@
 package com.linkurlshorter.urlshortener.user;
 
 import com.linkurlshorter.urlshortener.link.Link;
-import com.linkurlshorter.urlshortener.user.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,10 +14,10 @@ import java.util.UUID;
  * Represents a user in the system.
  *
  * <p>Encapsulates user information including their unique identifier, email address, password,
- * role, and associated links.
+ * role, and associated links.  Created on: 13.04.2024
  *
- * <p><strong>Author:</strong> Artem Poliakov
- *
+ * @author  Artem Poliakov
+ * @version 1.0
  * @see Link
  * @see UserRole
  */

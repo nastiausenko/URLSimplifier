@@ -1,6 +1,5 @@
 package com.linkurlshorter.urlshortener.link;
 
-import com.linkurlshorter.urlshortener.link.enums.LinkStatus;
 import com.linkurlshorter.urlshortener.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,10 +14,10 @@ import java.util.UUID;
  * Represents a link in the system.
  *
  * <p>Encapsulates information about a short link, including its unique identifier, long URL,
- * short URL, associated user, creation time, expiration time, usage statistics, and status.
+ * short URL, associated user, creation time, expiration time, usage statistics, and status. Created on: 13.04.2024
  *
- * <p><strong>Author:</strong> Artem Poliakov
- *
+ * @author Artem Poliakov
+ * @version 1.0
  * @see User
  * @see LinkStatus
  */
