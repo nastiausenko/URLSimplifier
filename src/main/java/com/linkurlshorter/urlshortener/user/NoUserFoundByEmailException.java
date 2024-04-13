@@ -12,7 +12,7 @@ package com.linkurlshorter.urlshortener.user;
  * @version 1.0
  * @author Artem Poliakov
  */
-public class NoUserFoundByEmailException extends Exception {
+public class NoUserFoundByEmailException extends RuntimeException {
     private static final String DEFAULT_MSG = "No user by provided email found";
 
     public NoUserFoundByEmailException() {

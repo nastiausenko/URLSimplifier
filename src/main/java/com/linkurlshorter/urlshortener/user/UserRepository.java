@@ -1,6 +1,8 @@
 package com.linkurlshorter.urlshortener.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -17,8 +19,8 @@ import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
     /**
-     * Returns user by their email address. If nothing found, returns null.
+     * Returns Optional of user by their email address.
      * Created on: 13.04.2024
      * */
-    User findByEmail(String email);
+    Optional<User> findByEmail(String email);
 }

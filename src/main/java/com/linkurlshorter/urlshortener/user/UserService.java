@@ -47,7 +47,7 @@ public class UserService {
      * @return the found user entity
      * @throws NoUserFoundByIdException if no user is found with the provided ID
      */
-    public User findById(UUID id) throws NoUserFoundByIdException {
+    public User findById(UUID id) {
         return userRepository.findById(id).orElseThrow(NoUserFoundByIdException::new);
     }
 
@@ -58,12 +58,8 @@ public class UserService {
      * @return the found user entity
      * @throws NoUserFoundByEmailException if no user is found with the provided email
      */
-    public User findByEmail(String email) throws NoUserFoundByEmailException {
-        User user = userRepository.findByEmail(email);
-        if (Objects.isNull(user)) {
-            throw new NoUserFoundByEmailException();
-        }
-        return user;
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(NoUserFoundByEmailException::new);
     }
 
     /**
