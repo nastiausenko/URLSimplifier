@@ -12,7 +12,7 @@ package com.linkurlshorter.urlshortener.user;
  * @version 1.0
  * @author Artem Poliakov
  */
-public class NoUserFoundByIdException extends Exception {
+public class NoUserFoundByIdException extends RuntimeException {
     private static final String DEFAULT_MSG = "No user by provided id found";
     public NoUserFoundByIdException(){
         super(DEFAULT_MSG);
