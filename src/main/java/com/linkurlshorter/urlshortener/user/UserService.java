@@ -59,11 +59,7 @@ public class UserService {
      * @throws NoUserFoundByEmailException if no user is found with the provided email
      */
     public User findByEmail(String email) throws NoUserFoundByEmailException {
-        User user = userRepository.findByEmail(email);
-        if (Objects.isNull(user)) {
-            throw new NoUserFoundByEmailException();
-        }
-        return user;
+        return userRepository.findByEmail(email).orElseThrow(NoUserFoundByEmailException::new);
     }
 
     /**
