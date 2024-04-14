@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  * @author Egor Sivenko
  * @see org.springframework.security.core.userdetails.UserDetailsService
  * @see UserService
- * @see SecurityUser
+ * @see SecurityUserDetails
  */
 @Service
 @RequiredArgsConstructor
@@ -37,6 +37,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) {
         User user = userService.findByEmail(email);
-        return new SecurityUser(user);
+        return new SecurityUserDetails(user);
     }
 }
