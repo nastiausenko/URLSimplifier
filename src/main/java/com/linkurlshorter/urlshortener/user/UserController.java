@@ -65,7 +65,8 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         int alteredCount = userService.updateByEmailDynamically(
                 User.builder()
-                        .email(emailRequest.getNewEmail())    //TODO: add email validation
+                        //TODO: add email validation
+                        .email(emailRequest.getNewEmail())
                         .build(),
                 authentication.getName()
         );

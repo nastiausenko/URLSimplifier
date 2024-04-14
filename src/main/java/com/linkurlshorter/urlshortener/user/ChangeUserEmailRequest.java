@@ -11,7 +11,7 @@ import lombok.Data;
  * @author Artem Poliakov
  * @version 1.0
  */
- @Data
+@Data
 @AllArgsConstructor
 public class ChangeUserEmailRequest {
     private String newEmail;
