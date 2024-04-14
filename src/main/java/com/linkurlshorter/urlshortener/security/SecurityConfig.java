@@ -1,5 +1,6 @@
 package com.linkurlshorter.urlshortener.security;
 
+import com.linkurlshorter.urlshortener.jwt.JwtRequestFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Configuration class for Spring Security.
@@ -30,6 +32,11 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
 
     /**
+     * Filter class for JWT authentication.
+     */
+    private final JwtRequestFilter jwtRequestFilter;
+
+    /**
      * Configures the security filter chain for the application.
      *
      * @param http HttpSecurity object to configure security settings
@@ -45,6 +52,7 @@ public class SecurityConfig {
                 )
                 .userDetailsService(customUserDetailsService)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }
