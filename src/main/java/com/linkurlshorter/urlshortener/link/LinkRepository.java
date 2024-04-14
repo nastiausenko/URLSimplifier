@@ -44,6 +44,8 @@ public interface LinkRepository extends JpaRepository<Link, UUID> {
 
     /**
      * Dynamically updates a link entity specified by its short link.
+     * Dynamically updates the corresponding row in the links table, modifying only those fields which are not null
+     * in the param Link entity. Null fields will be ignored and not included in the modifying request.
      * <strong>Does not update Id and UserId fields!!!</strong>
      * @param link       The link entity containing updated fields.
      * @param shortLink  The short link of the link entity to update.
