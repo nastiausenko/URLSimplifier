@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +24,7 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "users")
+@DynamicUpdate
 @Data
 @Builder
 @NoArgsConstructor
@@ -41,4 +43,14 @@ public class User {
     private UserRole role;
     @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private List<Link> links;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                '}';
+    }
 }
