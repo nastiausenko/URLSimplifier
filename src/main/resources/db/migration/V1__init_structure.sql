@@ -6,7 +6,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE links (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    id UUID PRIMARY KEY,
     long_link VARCHAR(1000) NOT NULL,
     short_link VARCHAR(40) NOT NULL UNIQUE,
     user_id UUID NOT NULL,
