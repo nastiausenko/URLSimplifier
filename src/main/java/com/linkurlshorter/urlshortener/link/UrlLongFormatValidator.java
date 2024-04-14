@@ -19,6 +19,7 @@ public @interface UrlLongFormatValidator {
 
     /**
      * An error message that will be used if the URL format is incorrect.
+     * <p>
      * Default: "Not valid url format!"
      *
      * @return Error message.

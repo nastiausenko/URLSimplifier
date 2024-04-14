@@ -18,6 +18,7 @@ import java.lang.annotation.*;
 public @interface PasswordValidator {
     /**
      * An error message that will be used if the password format is incorrect.
+     * <p>
      * Default: "Password must be at least 8 characters long and contain at least one digit,
      * one uppercase letter, and one lowercase letter. No spaces are allowed".
      *
