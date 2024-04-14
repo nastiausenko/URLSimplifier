@@ -21,7 +21,7 @@ import java.util.Collections;
  * @see User
  */
 @RequiredArgsConstructor
-public class SecurityUser implements UserDetails {
+public class SecurityUserDetails implements UserDetails {
 
     /**
      * The user entity associated with this SecurityUser instance.
