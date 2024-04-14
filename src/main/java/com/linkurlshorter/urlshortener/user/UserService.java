@@ -41,6 +41,29 @@ public class UserService {
     }
 
     /**
+     * Updates a user's information dynamically based on the provided User object, specifically identified by their email address.
+     *
+     * <p>
+     * This method checks if the provided User object contains a non-null email address. If it does,
+     * the user's information is updated dynamically using the {@link UserRepository#updateUserByEmailDynamically(User, String)} method.
+     * If the email address is null, a {@link NullEmailException} is thrown.
+     * </p>
+     *
+     * @param user the User object containing the updated information.
+     * @param email the String email by which the User row can be found in database
+     * @return the number of user records updated in the database.
+     * @throws NullEmailException if the email address in the provided User object is null.
+     * @see UserRepository#updateUserByEmailDynamically(User, String)
+     */
+    public int updateByEmailDynamically(User user, String email){
+        if(Objects.nonNull(email)){
+            return userRepository.updateUserByEmailDynamically(user, email);
+        } else{
+            throw new NullEmailException();
+        }
+    }
+
+    /**
      * Finds a user entity by its ID.
      *
      * @param id the UUID id of the user to find
