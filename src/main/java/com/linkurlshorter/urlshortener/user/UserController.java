@@ -1,5 +1,8 @@
 package com.linkurlshorter.urlshortener.user;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -19,7 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
+@Tag(name = "User", description = "The User API")
+@RequestMapping("V1/user")
 public class UserController {
     private final UserService userService;
     /**
@@ -30,6 +34,8 @@ public class UserController {
      * @throws NoSuchEmailFoundException if the user's email is not found.
      */
     @PostMapping("/change-password")
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "Change user password")
     public ResponseEntity<UserModifyingResponse> changePassword(@RequestBody ChangeUserPasswordRequest passRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         int alteredCount = userService.updateByEmailDynamically(
@@ -53,6 +59,8 @@ public class UserController {
      * @throws NoSuchEmailFoundException if the user's email is not found.
      */
     @PostMapping("/change-email")
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "Change user email")
     public ResponseEntity<UserModifyingResponse> changeEmail(@RequestBody ChangeUserEmailRequest emailRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         int alteredCount = userService.updateByEmailDynamically(
