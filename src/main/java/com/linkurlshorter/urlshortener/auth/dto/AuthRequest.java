@@ -2,7 +2,9 @@ package com.linkurlshorter.urlshortener.auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Represents a request object for user authentication.
@@ -13,6 +15,7 @@ import lombok.Data;
  * @author Egor Sivenko
  */
 @Data
+@AllArgsConstructor
 public class AuthRequest {
 
     @NotBlank
