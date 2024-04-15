@@ -1,5 +1,6 @@
 package com.linkurlshorter.urlshortener.exception;
 
+import com.linkurlshorter.urlshortener.auth.exception.EmailAlreadyTakenException;
 import com.linkurlshorter.urlshortener.security.ForbiddenException;
 import com.linkurlshorter.urlshortener.security.UnauthorizedException;
 import com.linkurlshorter.urlshortener.user.NoSuchEmailFoundException;
@@ -11,6 +12,7 @@ import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -50,6 +52,32 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleNullEmailException(NullEmailException ex) {
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST,
                 "Email provided is null, so request can not be processed!", ex.getMessage());
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    /**
+     * Handles AuthenticationException thrown during user authentication.
+     *
+     * @param ex the AuthenticationException thrown
+     * @return {@link ResponseEntity} containing the error response for authentication failure
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Object> handleAuthenticationException(AuthenticationException ex) {
+        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.UNAUTHORIZED,
+                "Authentication failed!", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
+    /**
+     * Handles EmailAlreadyTakenException thrown during user registration.
+     *
+     * @param ex the EmailAlreadyTakenException thrown
+     * @return {@link ResponseEntity} containing the error response for email already taken
+     */
+    @ExceptionHandler(EmailAlreadyTakenException.class)
+    public ResponseEntity<Object> handleEmailAlreadyTakenException(EmailAlreadyTakenException ex) {
+        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST,
+                "Email already taken!", ex.getMessage());
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
