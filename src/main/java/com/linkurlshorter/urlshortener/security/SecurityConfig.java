@@ -4,10 +4,14 @@ import com.linkurlshorter.urlshortener.jwt.JwtRequestFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -48,11 +52,40 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(customUserDetailsService)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    /**
+     * Configures the authentication manager bean.
+     *
+     * @param authenticationConfiguration the AuthenticationConfiguration to obtain the authentication manager
+     * @return the configured AuthenticationManager bean
+     * @throws Exception if an error occurs while configuring the authentication manager
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    /**
+     * Configures the password encoder bean.
+     *
+     * <p>This method creates and configures a {@link org.springframework.security.crypto.password.PasswordEncoder}
+     * bean using the {@link org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder} implementation.
+     * The BCryptPasswordEncoder is a strong password hashing function that incorporates salt and cost parameters
+     * to generate secure password hashes, enhancing the security of user authentication processes.
+     *
+     * @return the configured PasswordEncoder bean
+     */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
