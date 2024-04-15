@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ErrorResponse {
     private LocalDateTime localDateTime;
-    private String message;
     private int statusCode;
+    private String message;
     private String exceptionMessage;
 }

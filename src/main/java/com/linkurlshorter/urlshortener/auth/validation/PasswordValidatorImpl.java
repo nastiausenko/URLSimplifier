@@ -1,7 +1,9 @@
-package com.linkurlshorter.urlshortener.user;
+package com.linkurlshorter.urlshortener.auth.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+
+
 
 /**
  * Implementation {@link ConstraintValidator} of a validator to check the password format.
@@ -20,9 +22,10 @@ public class PasswordValidatorImpl implements ConstraintValidator<PasswordValida
      */
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
-        String regex = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[^ ]{8,}$";
+        String regex = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[^ ]{8,64}$";
         if (!password.matches(regex)) {
-            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
+                    .addConstraintViolation();
             return false;
         }
         return true;

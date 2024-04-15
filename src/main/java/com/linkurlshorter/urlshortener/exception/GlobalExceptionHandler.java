@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Global exception handler to catch and handle various types of errors throughout the application.
@@ -26,7 +27,6 @@ import java.time.LocalDateTime;
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
     /**
      * Handles method argument validation errors and invalid request errors (400).
      * Returns a response with status 400 and the corresponding error message.
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({MethodArgumentNotValidException.class, BadRequestException.class})
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception) {
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST, "Validation failed!",
-                exception.getMessage());
+                Objects.requireNonNull(exception.getFieldError()).getDefaultMessage());
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
@@ -174,7 +174,7 @@ public class GlobalExceptionHandler {
      * @return an {@link ErrorResponse} object with the appropriate data
      */
     private ErrorResponse buildErrorResponse(HttpStatus status, String message, String exceptionMessage) {
-        return new ErrorResponse(LocalDateTime.now(), message, status.value(), exceptionMessage);
+        return new ErrorResponse(LocalDateTime.now(), status.value(), message, exceptionMessage);
     }
 }
 
