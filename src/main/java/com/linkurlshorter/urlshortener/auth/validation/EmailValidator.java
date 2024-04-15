@@ -1,4 +1,4 @@
-package com.linkurlshorter.urlshortener.user;
+package com.linkurlshorter.urlshortener.auth.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -31,7 +31,7 @@ public @interface EmailValidator {
      *
      * @return Constraint groups.
      */
-    Class<?>[] group() default {};
+    Class<?>[] groups() default {};
 
     /**
      * Parameters that can be used to configure the constraint.
