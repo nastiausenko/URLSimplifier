@@ -15,6 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for {@link UserService} class.
+ *
+ * @author Anastasiia Usenko
+ */
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
@@ -26,6 +31,9 @@ class UserServiceTest {
 
     private User user;
 
+    /**
+     * Set up method to initialize test data before each test method.
+     */
     @BeforeEach
     void setUp() {
        user = User.builder()
@@ -35,6 +43,9 @@ class UserServiceTest {
                 .build();
     }
 
+    /**
+     * Test case for the {@link UserService#save(User)} method.
+     */
     @Test
     void saveTest() {
         when(userRepository.save(Mockito.any(User.class))).thenReturn(user);
@@ -45,6 +56,9 @@ class UserServiceTest {
         verify(userRepository, times(1)).save(user);
     }
 
+    /**
+     * Test case for the {@link UserService#update(User)} method.
+     */
     @Test
     void updateTest() {
         when(userRepository.save(Mockito.any(User.class))).thenReturn(user);
@@ -55,6 +69,9 @@ class UserServiceTest {
         verify(userRepository, times(1)).save(user);
     }
 
+    /**
+     * Test case for the {@link UserService#updateByEmailDynamically(User, String)} method.
+     */
     @Test
     void updateByEmailDynamicallyTest() {
         when(userRepository.updateUserByEmailDynamically(any(User.class), eq(user.getEmail()))).thenReturn(1);
@@ -64,6 +81,9 @@ class UserServiceTest {
         verify(userRepository, times(1)).updateUserByEmailDynamically(user, user.getEmail());
     }
 
+    /**
+     * Test case for the {@link UserService#updateByEmailDynamically(User, String)} method when the email is null.
+     */
     @Test
     void updateByEmailDynamicallyIsNullTest() {
         assertThrows(NullEmailException.class, () -> {
@@ -71,6 +91,9 @@ class UserServiceTest {
         });
     }
 
+    /**
+     * Test case for the {@link UserService#findById(UUID)} method.
+     */
     @Test
     void findByIdTest() {
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
@@ -80,6 +103,10 @@ class UserServiceTest {
         verify(userRepository, times(1)).findById(user.getId());
     }
 
+    /**
+     * Test case for the {@link UserService#findById(UUID)} method
+     * when the user with provided id does not exist.
+     */
     @Test
     void findByIdNotFoundTest() {
         UUID nonExistentUserId = UUID.randomUUID();
@@ -88,6 +115,9 @@ class UserServiceTest {
         assertThrows(NoUserFoundByIdException.class, () -> userService.findById(nonExistentUserId));
     }
 
+    /**
+     * Test case for the {@link UserService#findByEmail(String)} method.
+     */
     @Test
     void findByEmailTest() {
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
@@ -97,6 +127,10 @@ class UserServiceTest {
         verify(userRepository, times(1)).findByEmail(user.getEmail());
     }
 
+    /**
+     * Test case for the {@link UserService#findByEmail(String)} method
+     * when the user with provided email does not exist.
+     */
     @Test
     void findByEmailNotFoundTest() {
         String nonExistentUserEmail = "nonexistent@gmail.com";
@@ -105,6 +139,9 @@ class UserServiceTest {
         assertThrows(NoUserFoundByEmailException.class, () -> userService.findByEmail(nonExistentUserEmail));
     }
 
+    /**
+     * Test case for the {@link UserService#deleteById(UUID)} method.
+     */
     @Test
     void deleteByIdTest() {
         userService.deleteById(user.getId());
