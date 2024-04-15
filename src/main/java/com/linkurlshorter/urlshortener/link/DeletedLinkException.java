@@ -1,4 +1,5 @@
 package com.linkurlshorter.urlshortener.link;
+
 /**
  * Exception thrown when attempting to operate with a link marked as deleted
  */

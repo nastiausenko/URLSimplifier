@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -22,6 +23,7 @@ import java.util.UUID;
  * @see LinkStatus
  */
 @Entity
+@DynamicUpdate
 @Table(name = "links")
 @Data
 @Builder
