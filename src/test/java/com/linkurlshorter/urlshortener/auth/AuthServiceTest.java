@@ -23,6 +23,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for {@link AuthService} class.
+ *
+ * @author Anastasiia Usenko
+ */
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
     @Mock
@@ -40,6 +45,9 @@ class AuthServiceTest {
     @InjectMocks
     private AuthService authService;
 
+    /**
+     * Test case for the {@link AuthService#registerUser(AuthRequest)} method.
+     */
     @Test
     void registrationSuccessfulTest() {
         AuthRequest authRequest = new AuthRequest("test@example.com", "password");
@@ -53,6 +61,10 @@ class AuthServiceTest {
                 .isEqualTo("JWT");
     }
 
+    /**
+     * Test case for the {@link AuthService#registerUser(AuthRequest)} method when the user with the
+     * provided email is already registered.
+     */
     @Test
     void registrationFailedTest() {
         AuthRequest authRequest = new AuthRequest("test@example.com", "password");
@@ -62,8 +74,11 @@ class AuthServiceTest {
                 .isInstanceOf(EmailAlreadyTakenException.class);
     }
 
+    /**
+     * Test case for the {@link AuthService#loginUser(AuthRequest)} method.
+     */
     @Test
-    void loginSuccessfulTest() {
+    void loginTest() {
         AuthRequest authRequest = new AuthRequest("test@example.com", "password");
         Authentication authentication = new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword());
         String expectedToken = "SAMPLE_JWT";
