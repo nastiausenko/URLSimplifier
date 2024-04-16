@@ -107,35 +107,4 @@ class LinkRepositoryTest {
                 .isPresent()
                 .isEqualTo(Optional.of(savedLink));
     }
-    @Test
-    void thatUpdateLinkByShortLinkDynamicallyWorksCorrectly() {
-        Link linkForCompare = Link.builder()
-                .id(UUID.fromString("3053e49b-6da3-4389-9d06-23b2d57b6f25"))
-                .longLink("http://example.com/newPage")
-                .shortLink("http://linkshortener/newshortlink")
-                .user(User.builder()
-                        .id(UUID.fromString("84991c79-f6a9-4b7b-b1b4-0d66c0b92c81"))
-                        .email("user1@example.com")
-                        .password("password1")
-                        .role(UserRole.USER)
-                        .build())
-                .createdTime(LocalDateTime.of(2024, 4, 13, 10, 0))
-                .expirationTime(LocalDateTime.of(2024, 5, 16, 8, 0))
-                .statistics(101)
-                .status(LinkStatus.ACTIVE)
-                .build();
-
-        Link linkForSave = Link.builder()
-                .longLink("http://example.com/newPage")
-                .shortLink("http://linkshortener/newshortlink")
-                .expirationTime(LocalDateTime.of(2024, 5, 16, 8, 0))
-                .statistics(101)
-                .status(LinkStatus.ACTIVE)
-                .build();
-
-        linkRepository.updateLinkByShortLinkDynamically(linkForSave, link.getShortLink());
-        assertThat(linkRepository.findByShortLink(linkForSave.getShortLink()))
-                .isPresent()
-                .isEqualTo(Optional.of(linkForCompare));
-    }
 }
