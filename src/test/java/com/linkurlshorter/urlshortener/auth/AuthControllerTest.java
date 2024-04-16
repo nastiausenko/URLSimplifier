@@ -26,13 +26,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
  */
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-@Testcontainers
 @ExtendWith(MockitoExtension.class)
 class AuthControllerTest {
 
-    @Container
-    @ServiceConnection
-    static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:16.0-alpine");
 
     @Autowired
     private MockMvc mockMvc;
