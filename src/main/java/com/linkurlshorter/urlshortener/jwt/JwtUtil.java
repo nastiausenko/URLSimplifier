@@ -11,7 +11,7 @@ import java.util.Date;
  * Utility class for JWT (JSON Web Token) generation and parsing.
  *
  * <p>This class provides methods for generating JWT tokens based on authentication information,
- * as well as extracting username (email) from a JWT token.
+ * as well as extracting email from a JWT token.
  *
  * @author Egor Sivenko
  * @see javax.crypto.SecretKey
@@ -47,12 +47,12 @@ public class JwtUtil {
     }
 
     /**
-     * Extracts the username (email) from a JWT token.
+     * Extracts the email from a JWT token.
      *
      * @param token the JWT token
-     * @return the username (email) extracted from the token
+     * @return the email extracted from the token
      */
-    public String getUsernameFromToken(String token) {
+    public String getEmailFromToken(String token) {
         return Jwts.parser()
                 .verifyWith(SECRET_KEY)
                 .build()
