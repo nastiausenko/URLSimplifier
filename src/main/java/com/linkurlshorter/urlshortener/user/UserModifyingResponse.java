@@ -19,6 +19,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UserModifyingResponse {
-    private boolean success;
     private String error;
 }
