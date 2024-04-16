@@ -37,6 +37,7 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
        user = User.builder()
+                .id(UUID.fromString("84991c79-f6a9-4b7b-b1b4-0d66c0b92c81"))
                 .email("test1@gmail.com")
                 .password("password1")
                 .role(UserRole.USER)
