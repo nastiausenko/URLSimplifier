@@ -2,6 +2,8 @@ package com.linkurlshorter.urlshortener.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * Represents a request payload used to change a user's email address.
  *
@@ -13,6 +15,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class ChangeUserEmailRequest {
     private String newEmail;
 }

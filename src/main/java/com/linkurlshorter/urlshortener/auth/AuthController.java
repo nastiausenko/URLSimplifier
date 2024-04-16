@@ -2,6 +2,8 @@ package com.linkurlshorter.urlshortener.auth;
 
 import com.linkurlshorter.urlshortener.auth.dto.AuthRequest;
 import com.linkurlshorter.urlshortener.auth.dto.AuthResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Auth", description = "The Auth API")
 @RequestMapping("/auth")
 public class AuthController {
 
@@ -36,6 +39,7 @@ public class AuthController {
      * @param authRequest the authentication request containing user credentials
      * @return a ResponseEntity containing the authentication response, including a JWT token
      */
+    @Operation(summary = "Log In")
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody @Valid AuthRequest authRequest) {
         String token = authService.loginUser(authRequest);
@@ -48,6 +52,7 @@ public class AuthController {
      * @param authRequest the registration request containing user credentials
      * @return a ResponseEntity containing the registration response, including a JWT token
      */
+    @Operation(summary = "Registration")
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody @Valid AuthRequest authRequest) {
         String token = authService.registerUser(authRequest);
