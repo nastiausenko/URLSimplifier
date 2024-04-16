@@ -7,14 +7,14 @@ package com.linkurlshorter.urlshortener.link;
  * is unexpectedly null.
  * @version 1.0
  */
-public class NullPropertyException extends RuntimeException {
-    private static final String DEFAULT_MSG = "Some required property or link entity was null, operation failed";
+public class NullLinkPropertyException extends RuntimeException {
+    private static final String DEFAULT_MSG = "Some required link property or link entity was null, operation failed";
 
-    public NullPropertyException() {
+    public NullLinkPropertyException() {
         super(DEFAULT_MSG);
     }
 
-    public NullPropertyException(String msg) {
+    public NullLinkPropertyException(String msg) {
         super(msg);
     }
 }
