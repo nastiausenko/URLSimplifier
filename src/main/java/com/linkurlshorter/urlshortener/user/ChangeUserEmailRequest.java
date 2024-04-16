@@ -1,5 +1,6 @@
 package com.linkurlshorter.urlshortener.user;
 
+import com.linkurlshorter.urlshortener.auth.validation.EmailValidator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,5 +18,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChangeUserEmailRequest {
+    @EmailValidator
     private String newEmail;
 }
