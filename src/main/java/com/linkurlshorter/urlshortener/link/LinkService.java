@@ -2,6 +2,7 @@ package com.linkurlshorter.urlshortener.link;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -21,9 +22,9 @@ public class LinkService {
      * @throws NullLinkPropertyException If the 'link' parameter is null.
      */
     public Link save(Link link) {
-        try{
+        try {
             return linkRepository.save(link);
-        } catch(Exception e){
+        } catch (Exception e) {
             throw new NullLinkPropertyException();
         }
     }
@@ -34,13 +35,13 @@ public class LinkService {
      * @param link The link entity to update.
      * @return The updated link entity.
      * @throws NullLinkPropertyException If the 'link' parameter is null.
-     * @throws DeletedLinkException If the link has been marked as deleted.
+     * @throws DeletedLinkException      If the link has been marked as deleted.
      */
     public Link update(Link link) {
         throwIfDeleted(link);
-        try{
+        try {
             return linkRepository.save(link);
-        } catch(Exception e){
+        } catch (Exception e) {
             throw new NullLinkPropertyException();
         }
     }
@@ -51,15 +52,15 @@ public class LinkService {
      * @param id The ID of the link entity to retrieve.
      * @return The retrieved link entity.
      * @throws NullLinkPropertyException If the 'id' parameter is null.
-     * @throws NoLinkFoundByIdException If no link is found with the given ID.
-     * @throws DeletedLinkException If the retrieved link has been marked as deleted.
+     * @throws NoLinkFoundByIdException  If no link is found with the given ID.
+     * @throws DeletedLinkException      If the retrieved link has been marked as deleted.
      */
     public Link findById(UUID id) {
-        if(Objects.isNull(id)){
+        if (Objects.isNull(id)) {
             throw new NullLinkPropertyException();
         }
         Link link = linkRepository.findById(id).orElseThrow(NoLinkFoundByIdException::new);
-        if(link.getStatus()==LinkStatus.DELETED){
+        if (link.getStatus() == LinkStatus.DELETED) {
             throw new DeletedLinkException();
         }
         return link;
@@ -70,16 +71,16 @@ public class LinkService {
      *
      * @param shortLink The short link of the link entity to retrieve.
      * @return The retrieved link entity.
-     * @throws NullLinkPropertyException If the 'shortLink' parameter is null.
+     * @throws NullLinkPropertyException       If the 'shortLink' parameter is null.
      * @throws NoLinkFoundByShortLinkException If no link is found with the given short link.
-     * @throws DeletedLinkException If the retrieved link has been marked as deleted.
+     * @throws DeletedLinkException            If the retrieved link has been marked as deleted.
      */
     public Link findByShortLink(String shortLink) {
-        if(Objects.isNull(shortLink)){
+        if (Objects.isNull(shortLink)) {
             throw new NullLinkPropertyException();
         }
         Link link = linkRepository.findByShortLink(shortLink).orElseThrow(NoLinkFoundByShortLinkException::new);
-        if(link.getStatus()==LinkStatus.DELETED){
+        if (link.getStatus() == LinkStatus.DELETED) {
             throw new DeletedLinkException();
         }
         return link;
@@ -89,17 +90,35 @@ public class LinkService {
      * Marks a link entity as deleted by its short link.
      *
      * @param shortLink The short link of the link entity to mark as deleted.
-     * @throws NullLinkPropertyException If the 'shortLink' parameter is null.
+     * @throws NullLinkPropertyException       If the 'shortLink' parameter is null.
      * @throws NoLinkFoundByShortLinkException If no link is found with the given short link.
-     * @throws DeletedLinkException If the link has already been marked as deleted.
+     * @throws DeletedLinkException            If the link has already been marked as deleted.
      */
     public void deleteByShortLink(String shortLink) {
-        if(Objects.isNull(shortLink)){
+        if (Objects.isNull(shortLink)) {
             throw new NullLinkPropertyException();
         }
         Link link = findByShortLink(shortLink);
         link.setStatus(LinkStatus.DELETED);
         update(link);
+    }
+
+    /**
+     * Searches for a unique existing link by a short link.
+     * If an active link is found for the specified short link, returns that link.
+     *
+     * @param shortLink A string representing the short link to be searched.
+     * @return The active link found for the specified short link.
+     * @throws NoLinkFoundByShortLinkException If no link was found by the short link.
+     * @throws NullLinkPropertyException       If the found link does not have the ACTIVE status.
+     */
+    public Link findByExistUniqueLink(String shortLink) {
+        Link existingLink = linkRepository.findByShortLink(shortLink).orElseThrow(NoLinkFoundByShortLinkException::new);
+        if (existingLink.getStatus() == LinkStatus.ACTIVE) {
+            return existingLink;
+        } else {
+            throw new NullLinkPropertyException();
+        }
     }
 
     /**
