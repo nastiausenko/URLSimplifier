@@ -60,11 +60,10 @@ class UserControllerTest {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         authController.register(authRequest);
 
-        mockMvc.perform(post("/user/change-password")
+        mockMvc.perform(post("/api/V1/user/change-password")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.error").value("ok"));
     }
 
@@ -78,7 +77,7 @@ class UserControllerTest {
         authentication = new UsernamePasswordAuthenticationToken("failed@email.com", "PAssWORD1");
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        mockMvc.perform(post("/user/change-password")
+        mockMvc.perform(post("/api/V1/user/change-password")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound());
@@ -95,11 +94,10 @@ class UserControllerTest {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         authController.register(authRequest);
 
-        mockMvc.perform(post("/user/change-email")
+        mockMvc.perform(post("/api/V1/user/change-email")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.error").value("ok"));
     }
 
@@ -113,7 +111,7 @@ class UserControllerTest {
         authentication = new UsernamePasswordAuthenticationToken("user@email.com", "PAssWORD1");
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        mockMvc.perform(post("/user/change-email")
+        mockMvc.perform(post("/api/V1/user/change-email")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound());

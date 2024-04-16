@@ -22,11 +22,9 @@ public class LinkService {
      * @throws NullLinkPropertyException If the 'link' parameter is null.
      */
     public Link save(Link link) {
-        try {
-            return linkRepository.save(link);
-        } catch (Exception e) {
             throw new NullLinkPropertyException();
         }
+        return linkRepository.save(link);
     }
 
     /**
@@ -38,13 +36,13 @@ public class LinkService {
      * @throws DeletedLinkException      If the link has been marked as deleted.
      */
     public Link update(Link link) {
-        throwIfDeleted(link);
-        try {
-            return linkRepository.save(link);
-        } catch (Exception e) {
             throw new NullLinkPropertyException();
         }
+
+        throwIfDeleted(link);
+        return linkRepository.save(link);
     }
+
 
     /**
      * Retrieves a link entity by its ID.
@@ -100,7 +98,7 @@ public class LinkService {
         }
         Link link = findByShortLink(shortLink);
         link.setStatus(LinkStatus.DELETED);
-        update(link);
+        linkRepository.save(link);
     }
 
     /**

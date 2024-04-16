@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "User", description = "The User API")
-@RequestMapping("/user")
+@RequestMapping("/api/V1/user")
 public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
@@ -56,7 +56,7 @@ public class UserController {
         if (alteredCount <= 0) {
             throw new NoSuchEmailFoundException();
         } else {
-            UserModifyingResponse response = new UserModifyingResponse(true, "ok");
+            UserModifyingResponse response = new UserModifyingResponse("ok");
             return ResponseEntity.ok(response);
         }
     }
@@ -81,7 +81,7 @@ public class UserController {
         if (alteredCount <= 0) {
             throw new NoSuchEmailFoundException();
         } else {
-            UserModifyingResponse response = new UserModifyingResponse(true, "ok");
+            UserModifyingResponse response = new UserModifyingResponse("ok");
             String refreshedToken = getRefreshedToken(emailRequest.getNewEmail());
 
             return ResponseEntity
