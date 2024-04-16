@@ -1,12 +1,18 @@
 package com.linkurlshorter.urlshortener.user;
 
+import com.linkurlshorter.urlshortener.jwt.JwtUtil;
+import com.linkurlshorter.urlshortener.security.CustomUserDetailsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +32,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+    private final CustomUserDetailsService customUserDetailsService;
+    private final JwtUtil jwtUtil;
     /**
      * Handles POST requests to change a user's password.
      *
@@ -36,16 +45,16 @@ public class UserController {
     @PostMapping("/change-password")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "Change user password")
-    public ResponseEntity<UserModifyingResponse> changePassword(@RequestBody ChangeUserPasswordRequest passRequest) {
+    public ResponseEntity<UserModifyingResponse> changePassword(@RequestBody @Valid ChangeUserPasswordRequest passRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         int alteredCount = userService.updateByEmailDynamically(
                 User.builder()
-                        .password(passRequest.getNewPassword())  //TODO: needs to be encoded + password validation
+                        .password(passwordEncoder.encode(passRequest.getNewPassword()))
                         .build(),
                 authentication.getName()
         );
         if (alteredCount <= 0) {
-            throw new NoSuchEmailFoundException();   //TODO: to be handled in global handler
+            throw new NoSuchEmailFoundException();
         } else {
             UserModifyingResponse response = new UserModifyingResponse(true, "ok");
             return ResponseEntity.ok(response);
@@ -61,11 +70,10 @@ public class UserController {
     @PostMapping("/change-email")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "Change user email")
-    public ResponseEntity<UserModifyingResponse> changeEmail(@RequestBody ChangeUserEmailRequest emailRequest) {
+    public ResponseEntity<UserModifyingResponse> changeEmail(@RequestBody @Valid ChangeUserEmailRequest emailRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         int alteredCount = userService.updateByEmailDynamically(
                 User.builder()
-                        //TODO: add email validation
                         .email(emailRequest.getNewEmail())
                         .build(),
                 authentication.getName()
@@ -74,10 +82,21 @@ public class UserController {
             throw new NoSuchEmailFoundException();
         } else {
             UserModifyingResponse response = new UserModifyingResponse(true, "ok");
+            String refreshedToken = getRefreshedToken(emailRequest.getNewEmail());
+
             return ResponseEntity
                     .ok()
-                    .header("Authentication", "...") //TODO: add valid JWT generator
+                    .header("Authorization", "Bearer " + refreshedToken)
                     .body(response);
         }
+    }
+
+    private String getRefreshedToken(String newEmail) {
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(newEmail);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
+
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        return jwtUtil.generateToken(authenticationToken);
     }
 }
