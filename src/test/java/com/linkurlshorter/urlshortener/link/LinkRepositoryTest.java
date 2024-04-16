@@ -61,7 +61,7 @@ class LinkRepositoryTest {
 
     @Test
     void thatFindByIdWorksCorrectly() {
-        Link found = linkRepository.findById(link.getId()).get();
+        Link found = linkRepository.findById(link.getId()).orElseThrow();
 
         assertThat(found)
                 .isNotNull()
@@ -69,7 +69,7 @@ class LinkRepositoryTest {
     }
     @Test
     void thatFindByShortLinkWorksCorrectly() {
-        Link found = linkRepository.findByShortLink(link.getShortLink()).get();
+        Link found = linkRepository.findByShortLink(link.getShortLink()).orElseThrow();
         assertThat(found)
                 .isNotNull()
                 .isEqualTo(link);
