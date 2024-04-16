@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -123,6 +124,24 @@ public class LinkService {
             throw new NullLinkPropertyException();
         }
         linkRepository.deleteById(id);
+    }
+
+    /**
+     * Searches for a unique existing link by a short link.
+     * If an active link is found for the specified short link, returns that link.
+     *
+     * @param shortLink A string representing the short link to be searched.
+     * @return The active link found for the specified short link.
+     * @throws NoLinkFoundByShortLinkException If no link was found by the short link.
+     * @throws NullLinkPropertyException       If the found link does not have the ACTIVE status.
+     */
+    public Link findByExistUniqueLink(String shortLink) {
+        Link existingLink = linkRepository.findByShortLink(shortLink).orElseThrow(NoLinkFoundByShortLinkException::new);
+        if (existingLink.getStatus() == LinkStatus.ACTIVE) {
+            return existingLink;
+        } else {
+            throw new NullLinkPropertyException();
+        }
     }
 
     /**
