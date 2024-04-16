@@ -18,7 +18,11 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-
+/**
+ * Unit tests for {@link LinkService} class.
+ *
+ * @author Anastasiia Usenko
+ */
 @ExtendWith(MockitoExtension.class)
 class LinkServiceTest {
     @Mock
@@ -29,6 +33,9 @@ class LinkServiceTest {
 
     private Link link;
 
+    /**
+     * Set up method to initialize test data before each test method.
+     */
     @BeforeEach
     void setUp() {
         link = Link.builder()
@@ -48,6 +55,9 @@ class LinkServiceTest {
                 .build();
     }
 
+    /**
+     * Test case for the {@link LinkService#save(Link)} method.
+     */
     @Test
     void saveSuccessfulTest() {
         when(linkRepository.save(any(Link.class))).thenReturn(link);
@@ -57,12 +67,18 @@ class LinkServiceTest {
         verify(linkRepository, times(1)).save(link);
     }
 
+    /**
+     * Test case for the {@link LinkService#save(Link)} method when the provided link is null.
+     */
     @Test
     void saveFailedTest() {
         assertThatThrownBy(() -> linkService.save(null))
                 .isInstanceOf(NullLinkPropertyException.class);
     }
 
+    /**
+     * Test case for the {@link LinkService#update(Link)} method.
+     */
     @Test
     void updateSuccessfulTest() {
         when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.of(link));
@@ -72,12 +88,18 @@ class LinkServiceTest {
         assertThat(savedLink).isNotNull().isEqualTo(link);
     }
 
+    /**
+     * Test case for the {@link LinkService#update(Link)} method when the provided link is null.
+     */
     @Test
     void updateNullLinkTest() {
         assertThatThrownBy(() -> linkService.update(null))
                 .isInstanceOf(NullLinkPropertyException.class);
     }
 
+    /**
+     * Test case for the {@link LinkService#update(Link)} method when the provided link is deleted.
+     */
     @Test
     void updateDeletedLinkTest() {
         link.setStatus(LinkStatus.DELETED);
@@ -87,6 +109,9 @@ class LinkServiceTest {
                 .isInstanceOf(DeletedLinkException.class);
     }
 
+    /**
+     * Test case for the {@link LinkService#findById(UUID)} method.
+     */
     @Test
     void findByIdTest() {
         when(linkRepository.findById(link.getId())).thenReturn(Optional.ofNullable(link));
@@ -96,6 +121,10 @@ class LinkServiceTest {
         verify(linkRepository, times(1)).findById(link.getId());
     }
 
+    /**
+     * Test case for the {@link LinkService#findById(UUID)} method when the link with provided id
+     * does not exist.
+     */
     @Test
     void findByIdNotFoundTest() {
         UUID nonExistentUserId = UUID.randomUUID();
@@ -105,6 +134,10 @@ class LinkServiceTest {
                 .isInstanceOf(NoLinkFoundByIdException.class);
     }
 
+    /**
+     * Test case for the {@link LinkService#findById(UUID)} method when the link with provided id
+     * is deleted.
+     */
     @Test
     void findByIdDeletedTest() {
         link.setStatus(LinkStatus.DELETED);
@@ -114,12 +147,18 @@ class LinkServiceTest {
                 .isInstanceOf(DeletedLinkException.class);
     }
 
+    /**
+     * Test case for the {@link LinkService#findById(UUID)} method when the provided id is null.
+     */
     @Test
     void findByNullIdTest() {
         assertThatThrownBy(() -> linkService.findById(null))
                 .isInstanceOf(NullLinkPropertyException.class);
     }
 
+    /**
+     * Test case for the {@link LinkService#findByShortLink(String)} method.
+     */
     @Test
     void findByShortLinkTest() {
         when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.of(link));
@@ -129,18 +168,29 @@ class LinkServiceTest {
         verify(linkRepository, times(1)).findByShortLink(link.getShortLink());
     }
 
+    /**
+     * Test case for the {@link LinkService#findByShortLink(String)} method when the
+     * provided short link is null.
+     */
     @Test
     void findByNullShortLinkTest() {
         assertThatThrownBy(() -> linkService.findByShortLink(null))
                 .isInstanceOf(NullLinkPropertyException.class);
     }
 
+    /**
+     * Test case for the {@link LinkService#findByShortLink(String)} method when the
+     * provided short link does not exist.
+     */
     @Test
     void findByShortLinkNotFoundTest() {
         assertThatThrownBy(() ->  linkService.deleteByShortLink("http://link/short"))
                 .isInstanceOf(NoLinkFoundByShortLinkException.class);
     }
 
+    /**
+     * Test case for the {@link LinkService#deleteByShortLink(String)} method.
+     */
     @Test
     void deleteByShortLinkTest() {
         when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.of(link));
@@ -148,6 +198,10 @@ class LinkServiceTest {
         assertThat(LinkStatus.DELETED).isEqualTo(link.getStatus());
     }
 
+    /**
+     * Test case for the {@link LinkService#deleteByShortLink(String)} method when the
+     * provided short link is null.
+     */
     @Test
     void deleteByNullShortLinkTest() {
         assertThatThrownBy(() -> linkService.deleteByShortLink(null))
