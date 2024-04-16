@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Auth", description = "The Auth API")
-@RequestMapping("/auth")
+@RequestMapping("/api/V1/auth")
 public class AuthController {
 
     private static final String LOGIN_MESSAGE = "User logged in successfully!";
