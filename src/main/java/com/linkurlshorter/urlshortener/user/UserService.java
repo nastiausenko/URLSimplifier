@@ -25,9 +25,14 @@ public class UserService {
      *
      * @param user the user entity to save
      * @return the saved user entity
+     * @throws NullUserPropertyException if any property of the user entity is null
      */
     public User save(User user) {
-        return userRepository.save(user);
+        try{
+            return userRepository.save(user);
+        } catch(Exception e){
+            throw new NullUserPropertyException();
+        }
     }
 
     /**
@@ -35,9 +40,14 @@ public class UserService {
      *
      * @param user the user entity to update
      * @return the updated user entity
+     * @throws NullUserPropertyException if any property of the user entity is null
      */
     public User update(User user) {
-        return userRepository.save(user);
+        try{
+            return userRepository.save(user);
+        } catch(Exception e){
+            throw new NullUserPropertyException();
+        }
     }
 
     /**
@@ -69,8 +79,12 @@ public class UserService {
      * @param id the UUID id of the user to find
      * @return the found user entity
      * @throws NoUserFoundByIdException if no user is found with the provided ID
+     * @throws NullUserPropertyException if the provided ID is null
      */
     public User findById(UUID id) {
+        if (Objects.isNull(id)) {
+            throw new NullUserPropertyException();
+        }
         return userRepository.findById(id).orElseThrow(NoUserFoundByIdException::new);
     }
 
@@ -80,8 +94,12 @@ public class UserService {
      * @param email the email of the user to find
      * @return the found user entity
      * @throws NoUserFoundByEmailException if no user is found with the provided email
+     * @throws NullEmailException if the provided email is null
      */
     public User findByEmail(String email) {
+        if(Objects.isNull(email)){
+            throw new NullEmailException();
+        }
         return userRepository.findByEmail(email).orElseThrow(NoUserFoundByEmailException::new);
     }
 
@@ -89,10 +107,12 @@ public class UserService {
      * Deletes a user entity by its ID.
      *
      * @param id the UUID id of the user to delete
-     * @return true if the user is successfully deleted, false otherwise
+     * @throws NullUserPropertyException if the provided ID is null
      */
-    public boolean deleteById(UUID id) {
+    public void deleteById(UUID id) {
+        if (Objects.isNull(id)) {
+            throw new NullUserPropertyException();
+        }
         userRepository.deleteById(id);
-        return true;
     }
 }

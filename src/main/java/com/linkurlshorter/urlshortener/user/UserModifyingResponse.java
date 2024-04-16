@@ -3,6 +3,8 @@ package com.linkurlshorter.urlshortener.user;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * Represents a response payload for user data altering operations.
  *
@@ -14,6 +16,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class UserModifyingResponse {
     private boolean success;
