@@ -99,7 +99,7 @@ public class LinkService {
         }
         Link link = findByShortLink(shortLink);
         link.setStatus(LinkStatus.DELETED);
-        update(link);
+        linkRepository.save(link);
     }
 
     /**
