@@ -119,4 +119,38 @@ class LinkServiceTest {
         assertThatThrownBy(() -> linkService.findById(null))
                 .isInstanceOf(NullLinkPropertyException.class);
     }
+
+    @Test
+    void findByShortLinkTest() {
+        when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.of(link));
+        Link foundLink = linkService.findByShortLink(link.getShortLink());
+
+        assertThat(foundLink).isNotNull().isEqualTo(link);
+        verify(linkRepository, times(1)).findByShortLink(link.getShortLink());
+    }
+
+    @Test
+    void findByNullShortLinkTest() {
+        assertThatThrownBy(() -> linkService.findByShortLink(null))
+                .isInstanceOf(NullLinkPropertyException.class);
+    }
+
+    @Test
+    void findByShortLinkNotFoundTest() {
+        assertThatThrownBy(() ->  linkService.deleteByShortLink("http://link/short"))
+                .isInstanceOf(NoLinkFoundByShortLinkException.class);
+    }
+
+    @Test
+    void deleteByShortLinkTest() {
+        when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.of(link));
+        linkService.deleteByShortLink(link.getShortLink());
+        assertThat(LinkStatus.DELETED).isEqualTo(link.getStatus());
+    }
+
+    @Test
+    void deleteByNullShortLinkTest() {
+        assertThatThrownBy(() -> linkService.deleteByShortLink(null))
+                .isInstanceOf(NullLinkPropertyException.class);
+    }
 }
