@@ -93,7 +93,7 @@ class AuthControllerTest {
      * @throws Exception if an error occurs during the registration process
      */
     private ResultActions performRegistration(AuthRequest request) throws Exception {
-        return mockMvc.perform(post("/auth/register")
+        return mockMvc.perform(post("/api/V1/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));
     }
@@ -106,7 +106,7 @@ class AuthControllerTest {
      * @throws Exception if an error occurs during the login process
      */
     private ResultActions performLogin(AuthRequest request) throws Exception {
-        return mockMvc.perform(post("/auth/login")
+        return mockMvc.perform(post("/api/V1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));
     }
