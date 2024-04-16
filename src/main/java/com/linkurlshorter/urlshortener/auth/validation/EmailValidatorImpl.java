@@ -2,7 +2,6 @@ package com.linkurlshorter.urlshortener.auth.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import lombok.RequiredArgsConstructor;
 
 /**
  * The EmailValidatorImpl class implements {@link ConstraintValidator} the ConstraintValidator interface to
@@ -11,7 +10,6 @@ import lombok.RequiredArgsConstructor;
  *
  * @author Vlas Pototskyi
  */
-@RequiredArgsConstructor
 public class EmailValidatorImpl implements ConstraintValidator<EmailValidator, String> {
     /**
      * Checks if the specified email address matches the specified regular expression pattern.
@@ -23,7 +21,7 @@ public class EmailValidatorImpl implements ConstraintValidator<EmailValidator, S
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {
         String regexEmail = "^[A-Za-z0-9+_.-]+@(.+)$";
-        if (!email.matches(regexEmail)) {
+        if (email == null || !email.matches(regexEmail)) {
             context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
                     .addConstraintViolation();
             return false;
