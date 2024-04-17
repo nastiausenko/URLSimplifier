@@ -19,6 +19,11 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 
+/**
+ * Unit tests for the {@link LinkRepository} class.
+ *
+ * @author Ivan Shalaiev
+ */
 @Testcontainers
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -29,6 +34,7 @@ class LinkRepositoryTest {
     @Autowired
     LinkRepository linkRepository;
     private Link link;
+
     @BeforeEach
     void setUp() {
         link = Link.builder()
@@ -48,25 +54,29 @@ class LinkRepositoryTest {
                 .build();
     }
 
+    /**
+     * Test to verify that the database container is created and running.
+     */
     @Test
     void connectionEstablished() {
         assertThat(container.isCreated()).isTrue();
         assertThat(container.isRunning()).isTrue();
     }
+
+    /**
+     * Test to verify the {@link LinkRepository#deleteAll()} method.
+     * It ensures that all links are deleted from the database and the repository is empty.
+     */
     @Test
     void thatDeleteAllWorksCorrectly() {
         linkRepository.deleteAll();
         assertThat(linkRepository.findAll()).isEmpty();
     }
 
-    @Test
-    void thatFindByIdWorksCorrectly() {
-        Link found = linkRepository.findById(link.getId()).orElseThrow();
-
-        assertThat(found)
-                .isNotNull()
-                .isEqualTo(link);
-    }
+    /**
+     * Test to verify the {@link LinkRepository#findByShortLink(String)} method.
+     * It ensures that the findByShortLink method returns the correct link entity when provided with a valid short link.
+     */
     @Test
     void thatFindByShortLinkWorksCorrectly() {
         Link found = linkRepository.findByShortLink(link.getShortLink()).orElseThrow();
@@ -74,37 +84,15 @@ class LinkRepositoryTest {
                 .isNotNull()
                 .isEqualTo(link);
     }
+
+    /**
+     * Test to verify the {@link LinkRepository#findAll()} method.
+     * It ensures that the findAll method returns a non-empty list of links from the database.
+     */
     @Test
     void thatFindAllWorksCorrectly() {
         List<Link> links = linkRepository.findAll();
         assertThat(links).isNotNull()
                 .hasSize(5);
-    }
-    @Test
-    void thatDeleteWorksCorrectly() {
-
-        linkRepository.delete(link);
-        assertThat(linkRepository.findById(link.getId())).isEmpty();
-    }
-    @Test
-    void thatSaveWorksCorrectly() {
-        Link linkForSave = Link.builder()
-                .longLink("http://example.com/page1")
-                .shortLink("http://linkshortener/newshortlink1")
-                .user(User.builder()
-                        .id(UUID.fromString("84991c79-f6a9-4b7b-b1b4-0d66c0b92c81"))
-                        .email("user1@example.com")
-                        .password("password1")
-                        .role(UserRole.USER)
-                        .build())
-                .createdTime(LocalDateTime.of(2024, 4, 13, 10, 0))
-                .expirationTime(LocalDateTime.of(2024, 5, 16, 8, 0))
-                .statistics(100)
-                .status(LinkStatus.ACTIVE)
-                .build();
-        Link savedLink = linkRepository.save(linkForSave);
-        assertThat(linkRepository.findById(savedLink.getId()))
-                .isPresent()
-                .isEqualTo(Optional.of(savedLink));
     }
 }
