@@ -19,11 +19,12 @@ public class LinkRedirectController {
 
     @GetMapping("/{shortLink}")
     public RedirectView redirectToLongLink(@PathVariable("shortLink") String shortLink) {
-        Link byShortLink = linkService.findByShortLink(shortLink);
-        byShortLink.setStatistics(byShortLink.getStatistics() + 1);
-        byShortLink.setExpirationTime(LocalDateTime.now().plusMonths(1));
+        Link link = linkService.findByShortLink(shortLink);
+        link.setStatistics(link.getStatistics() + 1);
+        link.setExpirationTime(LocalDateTime.now().plusMonths(1));
+        linkService.save(link);
 
-        String longLink = byShortLink.getLongLink();
+        String longLink = link.getLongLink();
 
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl(longLink);
