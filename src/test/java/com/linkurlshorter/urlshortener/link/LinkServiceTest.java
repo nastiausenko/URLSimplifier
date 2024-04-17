@@ -10,11 +10,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -189,6 +189,66 @@ class LinkServiceTest {
     }
 
     /**
+     * Test case for the {@link LinkService#findAllByUser(User)} method.
+     */
+    @Test
+    void findByAllByUserTest() {
+        User user = User.builder()
+                .id(UUID.fromString("84991c79-f6a9-4b7b-b1b4-0d66c0b92c81"))
+                .email("test1@gmail.com")
+                .password("password1")
+                .role(UserRole.USER)
+                .build();
+
+        List<Link> userLinks = Arrays.asList(
+                Link.builder().id(UUID.randomUUID()).user(user).build(),
+                Link.builder().id(UUID.randomUUID()).user(user).build(),
+                Link.builder().id(UUID.randomUUID()).user(user).build()
+        );
+
+        when(linkRepository.findAllByUser(user)).thenReturn(userLinks);
+        List<Link> foundLinks = linkService.findAllByUser(user);
+
+        assertThat(foundLinks).isNotNull().isEqualTo(userLinks);
+        verify(linkRepository, times(1)).findAllByUser(user);
+    }
+
+    /**
+     * Test case for the {@link LinkService#findAllByUser(User)} method when the provided user is null.
+     */
+    @Test
+    void findAllByNullUserTest() {
+        assertThatThrownBy(() -> linkService.findAllByUser(null))
+                .isInstanceOf(NullLinkPropertyException.class);
+    }
+
+    /**
+     * Test case for the {@link LinkService#getLinkUsageStatsByUserId(UUID)} method.
+     */
+    @Test
+    void getLinkUsageStatsByUserIdTest() {
+        UUID userId = UUID.randomUUID();
+        List<LinkStatisticsDto> expectedStats = Collections.singletonList(
+                new LinkStatisticsDto(UUID.randomUUID(), "shortLink1", 10)
+        );
+        when(linkRepository.getLinkUsageStatsForUser(userId)).thenReturn(expectedStats);
+
+        List<LinkStatisticsDto> actualStats = linkService.getLinkUsageStatsByUserId(userId);
+
+        assertThat(actualStats).isNotNull().isEqualTo(expectedStats);
+        verify(linkRepository, times(1)).getLinkUsageStatsForUser(userId);
+    }
+
+    /**
+     * Test case for the {@link LinkService#findAllByUser(User)} method when the provided user is null.
+     */
+    @Test
+    void getLinkUsageStatsByUserIdNullTest() {
+        assertThatThrownBy(() -> linkService.getLinkUsageStatsByUserId(null))
+                .isInstanceOf(NullLinkPropertyException.class);
+    }
+
+    /**
      * Test case for the {@link LinkService#deleteByShortLink(String)} method.
      */
     @Test
@@ -205,6 +265,25 @@ class LinkServiceTest {
     @Test
     void deleteByNullShortLinkTest() {
         assertThatThrownBy(() -> linkService.deleteByShortLink(null))
+                .isInstanceOf(NullLinkPropertyException.class);
+    }
+
+    /**
+     * Test case for the {@link LinkService#deleteById(UUID)} method.
+     */
+    @Test
+    void deleteByIdTest() {
+        assertAll(() -> linkService.deleteById(link.getId()));
+        verify(linkRepository, times(1)).deleteById(link.getId());
+    }
+
+    /**
+     * Test case for the {@link LinkService#deleteById(UUID)} method when the
+     * provided id is null.
+     */
+    @Test
+    void deleteByNullIdTest() {
+        assertThatThrownBy(() -> linkService.deleteById(null))
                 .isInstanceOf(NullLinkPropertyException.class);
     }
 }
