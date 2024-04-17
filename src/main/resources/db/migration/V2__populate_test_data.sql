@@ -1,7 +1,10 @@
 INSERT INTO users (id, email, password, role)
-VALUES ('84991c79-f6a9-4b7b-b1b4-0d66c0b92c81', 'user1@example.com', 'password1', 'USER'),
-       ('f6ff4ee4-92c4-49f3-97eb-d6c69a715325', 'user2@example.com', 'password2', 'USER'),
-       ('b95cb1b3-1a7e-4e8b-a7ef-f3e20aef5f0a', 'user3@example.com', 'password3', 'ADMIN');
+VALUES ('84991c79-f6a9-4b7b-b1b4-0d66c0b92c81', 'user1@example.com',
+        '$2a$12$7Cp4On1DBNyCkz4TaZYc3O.A.CBKi4WXgXnlI4SD0yn7CgBX5Gd6O', 'USER'),
+       ('f6ff4ee4-92c4-49f3-97eb-d6c69a715325', 'user2@example.com',
+        '$2a$12$7Cp4On1DBNyCkz4TaZYc3O.A.CBKi4WXgXnlI4SD0yn7CgBX5Gd6O', 'USER'),
+       ('b95cb1b3-1a7e-4e8b-a7ef-f3e20aef5f0a', 'user3@example.com',
+        '$2a$12$7Cp4On1DBNyCkz4TaZYc3O.A.CBKi4WXgXnlI4SD0yn7CgBX5Gd6O', 'ADMIN');
 
 INSERT INTO links (id, long_link, short_link, user_id, created_time, expiration_time, statistics, status)
 VALUES ('3053e49b-6da3-4389-9d06-23b2d57b6f25', 'https://www.youtube.com', 'short-link-1',
