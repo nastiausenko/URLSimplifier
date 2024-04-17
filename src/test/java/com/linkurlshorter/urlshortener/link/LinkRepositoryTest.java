@@ -38,7 +38,7 @@ class LinkRepositoryTest {
                 .user(User.builder()
                         .id(UUID.fromString("84991c79-f6a9-4b7b-b1b4-0d66c0b92c81"))
                         .email("user1@example.com")
-                        .password("password1")
+                        .password("$2a$12$7Cp4On1DBNyCkz4TaZYc3O.A.CBKi4WXgXnlI4SD0yn7CgBX5Gd6O")
                         .role(UserRole.USER)
                         .build())
                 .createdTime(LocalDateTime.of(2024, 4, 13, 10, 0))
