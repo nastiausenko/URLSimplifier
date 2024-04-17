@@ -36,7 +36,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
      * <strong>The row is searched by email param, so email param should be NOT NULL</strong>
      *
      * @param entity the User entity containing the fields to be updated. Only non-null fields will be included in the update.
-     * @param email the String email by which the User row can be found in database
+     * @param email  the String email by which the User row can be found in database
      * @return the number of user records updated in the database.
      */
     @Transactional

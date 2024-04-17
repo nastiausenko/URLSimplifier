@@ -1,5 +1,6 @@
 
 package com.linkurlshorter.urlshortener.user;
+
 /**
  * This exception is thrown when a null email is provided, indicating that the request cannot be processed.
  *
@@ -9,16 +10,19 @@ package com.linkurlshorter.urlshortener.user;
  * </p>
  *
  * <p>
- * @author  Artem Poliakov
+ *
+ * @author Artem Poliakov
  * @version 1.0
  * </p>
  */
-public class NullEmailException extends NullUserPropertyException{
+public class NullEmailException extends NullUserPropertyException {
     private static final String MSG = "Email provided is null, so request can not be processed";
-    public NullEmailException(){
+
+    public NullEmailException() {
         super(MSG);
     }
-    public NullEmailException(String msg){
+
+    public NullEmailException(String msg) {
         super(msg);
     }
 }

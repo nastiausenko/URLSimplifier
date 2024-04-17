@@ -1,4 +1,5 @@
 package com.linkurlshorter.urlshortener.link;
+
 /**
  * Exception thrown when no link is found by the provided shortLink.
  */

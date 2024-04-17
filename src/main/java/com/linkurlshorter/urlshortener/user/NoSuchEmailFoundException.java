@@ -1,4 +1,5 @@
 package com.linkurlshorter.urlshortener.user;
+
 /**
  * This exception is thrown when no matching email is found in the database.
  *
@@ -12,8 +13,9 @@ package com.linkurlshorter.urlshortener.user;
  * {@author Artem Poliakov}
  * </p>
  */
-public class NoSuchEmailFoundException extends RuntimeException{
+public class NoSuchEmailFoundException extends RuntimeException {
     private static final String MSG = "No such email found in the database";
+
     public NoSuchEmailFoundException() {
         super(MSG);
     }

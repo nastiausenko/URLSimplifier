@@ -14,7 +14,7 @@ import java.util.UUID;
  * <p>Encapsulates user information including their unique identifier, email address, password,
  * role, and associated links.  Created on: 13.04.2024
  *
- * @author  Artem Poliakov
+ * @author Artem Poliakov
  * @version 1.0
  * @see Link
  * @see UserRole

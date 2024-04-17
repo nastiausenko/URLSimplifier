@@ -2,6 +2,7 @@ package com.linkurlshorter.urlshortener.link;
 
 /**
  * Exception thrown when attempting to operate with a link marked as deleted
+ *
  * @version 1.0
  */
 public class DeletedLinkException extends RuntimeException {
