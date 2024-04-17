@@ -240,7 +240,7 @@ class LinkServiceTest {
     }
 
     /**
-     * Test case for the {@link LinkService#findAllByUser(User)} method when the provided user is null.
+     * Test case for the {@link LinkService#getLinkUsageStatsByUserId(UUID)} method when the provided id is null.
      */
     @Test
     void getLinkUsageStatsByUserIdNullTest() {
