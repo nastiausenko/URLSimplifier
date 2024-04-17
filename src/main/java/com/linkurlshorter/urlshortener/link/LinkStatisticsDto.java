@@ -5,13 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LinkInfoResponse {
-    private List<LinkInfoDto> linkDtoList;
-    private String error;
+public class LinkStatisticsDto {
+    private UUID id;
+    private String shortLink;
+    private int usageStatistics;
 }

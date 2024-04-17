@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  */
 @Component
-public class LinkInfoResponseMapper {
-    public LinkInfoResponse mapLinkToResponse(Link link, String error) {
-        return LinkInfoResponse.builder()
+public class LinkInfoDtoMapper {
+    public LinkInfoDto mapLinkToDto(Link link) {
+        return LinkInfoDto.builder()
                 .id(link.getId())
                 .longLink(link.getLongLink())
                 .shortLink(link.getShortLink())
@@ -23,7 +23,6 @@ public class LinkInfoResponseMapper {
                 .expirationTime(link.getExpirationTime())
                 .usageStatistics(link.getStatistics())
                 .status(link.getStatus())
-                .error(error)
                 .build();
     }
 }

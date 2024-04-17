@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LinkInfoResponse {
-    private List<LinkInfoDto> linkDtoList;
+public class LinkStatisticsResponse {
+    private List<LinkStatisticsDto> linksStatsList;
     private String error;
 }

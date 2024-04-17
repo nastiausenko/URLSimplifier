@@ -13,7 +13,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Controller for Link-related operations such as create, delete, update and get info + statistics
@@ -31,7 +34,7 @@ public class LinkController {
     private final LinkService linkService;
     private final UserService userService;
     private final EntityManager entityManager;
-    private final LinkInfoResponseMapper infoResponseMapper;
+    private final LinkInfoDtoMapper linkDtoMapper;
 
     /**
      * Controller method for creating a new link.
@@ -132,6 +135,50 @@ public class LinkController {
             return ResponseEntity.ok(new LinkModifyingResponse("ok"));
         } else {
             throw new ForbiddenException(OPERATION_FORBIDDEN_MSG);
+        }
+    }
+        //TODO: for info and all-links-info exclude all results of status DELETED!
+    @GetMapping("/info")
+    public ResponseEntity<LinkInfoResponse> getInfoByShortLink(@RequestParam String shortLink) {
+        Link link = linkService.findByShortLink(shortLink);
+        if (doesUserHaveRightsForLinkById(link.getId())) {
+            LinkInfoDto dto = linkDtoMapper.mapLinkToDto(link);
+            LinkInfoResponse response = new LinkInfoResponse(List.of(dto), "ok");
+            return ResponseEntity.ok(response);
+        } else {
+            throw new ForbiddenException(OPERATION_FORBIDDEN_MSG);
+        }
+    }
+
+    @GetMapping("/all-links-info")
+    public ResponseEntity<LinkInfoResponse> getAllLinksForUser() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            User requesterUser = userService.findByEmail(authentication.getName());
+            List<LinkInfoDto> linksDto = linkService
+                    .findAllByUser(requesterUser)
+                    .stream()
+                    .map(linkDtoMapper::mapLinkToDto)
+                    .sorted(Comparator.comparing(LinkInfoDto::getUsageStatistics).reversed())
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(new LinkInfoResponse(linksDto, "ok"));
+        } catch (Exception e) {
+            throw new InternalServerLinkException();
+        }
+
+    }
+
+    //TODO: exclude all results of non-Active (or only of DELETED?)
+    @GetMapping("/url-usage-top-for-user")
+    public ResponseEntity<LinkStatisticsResponse> getLinksStatsForUser() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            User requesterUser = userService.findByEmail(authentication.getName());
+            List<LinkStatisticsDto> stats = linkService.getLinkUsageStatsByUserId(requesterUser.getId());
+            stats.sort(Comparator.comparing(LinkStatisticsDto::getUsageStatistics).reversed());
+            return ResponseEntity.ok(new LinkStatisticsResponse(stats, "ok"));
+        } catch (Exception e) {
+            throw new InternalServerLinkException();
         }
     }
 

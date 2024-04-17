@@ -1,8 +1,10 @@
 package com.linkurlshorter.urlshortener.link;
 
+import com.linkurlshorter.urlshortener.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -86,6 +88,19 @@ public class LinkService {
         return link;
     }
 
+    public List<Link> findAllByUser(User user){
+        if(Objects.isNull(user)){
+            throw new NullLinkPropertyException();
+        }
+        return linkRepository.findAllByUser(user);
+    }
+
+    public List<LinkStatisticsDto> getLinkUsageStatsByUserId(UUID userId){
+        if(Objects.isNull(userId)){
+            throw new NullLinkPropertyException();
+        }
+        return linkRepository.getLinkUsageStatsForUser(userId);
+    }
     /**
      * Marks a link entity as deleted by its short link.
      *
