@@ -13,9 +13,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
 import java.util.UUID;
+
 
 /**
  * Controller for Link-related operations such as create, delete, update and get info + statistics
@@ -25,14 +24,17 @@ import java.util.UUID;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/V1/link")
+@RequestMapping("/link")
 public class LinkController {
     private static final int SHORT_LINK_LIFETIME_IN_DAYS = 30;
     private static final String OPERATION_FORBIDDEN_MSG = "Operation forbidden!";
 
     private final LinkService linkService;
     private final UserService userService;
-    private final LinkInfoDtoMapper linkDtoMapper;
+    private final EntityManager entityManager;
+    private final LinkInfoResponseMapper infoResponseMapper;
+
+    private final LinkInfoResponseMapper infoResponseMapper;
 
     /**
      * Controller method for creating a new link.
@@ -55,7 +57,7 @@ public class LinkController {
     @PostMapping("/create")
     public ResponseEntity<CreateLinkResponse> createLink(@RequestBody @Valid CreateLinkRequest createRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findByEmail(authentication.getName());
+        UUID userId = userService.findByEmail(authentication.getName()).getId();
         String newShortUrl = generateShortLink();
         try {
             linkService.save(
@@ -63,7 +65,7 @@ public class LinkController {
                             .longLink(createRequest.getLongLink())
                             .shortLink(newShortUrl)
                             .expirationTime(LocalDateTime.now().plusDays(SHORT_LINK_LIFETIME_IN_DAYS))
-                            .user(user)
+                            .user(entityManager.getReference(User.class, userId))
                             .build()  //TODO: add validations (short link being unique etc)
             );
         } catch (Exception e) {
@@ -134,55 +136,6 @@ public class LinkController {
         } else {
             throw new ForbiddenException(OPERATION_FORBIDDEN_MSG);
         }
-    }
-    /**
-     * Retrieves information about a link using its short link.
-     *
-     * @param shortLink the short link of the link to retrieve information for
-     * @return a ResponseEntity containing the response object with information about the link
-     * @throws ForbiddenException if the authenticated user does not have rights to access the link
-     */
-    @GetMapping("/info")
-    public ResponseEntity<LinkInfoResponse> getInfoByShortLink(@RequestParam String shortLink) {
-        Link link = linkService.findByShortLink(shortLink);
-        if (doesUserHaveRightsForLinkById(link.getId())) {
-            LinkInfoDto dto = linkDtoMapper.mapLinkToDto(link);
-            LinkInfoResponse response = new LinkInfoResponse(List.of(dto), "ok");
-            return ResponseEntity.ok(response);
-        } else {
-            throw new ForbiddenException(OPERATION_FORBIDDEN_MSG);
-        }
-    }
-    /**
-     * Retrieves information about all links associated with the authenticated user.
-     *
-     * @return a ResponseEntity containing the response object with information about all links for the user
-     */
-    @GetMapping("/all-links-info")
-    public ResponseEntity<LinkInfoResponse> getAllLinksForUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID requesterUserId = userService.findByEmail(authentication.getName()).getId();
-        List<LinkInfoDto> linksDto = linkService
-                .findAllByUserId(requesterUserId)
-                .stream()
-                .map(linkDtoMapper::mapLinkToDto)
-                .sorted(Comparator.comparing(LinkInfoDto::getUsageStatistics).reversed())
-                .toList();
-        return ResponseEntity.ok(new LinkInfoResponse(linksDto, "ok"));
-    }
-    /**
-     * Retrieves usage statistics for all links associated with the authenticated user.
-     *
-     * @return a ResponseEntity containing the response object with usage statistics for all links for the user,
-     * links are sorted in descending order
-     */
-    @GetMapping("/url-usage-top-for-user")
-    public ResponseEntity<LinkStatisticsResponse> getLinksStatsForUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User requesterUser = userService.findByEmail(authentication.getName());
-        List<LinkStatisticsDto> stats = linkService.getLinkUsageStatsByUserId(requesterUser.getId());
-        stats.sort(Comparator.comparing(LinkStatisticsDto::getUsageStatistics).reversed());
-        return ResponseEntity.ok(new LinkStatisticsResponse(stats, "ok"));
     }
 
     /**
