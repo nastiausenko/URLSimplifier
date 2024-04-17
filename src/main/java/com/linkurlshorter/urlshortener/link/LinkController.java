@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+
 /**
  * Controller for Link-related operations such as create, delete, update and get info + statistics
  *
@@ -35,6 +36,8 @@ public class LinkController {
     private final UserService userService;
     private final EntityManager entityManager;
     private final LinkInfoDtoMapper linkDtoMapper;
+
+    private final LinkInfoResponseMapper infoResponseMapper;
 
     /**
      * Controller method for creating a new link.
