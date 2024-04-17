@@ -145,6 +145,7 @@ public class LinkService {
         }
     }
 
+
     /**
      * Throws a DeletedLinkException if the link has been marked as deleted.
      *
