@@ -3,6 +3,7 @@ package com.linkurlshorter.urlshortener.link;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 /**
  * Represents a request object for creating a link.
  * <p>

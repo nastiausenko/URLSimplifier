@@ -3,6 +3,7 @@ package com.linkurlshorter.urlshortener.link;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 /**
  * A response class representing the result of a link creation request.
  * It contains information about any error that occurred during the creation process

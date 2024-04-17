@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
  * <p>
  * This class encapsulates the new password to be assigned to the user.
  * </p>
+ *
  * @author Artem Poliakov
  * @version 1.0
  */

@@ -1,4 +1,5 @@
 package com.linkurlshorter.urlshortener.user;
+
 /**
  * Exception indicating that no user was found based on the provided email.
  * This exception is typically thrown when attempting to retrieve a user
@@ -9,8 +10,8 @@ package com.linkurlshorter.urlshortener.user;
  * circumstance in which it was thrown.
  * </p>
  *
- * @version 1.0
  * @author Artem Poliakov
+ * @version 1.0
  */
 public class NoUserFoundByEmailException extends RuntimeException {
     private static final String DEFAULT_MSG = "No user by provided email found";

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
  * <p>
  * This class encapsulates information about operation status.
  * </p>
+ *
  * @author Artem Poliakov
  * @version 1.0
  */

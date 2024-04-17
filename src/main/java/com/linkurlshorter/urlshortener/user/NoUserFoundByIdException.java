@@ -9,15 +9,18 @@ package com.linkurlshorter.urlshortener.user;
  * This exception can provide a custom message to describe the specific
  * circumstance in which it was thrown.
  * </p>
- * @version 1.0
+ *
  * @author Artem Poliakov
+ * @version 1.0
  */
 public class NoUserFoundByIdException extends RuntimeException {
     private static final String DEFAULT_MSG = "No user by provided id found";
-    public NoUserFoundByIdException(){
+
+    public NoUserFoundByIdException() {
         super(DEFAULT_MSG);
     }
-    public NoUserFoundByIdException(String msg){
+
+    public NoUserFoundByIdException(String msg) {
         super(msg);
     }
 }

@@ -28,9 +28,9 @@ public class UserService {
      * @throws NullUserPropertyException if any property of the user entity is null
      */
     public User save(User user) {
-        try{
+        try {
             return userRepository.save(user);
-        } catch(Exception e){
+        } catch (Exception e) {
             throw new NullUserPropertyException();
         }
     }
@@ -43,9 +43,9 @@ public class UserService {
      * @throws NullUserPropertyException if any property of the user entity is null
      */
     public User update(User user) {
-        try{
+        try {
             return userRepository.save(user);
-        } catch(Exception e){
+        } catch (Exception e) {
             throw new NullUserPropertyException();
         }
     }
@@ -59,16 +59,16 @@ public class UserService {
      * If the email address is null, a {@link NullEmailException} is thrown.
      * </p>
      *
-     * @param user the User object containing the updated information.
+     * @param user  the User object containing the updated information.
      * @param email the String email by which the User row can be found in database
      * @return the number of user records updated in the database.
      * @throws NullEmailException if the email address in the provided User object is null.
      * @see UserRepository#updateUserByEmailDynamically(User, String)
      */
-    public int updateByEmailDynamically(User user, String email){
-        if(Objects.nonNull(email)){
+    public int updateByEmailDynamically(User user, String email) {
+        if (Objects.nonNull(email)) {
             return userRepository.updateUserByEmailDynamically(user, email);
-        } else{
+        } else {
             throw new NullEmailException();
         }
     }
@@ -78,7 +78,7 @@ public class UserService {
      *
      * @param id the UUID id of the user to find
      * @return the found user entity
-     * @throws NoUserFoundByIdException if no user is found with the provided ID
+     * @throws NoUserFoundByIdException  if no user is found with the provided ID
      * @throws NullUserPropertyException if the provided ID is null
      */
     public User findById(UUID id) {
@@ -94,10 +94,10 @@ public class UserService {
      * @param email the email of the user to find
      * @return the found user entity
      * @throws NoUserFoundByEmailException if no user is found with the provided email
-     * @throws NullEmailException if the provided email is null
+     * @throws NullEmailException          if the provided email is null
      */
     public User findByEmail(String email) {
-        if(Objects.isNull(email)){
+        if (Objects.isNull(email)) {
             throw new NullEmailException();
         }
         return userRepository.findByEmail(email).orElseThrow(NoUserFoundByEmailException::new);
