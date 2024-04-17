@@ -32,6 +32,8 @@ public class LinkRedirectController {
      */
     private final LinkService linkService;
 
+    private final LinkCache linkCache;
+
     /**
      * Redirects a request with a short link to its corresponding long link.
      *
@@ -39,16 +41,26 @@ public class LinkRedirectController {
      * @return a RedirectView object directing the user to the long link
      */
     @GetMapping("/{shortLink}")
-    public RedirectView redirectToLongLink(@PathVariable("shortLink") String shortLink) {
-        Link link = linkService.findByShortLink(shortLink);
+    public RedirectView redirectToOriginalLink(@PathVariable("shortLink") String shortLink) {
+        Link link = linkCache.containsShortLink(shortLink)
+                ? linkCache.getByShortLink(shortLink)
+                : linkService.findByShortLink(shortLink);
+
+        updateLinkStats(link);
+        return redirectToLongLink(link);
+    }
+
+    private void updateLinkStats(Link link) {
         link.setStatistics(link.getStatistics() + 1);
         link.setExpirationTime(LocalDateTime.now().plusMonths(1));
-        linkService.save(link);
 
-        String longLink = link.getLongLink();
+        linkService.update(link);
+        linkCache.putLink(link.getShortLink(), link);
+    }
 
+    private RedirectView redirectToLongLink(Link link) {
         RedirectView redirectView = new RedirectView();
-        redirectView.setUrl(longLink);
+        redirectView.setUrl(link.getLongLink());
         redirectView.setStatusCode(HttpStatusCode.valueOf(302));
         return redirectView;
     }
