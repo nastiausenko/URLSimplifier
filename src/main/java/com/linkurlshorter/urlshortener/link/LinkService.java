@@ -39,6 +39,7 @@ public class LinkService {
      * @throws NullLinkPropertyException If the 'link' parameter is null.
      * @throws DeletedLinkException      If the link has been marked as deleted.
      */
+
     public Link update(Link link) {
         if (Objects.isNull(link)) {
             throw new NullLinkPropertyException();
@@ -89,19 +90,20 @@ public class LinkService {
         return link;
     }
 
-    public List<Link> findAllByUser(User user){
-        if(Objects.isNull(user)){
+    public List<Link> findAllByUser(User user) {
+        if (Objects.isNull(user)) {
             throw new NullLinkPropertyException();
         }
         return linkRepository.findAllByUser(user);
     }
 
-    public List<LinkStatisticsDto> getLinkUsageStatsByUserId(UUID userId){
-        if(Objects.isNull(userId)){
+    public List<LinkStatisticsDto> getLinkUsageStatsByUserId(UUID userId) {
+        if (Objects.isNull(userId)) {
             throw new NullLinkPropertyException();
         }
         return linkRepository.getLinkUsageStatsForUser(userId);
     }
+
     /**
      * Marks a link entity as deleted by its short link.
      *
@@ -124,23 +126,6 @@ public class LinkService {
             throw new NullLinkPropertyException();
         }
         linkRepository.deleteById(id);
-    }
-    /**
-     * Searches for a unique existing link by a short link.
-     * If an active link is found for the specified short link, returns that link.
-     *
-     * @param shortLink A string representing the short link to be searched.
-     * @return The active link found for the specified short link.
-     * @throws NoLinkFoundByShortLinkException If no link was found by the short link.
-     * @throws NullLinkPropertyException       If the found link does not have the ACTIVE status.
-     */
-    public Link findByExistUniqueLink(String shortLink) {
-        Link existingLink = linkRepository.findByShortLink(shortLink).orElseThrow(NoLinkFoundByShortLinkException::new);
-        if (existingLink.getStatus() == LinkStatus.ACTIVE) {
-            return existingLink;
-        } else {
-            throw new NullLinkPropertyException();
-        }
     }
 
     /**
@@ -173,3 +158,4 @@ public class LinkService {
         }
     }
 }
+
