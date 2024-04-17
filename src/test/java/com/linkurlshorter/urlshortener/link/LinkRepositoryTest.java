@@ -33,8 +33,8 @@ class LinkRepositoryTest {
     void setUp() {
         link = Link.builder()
                 .id(UUID.fromString("3053e49b-6da3-4389-9d06-23b2d57b6f25"))
-                .longLink("http://example.com/page1")
-                .shortLink("http://linkshortener/shortlink1")
+                .longLink("https://www.youtube.com")
+                .shortLink("short-link-1")
                 .user(User.builder()
                         .id(UUID.fromString("84991c79-f6a9-4b7b-b1b4-0d66c0b92c81"))
                         .email("user1@example.com")
@@ -61,7 +61,7 @@ class LinkRepositoryTest {
 
     @Test
     void thatFindByIdWorksCorrectly() {
-        Link found = linkRepository.findById(link.getId()).get();
+        Link found = linkRepository.findById(link.getId()).orElseThrow();
 
         assertThat(found)
                 .isNotNull()
@@ -69,7 +69,7 @@ class LinkRepositoryTest {
     }
     @Test
     void thatFindByShortLinkWorksCorrectly() {
-        Link found = linkRepository.findByShortLink(link.getShortLink()).get();
+        Link found = linkRepository.findByShortLink(link.getShortLink()).orElseThrow();
         assertThat(found)
                 .isNotNull()
                 .isEqualTo(link);
