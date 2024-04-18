@@ -1,5 +1,6 @@
 package com.linkurlshorter.urlshortener.user;
 
+import com.linkurlshorter.urlshortener.auth.exception.EmailAlreadyTakenException;
 import com.linkurlshorter.urlshortener.jwt.JwtUtil;
 import com.linkurlshorter.urlshortener.security.CustomUserDetailsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,7 +60,7 @@ public class UserController {
         if (alteredCount <= 0) {
             throw new NoSuchEmailFoundException();
         } else {
-            UserModifyingResponse response = new UserModifyingResponse("ok");
+            UserModifyingResponse response = new UserModifyingResponse("ok", null);
             return ResponseEntity.ok(response);
         }
     }
@@ -76,22 +77,22 @@ public class UserController {
     @Operation(summary = "Change user email")
     public ResponseEntity<UserModifyingResponse> changeEmail(@RequestBody @Valid ChangeUserEmailRequest emailRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String newEmail = emailRequest.getNewEmail();
+        if (userService.existsByEmail(newEmail)) {
+            throw new EmailAlreadyTakenException(newEmail);
+        }
         int alteredCount = userService.updateByEmailDynamically(
                 User.builder()
-                        .email(emailRequest.getNewEmail())
+                        .email(newEmail)
                         .build(),
                 authentication.getName()
         );
         if (alteredCount <= 0) {
             throw new NoSuchEmailFoundException();
         } else {
-            UserModifyingResponse response = new UserModifyingResponse("ok");
-            String refreshedToken = getRefreshedToken(emailRequest.getNewEmail());
-
-            return ResponseEntity
-                    .ok()
-                    .header("Authorization", "Bearer " + refreshedToken)
-                    .body(response);
+            String refreshedToken = getRefreshedToken(newEmail);
+            UserModifyingResponse response = new UserModifyingResponse("ok", refreshedToken);
+            return ResponseEntity.ok(response);
         }
     }
 

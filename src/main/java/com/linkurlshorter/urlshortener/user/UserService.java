@@ -104,6 +104,20 @@ public class UserService {
     }
 
     /**
+     * Checks if a user exists by the given email address.
+     *
+     * @param email the email address of the user to check existence for.
+     * @return {@code true} if a user with the specified email address exists, {@code false} otherwise.
+     * @throws NullEmailException if the provided email address is null.
+     */
+    public boolean existsByEmail(String email) {
+        if (Objects.isNull(email)) {
+            throw new NullEmailException();
+        }
+        return userRepository.findByEmail(email).isPresent();
+    }
+
+    /**
      * Deletes a user entity by its ID.
      *
      * @param id the UUID id of the user to delete

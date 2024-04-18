@@ -21,4 +21,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserModifyingResponse {
     private String error;
+    private String jwtToken;
 }
