@@ -33,9 +33,6 @@ public class LinkController {
     private final UserService userService;
     private final EntityManager entityManager;
     private final LinkInfoResponseMapper infoResponseMapper;
-
-    private final LinkInfoResponseMapper infoResponseMapper;
-
     /**
      * Controller method for creating a new link.
      * <p>
