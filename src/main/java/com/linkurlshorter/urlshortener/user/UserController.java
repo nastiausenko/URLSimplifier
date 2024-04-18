@@ -1,5 +1,6 @@
 package com.linkurlshorter.urlshortener.user;
 
+import com.linkurlshorter.urlshortener.auth.exception.EmailAlreadyTakenException;
 import com.linkurlshorter.urlshortener.jwt.JwtUtil;
 import com.linkurlshorter.urlshortener.security.CustomUserDetailsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -76,9 +77,13 @@ public class UserController {
     @Operation(summary = "Change user email")
     public ResponseEntity<UserModifyingResponse> changeEmail(@RequestBody @Valid ChangeUserEmailRequest emailRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String newEmail = emailRequest.getNewEmail();
+        if (userService.existsByEmail(newEmail)) {
+            throw new EmailAlreadyTakenException(newEmail);
+        }
         int alteredCount = userService.updateByEmailDynamically(
                 User.builder()
-                        .email(emailRequest.getNewEmail())
+                        .email(newEmail)
                         .build(),
                 authentication.getName()
         );
@@ -86,7 +91,7 @@ public class UserController {
             throw new NoSuchEmailFoundException();
         } else {
             UserModifyingResponse response = new UserModifyingResponse("ok");
-            String refreshedToken = getRefreshedToken(emailRequest.getNewEmail());
+            String refreshedToken = getRefreshedToken(newEmail);
 
             return ResponseEntity
                     .ok()
