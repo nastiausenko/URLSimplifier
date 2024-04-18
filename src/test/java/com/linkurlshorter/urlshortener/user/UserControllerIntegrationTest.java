@@ -30,6 +30,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Integration tests for {@link UserController} class.
+ *
+ * @author Ivan Shalaiev
+ * @version 1.0
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
@@ -59,6 +65,11 @@ class UserControllerIntegrationTest {
         this.token = "Bearer " + jsonObject.getString("jwtToken");
     }
 
+    /**
+     * Test case for changing user password.
+     *
+     * @throws Exception if an error occurs during the test execution
+     */
     @Test
     void changePasswordTest() throws Exception {
         authRequest = new AuthRequest("change-password-test@email.com", "Password1");
@@ -79,17 +90,33 @@ class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.error").value("ok"));
     }
 
+    /**
+     * Test case for changing user password when an invalid password is given.
+     *
+     * @param password the invalid password to test
+     * @throws Exception if an error occurs during the test execution
+     */
     @ParameterizedTest
-    @ValueSource(strings = {"", "Password", "Pass123", "pass1234", "Pass 1234"})
+    @ValueSource(strings = {"", "Password", "Pass123", "pass1234", "Pass 1234", "PASS1234"})
     void changePasswordFailedWhenInvalidPasswordGivenTest(String password) throws Exception {
         ChangeUserPasswordRequest request = new ChangeUserPasswordRequest(password);
         mockMvc.perform(post(baseUrl + "change-password")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", token)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Validation failed!"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value("Password " +
+                        "must be at least 8 characters long and contain at least one digit, one uppercase letter, " +
+                        "and one lowercase letter. No spaces are allowed."));
     }
 
+    /**
+     * Test case for changing user email.
+     *
+     * @throws Exception if an error occurs during the test execution
+     */
     @Test
     void changeEmailTest() throws Exception {
         authRequest = new AuthRequest("change-email-test@email.com", "Password1");
@@ -110,12 +137,18 @@ class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.error").value("ok"));
     }
 
+    /**
+     * Test case for changing user email when an invalid email is given.
+     *
+     * @param email the invalid email to test
+     * @throws Exception if an error occurs during the test execution
+     */
     @ParameterizedTest
     @ValueSource(strings = {"", "change email-test@email.com",
-            " change-email-test@email.com",
-            "change-email-test%@email.com",
-            "change-email-test#@email.com",
-            "change-email-test.email.com"})
+            " user-test@email.com",
+            "user-test%@email.com",
+            "user-test#@email.com",
+            "user-test.email.com"})
 //    TODO: add more email to test "change-email-test@email"
     void changeEmailFailedWhenInvalidEmailGivenTest(String email) throws Exception {
         ChangeUserEmailRequest request = new ChangeUserEmailRequest(email);
@@ -123,6 +156,10 @@ class UserControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", token)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Validation failed!"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage")
+                        .value("Email address entered incorrectly!"));
     }
 }
