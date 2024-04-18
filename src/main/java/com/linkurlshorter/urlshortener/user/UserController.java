@@ -60,7 +60,7 @@ public class UserController {
         if (alteredCount <= 0) {
             throw new NoSuchEmailFoundException();
         } else {
-            UserModifyingResponse response = new UserModifyingResponse("ok");
+            UserModifyingResponse response = new UserModifyingResponse("ok", null);
             return ResponseEntity.ok(response);
         }
     }
@@ -90,13 +90,9 @@ public class UserController {
         if (alteredCount <= 0) {
             throw new NoSuchEmailFoundException();
         } else {
-            UserModifyingResponse response = new UserModifyingResponse("ok");
             String refreshedToken = getRefreshedToken(newEmail);
-
-            return ResponseEntity
-                    .ok()
-                    .header("Authorization", "Bearer " + refreshedToken)
-                    .body(response);
+            UserModifyingResponse response = new UserModifyingResponse("ok", refreshedToken);
+            return ResponseEntity.ok(response);
         }
     }
 
