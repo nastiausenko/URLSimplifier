@@ -20,7 +20,7 @@ public class EmailValidatorImpl implements ConstraintValidator<EmailValidator, S
      */
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {
-        String regexEmail = "^[A-Za-z0-9+_.-]+@(.+)$";
+        String regexEmail = "^[A-Za-z0-9]+[._-]?[A-Za-z0-9]+@[A-Za-z0-9]+[._-]?[A-Za-z0-9]+\\.[A-Za-z]{2,}$";
         if (email == null || !email.matches(regexEmail)) {
             context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
                     .addConstraintViolation();
