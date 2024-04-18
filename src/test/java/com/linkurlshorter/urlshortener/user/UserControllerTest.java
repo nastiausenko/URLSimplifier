@@ -3,16 +3,14 @@ package com.linkurlshorter.urlshortener.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linkurlshorter.urlshortener.jwt.JwtUtil;
 import com.linkurlshorter.urlshortener.security.CustomUserDetailsService;
+import com.linkurlshorter.urlshortener.security.SecurityConfig;
 import com.linkurlshorter.urlshortener.security.SecurityUserDetails;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -33,9 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author Anastasiia Usenko
  */
-@SpringBootTest
-@AutoConfigureMockMvc
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(controllers = UserController.class)
+@Import(SecurityConfig.class)
 class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -98,8 +95,8 @@ class UserControllerTest {
         given(userService.updateByEmailDynamically(any(User.class), any(String.class))).willReturn(0);
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/user/change-password")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
 
         resultActions.andExpect(status().isNotFound());
     }
