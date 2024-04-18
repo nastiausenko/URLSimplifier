@@ -6,7 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.UUID;
-
+/**
+ * Data transfer object (DTO) for representing link statistics.
+ * This class encapsulates information about a link's ID, short link, and usage statistics.
+ *
+ * @author Artem Poliakov
+ * @version 1.0
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

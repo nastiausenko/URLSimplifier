@@ -2,12 +2,17 @@ package com.linkurlshorter.urlshortener.link;
 
 import com.linkurlshorter.urlshortener.user.User;
 import com.linkurlshorter.urlshortener.user.UserRole;
+import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -189,36 +194,31 @@ class LinkServiceTest {
     }
 
     /**
-     * Test case for the {@link LinkService#findAllByUser(User)} method.
+     * Test case for the {@link LinkService#findAllByUserId(UUID)} method.
      */
     @Test
-    void findByAllByUserTest() {
-        User user = User.builder()
-                .id(UUID.fromString("84991c79-f6a9-4b7b-b1b4-0d66c0b92c81"))
-                .email("test1@gmail.com")
-                .password("password1")
-                .role(UserRole.USER)
-                .build();
-
+    void findByAllByUserIdTest() {
+        UUID userId = UUID.fromString("84991c79-f6a9-4b7b-b1b4-0d66c0b92c81");
+        User user = User.builder().id(userId).build();
         List<Link> userLinks = Arrays.asList(
                 Link.builder().id(UUID.randomUUID()).user(user).build(),
                 Link.builder().id(UUID.randomUUID()).user(user).build(),
                 Link.builder().id(UUID.randomUUID()).user(user).build()
         );
 
-        when(linkRepository.findAllByUser(user)).thenReturn(userLinks);
-        List<Link> foundLinks = linkService.findAllByUser(user);
+        when(linkRepository.findAllByUserId(userId)).thenReturn(userLinks);
+        List<Link> foundLinks = linkService.findAllByUserId(userId);
 
         assertThat(foundLinks).isNotNull().isEqualTo(userLinks);
-        verify(linkRepository, times(1)).findAllByUser(user);
+        verify(linkRepository, times(1)).findAllByUserId(userId);
     }
 
     /**
-     * Test case for the {@link LinkService#findAllByUser(User)} method when the provided user is null.
+     * Test case for the {@link LinkService#findAllByUserId(UUID)} method when the provided user is null.
      */
     @Test
     void findAllByNullUserTest() {
-        assertThatThrownBy(() -> linkService.findAllByUser(null))
+        assertThatThrownBy(() -> linkService.findAllByUserId(null))
                 .isInstanceOf(NullLinkPropertyException.class);
     }
 
