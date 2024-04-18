@@ -61,7 +61,7 @@ class UserControllerIntegrationTest {
 
     @Test
     void changePasswordTest() throws Exception {
-        authRequest = new AuthRequest("change-password-test@email.com", "Password1");
+        authRequest = new AuthRequest("change-password@email.com", "Password1");
         ResultActions result = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/V1/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(authRequest)));
@@ -92,7 +92,7 @@ class UserControllerIntegrationTest {
 
     @Test
     void changeEmailTest() throws Exception {
-        authRequest = new AuthRequest("change-email-test@email.com", "Password1");
+        authRequest = new AuthRequest("change-email@email.com", "Password1");
         ResultActions result = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/V1/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(authRequest)));
