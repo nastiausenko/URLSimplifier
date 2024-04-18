@@ -3,13 +3,9 @@ package com.linkurlshorter.urlshortener.link;
 import com.linkurlshorter.urlshortener.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,9 +30,10 @@ public interface LinkRepository extends JpaRepository<Link, UUID> {
      */
     Optional<Link> findByShortLink(String shortLink);
 
-    List<Link> findAllByUser(User user);
+    @Query("SELECT l from Link l WHERE l.user.id = :userId AND l.status <> 'DELETED'")
+    List<Link> findAllByUserId(@Param(value = "userId") UUID userId);
 
     @Query("SELECT new com.linkurlshorter.urlshortener.link.LinkStatisticsDto(l.id, l.shortLink, l.statistics)" +
-            " FROM Link l WHERE l.user.id = :userId")
+            " FROM Link l WHERE l.user.id = :userId AND l.status <> 'DELETED'")
     List<LinkStatisticsDto> getLinkUsageStatsForUser(@Param(value = "userId") UUID userId);
 }

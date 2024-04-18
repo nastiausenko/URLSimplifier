@@ -50,6 +50,7 @@ public class Link {
     @Column(name = "statistics")
     private int statistics;
     @Column(name = "status")
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private LinkStatus status;
+    private LinkStatus status = LinkStatus.ACTIVE;
 }

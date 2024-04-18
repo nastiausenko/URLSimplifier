@@ -88,11 +88,11 @@ public class LinkService {
         return link;
     }
 
-    public List<Link> findAllByUser(User user){
-        if(Objects.isNull(user)){
+    public List<Link> findAllByUserId(UUID userId){
+        if(Objects.isNull(userId)){
             throw new NullLinkPropertyException();
         }
-        return linkRepository.findAllByUser(user);
+        return linkRepository.findAllByUserId(userId);
     }
 
     public List<LinkStatisticsDto> getLinkUsageStatsByUserId(UUID userId){
