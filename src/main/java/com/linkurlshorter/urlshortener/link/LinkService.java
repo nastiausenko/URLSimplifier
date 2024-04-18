@@ -118,7 +118,7 @@ public class LinkService {
         linkRepository.save(link);
     }
 
-    public void deleteById(UUID id) {        //TODO: needs test
+    public void deleteById(UUID id) {
         if (Objects.isNull(id)) {
             throw new NullLinkPropertyException();
         }

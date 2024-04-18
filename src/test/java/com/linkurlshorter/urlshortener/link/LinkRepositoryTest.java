@@ -95,4 +95,13 @@ class LinkRepositoryTest {
         assertThat(links).isNotNull()
                 .hasSize(5);
     }
+    /**
+     * Test to verify the {@link LinkRepository#deleteById(UUID)} method.
+     * It ensures that the deleteById method removes the link with the specified ID from the database.
+     */
+    @Test
+    void thatDeleteByIdWorksCorrectly() {
+        linkRepository.deleteById(link.getId());
+        assertThat(linkRepository.findById(link.getId())).isEmpty();
+    }
 }

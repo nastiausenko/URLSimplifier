@@ -33,7 +33,15 @@ public interface LinkRepository extends JpaRepository<Link, UUID> {
     @Query("SELECT l from Link l WHERE l.user.id = :userId AND l.status <> 'DELETED'")
     List<Link> findAllByUserId(@Param(value = "userId") UUID userId);
 
+    List<Link> findAllByUser(User user);
+
     @Query("SELECT new com.linkurlshorter.urlshortener.link.LinkStatisticsDto(l.id, l.shortLink, l.statistics)" +
             " FROM Link l WHERE l.user.id = :userId AND l.status <> 'DELETED'")
     List<LinkStatisticsDto> getLinkUsageStatsForUser(@Param(value = "userId") UUID userId);
+    /**
+     * Deletes a link entity by its ID.
+     *
+     * @param id The ID of the link entity to delete.
+     */
+    void deleteById(UUID id);
 }
