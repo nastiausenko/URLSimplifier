@@ -6,10 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+
 /**
- * Data transfer object (DTO) for representing a response containing link information.
- * This class encapsulates a list of {@link LinkInfoDto} objects representing link information,
- * along with an optional error message.
+ * Represents a response containing information about a link.
+ * This class provides various properties related to a link, such as its ID, long link,
+ * short link, creation time, expiration time, usage statistics, and status.
+ * Instances of this class can be created using the provided builder pattern.
  *
  * @author Artem Poliakov
  * @version 1.0
