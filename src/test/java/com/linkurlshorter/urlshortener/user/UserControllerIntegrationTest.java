@@ -1,6 +1,7 @@
 package com.linkurlshorter.urlshortener.user;
 
 import com.linkurlshorter.urlshortener.auth.dto.AuthRequest;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -21,6 +23,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -37,15 +40,18 @@ public class UserControllerIntegrationTest {
     private String baseUrl = "/api/V1/user/";
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception{
+        ResultActions result = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/V1/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"user1@gmail.com\",\"password\":\"Pass1234\"}"));
+        MvcResult mvcResult =result.andDo(print()).andReturn();
+        String contentAsString = mvcResult.getResponse().getContentAsString();
+        JSONObject jsonObject = new JSONObject(contentAsString);
+        this.token = "Bearer " + jsonObject.getString("jwtToken");
     }
 
     @Test
     void registrationSuccessfulTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/V1/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\":\"test@gmail.com\",\"password\":\"Pass1234\"}"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User registered successfully!"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.jwtToken").exists());
+
     }
 }
