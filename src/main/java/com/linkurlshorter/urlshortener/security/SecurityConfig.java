@@ -4,6 +4,7 @@ import com.linkurlshorter.urlshortener.jwt.JwtRequestFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -52,9 +53,11 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/V1/auth/**").permitAll()
-                        .requestMatchers("/api/V1/user/**").authenticated()
-                        .anyRequest().permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/V1/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/V1/user/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/*").permitAll()
+                        .requestMatchers("/api/V1/link/**").authenticated()
+                        .anyRequest().denyAll()
                 )
                 .userDetailsService(customUserDetailsService)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

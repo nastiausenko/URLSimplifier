@@ -25,7 +25,7 @@ import java.util.UUID;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/link")
+@RequestMapping("/api/V1/link")
 public class LinkController {
     private static final int SHORT_LINK_LIFETIME_IN_DAYS = 30;
     private static final String OPERATION_FORBIDDEN_MSG = "Operation forbidden!";
