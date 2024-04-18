@@ -1,4 +1,5 @@
 INSERT INTO users (id, email, password, role)
+
 VALUES ('84991c79-f6a9-4b7b-b1b4-0d66c0b92c81', 'user1@example.com',
         '$2a$12$7Cp4On1DBNyCkz4TaZYc3O.A.CBKi4WXgXnlI4SD0yn7CgBX5Gd6O', 'USER'),
        ('f6ff4ee4-92c4-49f3-97eb-d6c69a715325', 'user2@example.com',
