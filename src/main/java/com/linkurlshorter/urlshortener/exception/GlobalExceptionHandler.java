@@ -1,17 +1,13 @@
 package com.linkurlshorter.urlshortener.exception;
 
 import com.linkurlshorter.urlshortener.auth.exception.EmailAlreadyTakenException;
-import com.linkurlshorter.urlshortener.security.ForbiddenException;
-import com.linkurlshorter.urlshortener.security.UnauthorizedException;
 import com.linkurlshorter.urlshortener.user.NoSuchEmailFoundException;
 import com.linkurlshorter.urlshortener.user.NoUserFoundByEmailException;
 import com.linkurlshorter.urlshortener.user.NoUserFoundByIdException;
 import com.linkurlshorter.urlshortener.user.NullEmailException;
 import org.apache.coyote.BadRequestException;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -82,48 +78,6 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles authentication failure (401) errors.
-     * Returns a response with a 401 status and the corresponding error message.
-     *
-     * @param ex failed authentication error
-     * @return {@link ResponseEntity} object with the corresponding status and error message
-     */
-    @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<Object> handleUnauthorizedException(UnauthorizedException ex) {
-        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.UNAUTHORIZED,
-                "Unauthorized!", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-    }
-
-    /**
-     * Handles bad credentials (401) errors.
-     * Returns a response with a 401 status and the corresponding error message.
-     *
-     * @param ex bad credentials error
-     * @return {@link ResponseEntity} object with the corresponding status and error message
-     */
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException ex) {
-        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.UNAUTHORIZED,
-                "Bad Credentials!", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-    }
-
-    /**
-     * Handles denied access (403) errors.
-     * Returns a response with a 403 status and the corresponding error message.
-     *
-     * @param ex denied access error
-     * @return {@link ResponseEntity} object with the corresponding status and error message
-     */
-    @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<Object> handleForbiddenException(ForbiddenException ex) {
-        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.FORBIDDEN,
-                "Forbidden!", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
-    }
-
-    /**
      * Handles no resource (404) exceptions for different types of requests.
      * Returns a response with a 404 status and the corresponding error message.
      *
@@ -135,34 +89,6 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.NOT_FOUND, "Email Not Found!",
                 ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-    }
-
-    /**
-     * Handles resource unavailable (404) errors.
-     * Returns a response with a 404 status and the corresponding error message.
-     *
-     * @param ex resource error
-     * @return {@link ResponseEntity} object with the corresponding status and error message
-     */
-    @ExceptionHandler(ChangeSetPersister.NotFoundException.class)
-    public ResponseEntity<Object> handleNotFoundException(ChangeSetPersister.NotFoundException ex) {
-        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.NOT_FOUND,
-                "Not Found!", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-    }
-
-    /**
-     * Handles general exceptions (500).
-     * Returns a response with status 500 and the corresponding error message.
-     *
-     * @param ex general exception
-     * @return {@link ResponseEntity} object with the appropriate status and error message
-     */
-    @ExceptionHandler({Exception.class})
-    public ResponseEntity<Object> handleInternalServerError(Exception ex) {
-        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
-                "Internal Server Error!", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
     /**
