@@ -30,7 +30,7 @@ public class UrlLongFormatValidatorImpl implements ConstraintValidator<UrlLongFo
             context.disableDefaultConstraintViolation();
             return false;
         }
-        if (validateUrl(url)) {
+        if (!validateUrl(url)) {
             context.disableDefaultConstraintViolation();
             return false;
         }
