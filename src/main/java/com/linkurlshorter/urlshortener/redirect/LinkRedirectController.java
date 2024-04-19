@@ -15,10 +15,10 @@ import java.time.LocalDateTime;
  * Controller class for handling link redirection requests.
  *
  * <p>This class provides an endpoint for redirecting short links to their corresponding long links.
- * When a request is made with a short link, the controller fetches the corresponding long link
- * from the database using the {@link LinkService#findByShortLink(String)}, updates link statistics,
- * and redirects the user to the long link.
- * Additionally, it updates the link's expiration time to extend its validity.
+ * It first checks if the short link is cached in {@link LinkCache}. If the short link is found in the cache,
+ * it retrieves the link directly from the cache; otherwise, it queries the {@link LinkService} to fetch
+ * the link from the database. After retrieving the link, it updates its statistics and expiration time,
+ * caches the link for future requests and redirects the user to the corresponding long link.
  *
  * @author Egor Sivenko
  * @see org.springframework.web.servlet.view.RedirectView
@@ -27,12 +27,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class LinkRedirectController {
 
-    /**
-     * The service responsible for managing links
-     */
-    private final LinkService linkService;
-
     private final LinkCache linkCache;
+    private final LinkService linkService;
 
     /**
      * Redirects a request with a short link to its corresponding long link.
@@ -50,14 +46,25 @@ public class LinkRedirectController {
         return redirectToLongLink(link);
     }
 
+    /**
+     * Updates the link statistics, expiration time, and caches the link.
+     *
+     * @param link the link to be updated
+     */
     private void updateLinkStats(Link link) {
         link.setStatistics(link.getStatistics() + 1);
         link.setExpirationTime(LocalDateTime.now().plusMonths(1));
 
-        linkService.update(link);
+        linkService.save(link);
         linkCache.putLink(link.getShortLink(), link);
     }
 
+    /**
+     * Redirects to the long link.
+     *
+     * @param link the link to redirect to
+     * @return a RedirectView object directing the user to the long link
+     */
     private RedirectView redirectToLongLink(Link link) {
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl(link.getLongLink());
