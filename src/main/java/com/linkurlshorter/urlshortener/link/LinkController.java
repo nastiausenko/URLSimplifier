@@ -1,16 +1,19 @@
 package com.linkurlshorter.urlshortener.link;
 
-import com.linkurlshorter.urlshortener.security.ForbiddenException;
 import com.linkurlshorter.urlshortener.user.User;
 import com.linkurlshorter.urlshortener.user.UserService;
-import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -135,6 +138,7 @@ public class LinkController {
             throw new ForbiddenException(OPERATION_FORBIDDEN_MSG);
         }
     }
+
     /**
      * Retrieves information about a link using its short link.
      *
@@ -153,6 +157,7 @@ public class LinkController {
             throw new ForbiddenException(OPERATION_FORBIDDEN_MSG);
         }
     }
+
     /**
      * Retrieves information about all links associated with the authenticated user.
      *
@@ -170,6 +175,7 @@ public class LinkController {
                 .toList();
         return ResponseEntity.ok(new LinkInfoResponse(linksDto, "ok"));
     }
+
     /**
      * Retrieves usage statistics for all links associated with the authenticated user.
      *
