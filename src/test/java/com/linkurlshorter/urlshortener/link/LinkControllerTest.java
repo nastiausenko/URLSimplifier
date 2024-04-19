@@ -28,7 +28,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
+/**
+ * Unit tests for {@link LinkController} class.
+ *
+ * @author Anastasiia Usenko
+ */
 @WebMvcTest(controllers = LinkController.class)
 @Import({SecurityConfig.class, TestConfig.class})
 class LinkControllerTest {
@@ -93,6 +97,10 @@ class LinkControllerTest {
                 .andExpect(jsonPath("$.shortLink").exists());
     }
 
+    /**
+     * Test case for the {@link LinkController#createLink(CreateLinkRequest)} method when
+     * an error occurs during the link creation process.
+     */
     @Test
     @WithMockUser
     void createLinkFailedTest() throws Exception {
@@ -150,6 +158,9 @@ class LinkControllerTest {
         resultActions.andExpect(status().isForbidden());
     }
 
+    /**
+     * Test case for the {@link LinkController#editLinkContent(EditLinkContentRequest)} method.
+     */
     @Test
     @WithMockUser
     void editLinkContentTest() throws Exception {
@@ -168,6 +179,10 @@ class LinkControllerTest {
                 .andExpect(jsonPath("$.error").value("ok"));
     }
 
+    /**
+     * Test case for the {@link LinkController#editLinkContent(EditLinkContentRequest)} method when
+     * the authenticated user does not have rights.
+     */
     @Test
     @WithMockUser
     void editLinkContentForbiddenTest() throws Exception {
@@ -191,6 +206,10 @@ class LinkControllerTest {
         resultActions.andExpect(status().isForbidden());
     }
 
+    /**
+     * Test case for the {@link LinkController#editLinkContent(EditLinkContentRequest)} method when
+     * the status of the link is not ACTIVE.
+     */
     @Test
     @WithMockUser
     void editDeletedLinkContentTest() throws Exception {
@@ -210,6 +229,9 @@ class LinkControllerTest {
                 .andExpect(jsonPath("$.exceptionMessage").value("Link status is invalid for the operation"));
     }
 
+    /**
+     * Test case for the {@link LinkController#refreshLink(UUID)} method.
+     */
     @Test
     @WithMockUser
     void refreshLinkTest() throws Exception {
@@ -225,6 +247,10 @@ class LinkControllerTest {
                 .andExpect(jsonPath("$.error").value("ok"));
     }
 
+    /**
+     * Test case for the {@link LinkController#refreshLink(UUID)} method when
+     * the authenticated user does not have rights.
+     */
     @Test
     @WithMockUser
     void refreshLinkForbiddenTest() throws Exception {
@@ -245,6 +271,10 @@ class LinkControllerTest {
         resultActions.andExpect(status().isForbidden());
     }
 
+    /**
+     * Test case for the {@link LinkController#refreshLink(UUID)} method when
+     * the status of the link is not ACTIVE.
+     */
     @Test
     @WithMockUser
     void refreshDeletedLinkTest() throws Exception {
@@ -262,6 +292,9 @@ class LinkControllerTest {
                                                        "no operations are allowed"));
     }
 
+    /**
+     * Test case for the {@link LinkController#getInfoByShortLink(String)} method.
+     */
     @Test
     @WithMockUser
     void getInfoByShortLinkTest() throws Exception {
@@ -278,6 +311,10 @@ class LinkControllerTest {
                 .andExpect(jsonPath("$.linkDtoList").isArray());
     }
 
+    /**
+     * Test case for the {@link LinkController#getInfoByShortLink(String)} method when
+     * the authenticated user does not have rights.
+     */
     @Test
     @WithMockUser
     void getInfoByShortLinkForbiddenTest() throws Exception {
@@ -322,6 +359,9 @@ class LinkControllerTest {
                 .andExpect(jsonPath("$.linkDtoList.length()").value(userLinks.size()));
     }
 
+    /**
+     * Test case for the {@link LinkController#getLinksStatsForUser()} method.
+     */
     @Test
     @WithMockUser
     void getLinksStatsForUserTest() throws Exception {

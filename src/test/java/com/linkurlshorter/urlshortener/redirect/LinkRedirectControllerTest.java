@@ -25,6 +25,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Unit tests for {@link LinkRedirectController} class.
+ *
+ * @author Anastasiia Usenko
+ */
 @WebMvcTest(controllers = LinkRedirectController.class)
 @Import({SecurityConfig.class, TestConfig.class})
 class LinkRedirectControllerTest {
@@ -40,6 +45,9 @@ class LinkRedirectControllerTest {
 
     private Link link;
 
+    /**
+     * Set up method to initialize test data before each test method.
+     */
     @BeforeEach
     void setUp() {
         link = Link.builder()
@@ -59,6 +67,10 @@ class LinkRedirectControllerTest {
                 .build();
     }
 
+    /**
+     * Test case for the {@link LinkRedirectController#redirectToOriginalLink(String)} method
+     * when there is a short link in the cache.
+     */
     @Test
     void redirectToOriginalLinkTest() throws Exception {
         when(linkCache.containsShortLink(link.getShortLink())).thenReturn(true);
@@ -71,6 +83,10 @@ class LinkRedirectControllerTest {
                 .andExpect(redirectedUrl(link.getLongLink()));
     }
 
+    /**
+     * Test case for the {@link LinkRedirectController#redirectToOriginalLink(String)} method
+     * when there is no short link in the cache.
+     */
     @Test
     void redirectToOriginalLinkNotInLinkCacheTest() throws Exception {
         when(linkCache.containsShortLink(link.getShortLink())).thenReturn(false);
