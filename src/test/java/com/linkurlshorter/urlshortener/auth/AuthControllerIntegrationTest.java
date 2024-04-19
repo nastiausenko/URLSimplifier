@@ -71,8 +71,8 @@ class AuthControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(401))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("No user by provided email found"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Email address entered incorrectly!"));
     }
 
     /**
@@ -122,8 +122,8 @@ class AuthControllerIntegrationTest {
             " user-test@example.com",
             "user-test%@example.com",
             "user-test#@example.com",
-            "user-test.example.com"})
-//    TODO: add more email to test "user-test@example"
+            "user-test.example.com",
+            "user-test@example"})
     void loginFailedWhenInvalidEmailGivenTest(String email) throws Exception {
         authRequest = new AuthRequest(email, "Pass1234");
         mockMvc.perform(post(baseUrl + "login")
@@ -165,8 +165,8 @@ class AuthControllerIntegrationTest {
             " user-test@example.com",
             "user-test%@example.com",
             "user-test#@example.com",
-            "user-test.example.com"})
-//    TODO: add more email to test "user-test@example"
+            "user-test.example.com",
+            "user-test@example"})
     void registerFailedWhenInvalidEmailGivenTest(String email) throws Exception {
         authRequest = new AuthRequest(email, "Pass1234");
         mockMvc.perform(post(baseUrl + "register")
