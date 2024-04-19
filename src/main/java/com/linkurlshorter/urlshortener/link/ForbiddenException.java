@@ -1,4 +1,4 @@
-package com.linkurlshorter.urlshortener.security;
+package com.linkurlshorter.urlshortener.link;
 
 public class ForbiddenException extends RuntimeException {
 
