@@ -11,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -94,7 +93,20 @@ class LinkControllerTest {
                 .andExpect(jsonPath("$.shortLink").exists());
     }
 
-    //TODO test for InternalServerLinkException() for create
+    @Test
+    @WithMockUser
+    void createLinkFailedTest() throws Exception {
+        CreateLinkRequest request = new CreateLinkRequest("https://www.example.com");
+
+        when(userService.findByEmail(any())).thenReturn(user);
+        when(linkService.save(any())).thenThrow(new RuntimeException("Short link already exists"));
+
+        ResultActions resultActions = mockMvc.perform(post("/api/V1/link/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+        resultActions.andExpect(status().isInternalServerError());
+    }
 
     /**
      * Test case for the {@link LinkController#deleteLink(UUID)} method.
@@ -119,9 +131,15 @@ class LinkControllerTest {
      * the authenticated user does not have rights.
      */
     @Test
-    @WithAnonymousUser
+    @WithMockUser
     void deleteLinkForbiddenTest() throws Exception {
-        when(userService.findByEmail(any())).thenReturn(user);
+        User newUser = User.builder()
+                .id(UUID.fromString("84991c79-f6a9-4b7b-b1b4-0d66c0b92c83"))
+                .email("test3@gmail.com")
+                .password("Password3")
+                .role(UserRole.USER)
+                .build();
+        when(userService.findByEmail(any())).thenReturn(newUser);
         when(linkService.findById(link.getId())).thenReturn(link);
         doNothing().when(linkService).deleteById(link.getId());
 
@@ -130,78 +148,6 @@ class LinkControllerTest {
                 .param("id", String.valueOf(link.getId())));
 
         resultActions.andExpect(status().isForbidden());
-    }
-
-    /**
-     * Test case for the {@link LinkController#getAllLinksForUser()} method.
-     */
-    @Test
-    @WithMockUser
-    void getAllLinksForUserTest() throws Exception {
-        List<Link> userLinks = Arrays.asList(
-                Link.builder().id(UUID.randomUUID()).user(user).build(),
-                Link.builder().id(UUID.randomUUID()).user(user).build(),
-                Link.builder().id(UUID.randomUUID()).user(user).build());
-
-        when(userService.findByEmail(any())).thenReturn(user);
-        when(linkService.findAllByUserId(user.getId())).thenReturn(userLinks);
-
-        ResultActions resultActions = mockMvc.perform(get("/api/V1/link/all-links-info")
-                .contentType(MediaType.APPLICATION_JSON)
-                .param("userId", String.valueOf(user.getId())));
-
-        resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.error").value("ok"))
-                .andExpect(jsonPath("$.linkDtoList").isArray())
-                .andExpect(jsonPath("$.linkDtoList.length()").value(userLinks.size()));
-    }
-
-    //TODO test for InternalServerLinkException() for getAll
-
-    @Test
-    @WithMockUser
-    void refreshLinkTest() throws Exception {
-        when(userService.findByEmail(any())).thenReturn(user);
-        when(linkService.findById(link.getId())).thenReturn(link);
-        when(linkService.update(link)).thenReturn(link);
-
-        ResultActions resultActions = mockMvc.perform(post("/api/V1/link/edit/refresh")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("id", String.valueOf(link.getId())));
-
-        resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.error").value("ok"));
-    }
-
-    @Test
-    @WithAnonymousUser
-    void refreshLinkForbiddenTest() throws Exception {
-        when(userService.findByEmail(any())).thenReturn(user);
-        when(linkService.findById(link.getId())).thenReturn(link);
-        when(linkService.update(link)).thenReturn(link);
-
-        ResultActions resultActions = mockMvc.perform(post("/api/V1/link/edit/refresh")
-                .contentType(MediaType.APPLICATION_JSON)
-                .param("id", String.valueOf(link.getId())));
-
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser
-    void refreshDeletedLinkTest() throws Exception {
-        link.setStatus(LinkStatus.DELETED);
-        when(userService.findByEmail(any())).thenReturn(user);
-        when(linkService.findById(link.getId())).thenReturn(link);
-        when(linkService.update(link)).thenReturn(link);
-
-        ResultActions resultActions = mockMvc.perform(post("/api/V1/link/edit/refresh")
-                .contentType(MediaType.APPLICATION_JSON)
-                .param("id", String.valueOf(link.getId())));
-
-        resultActions.andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.exceptionMessage").value("The link has already been deleted, " +
-                                                       "no operations are allowed"));
     }
 
     @Test
@@ -223,9 +169,15 @@ class LinkControllerTest {
     }
 
     @Test
-    @WithAnonymousUser
+    @WithMockUser
     void editLinkContentForbiddenTest() throws Exception {
-        when(userService.findByEmail(any())).thenReturn(user);
+        User newUser = User.builder()
+                .id(UUID.fromString("84991c79-f6a9-4b7b-b1b4-0d66c0b92c83"))
+                .email("test3@gmail.com")
+                .password("Password3")
+                .role(UserRole.USER)
+                .build();
+        when(userService.findByEmail(any())).thenReturn(newUser);
         when(linkService.findById(link.getId())).thenReturn(link);
 
         EditLinkContentRequest request = new EditLinkContentRequest(link.getId(), "short-link-2");
@@ -260,6 +212,58 @@ class LinkControllerTest {
 
     @Test
     @WithMockUser
+    void refreshLinkTest() throws Exception {
+        when(userService.findByEmail(any())).thenReturn(user);
+        when(linkService.findById(link.getId())).thenReturn(link);
+        when(linkService.update(link)).thenReturn(link);
+
+        ResultActions resultActions = mockMvc.perform(post("/api/V1/link/edit/refresh")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("id", String.valueOf(link.getId())));
+
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.error").value("ok"));
+    }
+
+    @Test
+    @WithMockUser
+    void refreshLinkForbiddenTest() throws Exception {
+        User newUser = User.builder()
+                .id(UUID.fromString("84991c79-f6a9-4b7b-b1b4-0d66c0b92c83"))
+                .email("test3@gmail.com")
+                .password("Password3")
+                .role(UserRole.USER)
+                .build();
+        when(userService.findByEmail(any())).thenReturn(newUser);
+        when(linkService.findById(link.getId())).thenReturn(link);
+        when(linkService.update(link)).thenReturn(link);
+
+        ResultActions resultActions = mockMvc.perform(post("/api/V1/link/edit/refresh")
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("id", String.valueOf(link.getId())));
+
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser
+    void refreshDeletedLinkTest() throws Exception {
+        link.setStatus(LinkStatus.DELETED);
+        when(userService.findByEmail(any())).thenReturn(user);
+        when(linkService.findById(link.getId())).thenReturn(link);
+        when(linkService.update(link)).thenReturn(link);
+
+        ResultActions resultActions = mockMvc.perform(post("/api/V1/link/edit/refresh")
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("id", String.valueOf(link.getId())));
+
+        resultActions.andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.exceptionMessage").value("The link has already been deleted, " +
+                                                       "no operations are allowed"));
+    }
+
+    @Test
+    @WithMockUser
     void getInfoByShortLinkTest() throws Exception {
         when(userService.findByEmail(any())).thenReturn(user);
         when(linkService.findById(any())).thenReturn(link);
@@ -272,13 +276,18 @@ class LinkControllerTest {
         resultActions.andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value("ok"))
                 .andExpect(jsonPath("$.linkDtoList").isArray());
-
     }
 
     @Test
-    @WithAnonymousUser
+    @WithMockUser
     void getInfoByShortLinkForbiddenTest() throws Exception {
-        when(userService.findByEmail(any())).thenReturn(user);
+        User newUser = User.builder()
+                .id(UUID.fromString("84991c79-f6a9-4b7b-b1b4-0d66c0b92c83"))
+                .email("test3@gmail.com")
+                .password("Password3")
+                .role(UserRole.USER)
+                .build();
+        when(userService.findByEmail(any())).thenReturn(newUser);
         when(linkService.findById(any())).thenReturn(link);
         when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
 
@@ -287,6 +296,47 @@ class LinkControllerTest {
                 .param("shortLink", link.getShortLink()));
 
         resultActions.andExpect(status().isForbidden());
+    }
 
+    /**
+     * Test case for the {@link LinkController#getAllLinksForUser()} method.
+     */
+    @Test
+    @WithMockUser
+    void getAllLinksForUserTest() throws Exception {
+        List<Link> userLinks = Arrays.asList(
+                Link.builder().id(UUID.randomUUID()).user(user).build(),
+                Link.builder().id(UUID.randomUUID()).user(user).build(),
+                Link.builder().id(UUID.randomUUID()).user(user).build());
+
+        when(userService.findByEmail(any())).thenReturn(user);
+        when(linkService.findAllByUserId(user.getId())).thenReturn(userLinks);
+
+        ResultActions resultActions = mockMvc.perform(get("/api/V1/link/all-links-info")
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("userId", String.valueOf(user.getId())));
+
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.error").value("ok"))
+                .andExpect(jsonPath("$.linkDtoList").isArray())
+                .andExpect(jsonPath("$.linkDtoList.length()").value(userLinks.size()));
+    }
+
+    @Test
+    @WithMockUser
+    void getLinksStatsForUserTest() throws Exception {
+        List<LinkStatisticsDto> stats = Arrays.asList(
+                new LinkStatisticsDto(UUID.randomUUID(),"link1", 10),
+                new LinkStatisticsDto(UUID.randomUUID(),"link2", 20)
+        );
+
+        when(userService.findByEmail(any())).thenReturn(user);
+        when(linkService.getLinkUsageStatsByUserId(user.getId())).thenReturn(stats);
+        ResultActions resultActions = mockMvc.perform(get("/api/V1/link/url-usage-top-for-user")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.linksStatsList").isArray())
+                .andExpect(jsonPath("$.error").value("ok"));
     }
 }
