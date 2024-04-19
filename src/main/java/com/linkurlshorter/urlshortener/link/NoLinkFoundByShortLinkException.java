@@ -9,8 +9,4 @@ public class NoLinkFoundByShortLinkException extends RuntimeException {
     public NoLinkFoundByShortLinkException() {
         super(DEFAULT_MSG);
     }
-
-    public NoLinkFoundByShortLinkException(String msg) {
-        super(msg);
-    }
 }

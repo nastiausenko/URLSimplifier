@@ -16,8 +16,4 @@ public class LinkStatusException extends RuntimeException {
     public LinkStatusException() {
         super(MSG);
     }
-
-    public LinkStatusException(String message) {
-        super(message);
-    }
 }

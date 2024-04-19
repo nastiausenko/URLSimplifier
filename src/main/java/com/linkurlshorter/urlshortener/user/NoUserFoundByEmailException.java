@@ -19,8 +19,4 @@ public class NoUserFoundByEmailException extends RuntimeException {
     public NoUserFoundByEmailException() {
         super(DEFAULT_MSG);
     }
-
-    public NoUserFoundByEmailException(String msg) {
-        super(msg);
-    }
 }

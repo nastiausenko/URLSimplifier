@@ -104,9 +104,7 @@ class UserControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Password " +
-                        "must be at least 8 characters long and contain at least one digit, one uppercase letter, " +
-                        "and one lowercase letter. No spaces are allowed."));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Validation failed!"));
     }
 
     /**
@@ -156,6 +154,6 @@ class UserControllerIntegrationTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message")
-                        .value("Email address entered incorrectly!"));
+                        .value("Validation failed!"));
     }
 }

@@ -1,6 +1,5 @@
 package com.linkurlshorter.urlshortener.link;
 
-import com.linkurlshorter.urlshortener.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -42,8 +41,10 @@ public class LinkService {
         if (Objects.isNull(link)) {
             throw new NullLinkPropertyException();
         }
-
-        throwIfDeleted(link);
+//TODO:test for delete
+        if (findByShortLink(link.getShortLink()).getStatus() == LinkStatus.DELETED) {
+            throw new DeletedLinkException();
+        }
         return linkRepository.save(link);
     }
 
@@ -133,24 +134,13 @@ public class LinkService {
      * @throws NoLinkFoundByShortLinkException If no link was found by the short link.
      * @throws NullLinkPropertyException       If the found link does not have the ACTIVE status.
      */
+    //TODO: tests for this method
     public Link findByExistUniqueLink(String shortLink) {
         Link existingLink = linkRepository.findByShortLink(shortLink).orElseThrow(NoLinkFoundByShortLinkException::new);
         if (existingLink.getStatus() == LinkStatus.ACTIVE) {
             return existingLink;
         } else {
             throw new NullLinkPropertyException();
-        }
-    }
-
-    /**
-     * Throws a DeletedLinkException if the link has been marked as deleted.
-     *
-     * @param link The link entity to check.
-     * @throws DeletedLinkException If the link has been marked as deleted.
-     */
-    private void throwIfDeleted(Link link) {
-        if (findByShortLink(link.getShortLink()).getStatus() == LinkStatus.DELETED) {
-            throw new DeletedLinkException();
         }
     }
 }
