@@ -2,8 +2,6 @@ package com.linkurlshorter.urlshortener.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linkurlshorter.urlshortener.auth.dto.AuthRequest;
-import com.linkurlshorter.urlshortener.user.ChangeUserEmailRequest;
-import com.linkurlshorter.urlshortener.user.ChangeUserPasswordRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -74,8 +72,7 @@ class AuthControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(401))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Authentication failed!"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value("No user by provided email found"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("No user by provided email found"));
     }
 
     /**
@@ -91,8 +88,7 @@ class AuthControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(401))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Bad Credentials!"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value("Bad credentials"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Bad credentials"));
     }
 
     /**
@@ -110,8 +106,7 @@ class AuthControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Validation failed!"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value("Password " +
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Password " +
                         "must be at least 8 characters long and contain at least one digit, one uppercase letter, " +
                         "and one lowercase letter. No spaces are allowed."));
     }
@@ -136,9 +131,7 @@ class AuthControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Validation failed!"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage")
-                        .value("Email address entered incorrectly!"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Email address entered incorrectly!"));
     }
 
     /**
@@ -156,8 +149,7 @@ class AuthControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Validation failed!"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value("Password " +
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Password " +
                         "must be at least 8 characters long and contain at least one digit, one uppercase letter, " +
                         "and one lowercase letter. No spaces are allowed."));
     }
@@ -182,8 +174,6 @@ class AuthControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Validation failed!"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage")
-                        .value("Email address entered incorrectly!"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Email address entered incorrectly!"));
     }
 }

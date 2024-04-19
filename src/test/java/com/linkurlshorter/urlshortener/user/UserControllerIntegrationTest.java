@@ -23,8 +23,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -106,8 +104,7 @@ class UserControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Validation failed!"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value("Password " +
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Password " +
                         "must be at least 8 characters long and contain at least one digit, one uppercase letter, " +
                         "and one lowercase letter. No spaces are allowed."));
     }
@@ -158,8 +155,7 @@ class UserControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Validation failed!"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage")
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message")
                         .value("Email address entered incorrectly!"));
     }
 }
