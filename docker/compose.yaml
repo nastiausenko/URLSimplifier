@@ -1,9 +1,21 @@
 services:
   postgres:
-    image: 'postgres:latest'
-    environment:
-      - 'POSTGRES_DB=${PROD_DATABASE_USERNAME}'
-      - 'POSTGRES_PASSWORD=${PROD_DATABASE_PASSWORD}'
-      - 'POSTGRES_USER=${PROD_DATABASE_NAME}'
+    image: 'postgres:14'
+    container_name: prod_postgres
+    restart: always
     ports:
-      - '${PROD_DATABASE_PORT}:5432'
+      #      - '${PROD_DATABASE_PORT}:5432'
+      - "5432:5432"
+    environment:
+#      - 'POSTGRES_DB=${PROD_DATABASE_USERNAME}'
+#      - 'POSTGRES_PASSWORD=${PROD_DATABASE_PASSWORD}'
+#      - 'POSTGRES_USER=${PROD_DATABASE_NAME}'
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: StrongPass01
+      POSTGRES_DB: prodDb
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+    postgres_data:
