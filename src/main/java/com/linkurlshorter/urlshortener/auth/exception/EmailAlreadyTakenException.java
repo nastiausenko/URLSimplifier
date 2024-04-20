@@ -7,7 +7,7 @@ package com.linkurlshorter.urlshortener.auth.exception;
  * in the system and cannot be used for registration again.
  *
  * @author Egor Sivenko
- * @see java.lang.RuntimeException
+ * @see RuntimeException
  */
 public class EmailAlreadyTakenException extends RuntimeException {
 
