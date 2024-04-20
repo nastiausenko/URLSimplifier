@@ -88,6 +88,7 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.jwtToken").exists());
     }
 
+
 //    /**
 //     * Test case for the {@link AuthController#login(AuthRequest)} method when the user is not registered.
 //     */
