@@ -14,11 +14,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -38,6 +40,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
 @Testcontainers
+@Transactional
+@Rollback
 class UserControllerIntegrationTest {
     @Container
     @ServiceConnection
@@ -70,15 +74,6 @@ class UserControllerIntegrationTest {
      */
     @Test
     void changePasswordTest() throws Exception {
-        authRequest = new AuthRequest("change-password@email.com", "Password1");
-        ResultActions result = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/V1/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(authRequest)));
-        MvcResult mvcResult = result.andDo(print()).andReturn();
-        String contentAsString = mvcResult.getResponse().getContentAsString();
-        JSONObject jsonObject = new JSONObject(contentAsString);
-        this.token = "Bearer " + jsonObject.getString("jwtToken");
-
         ChangeUserPasswordRequest request = new ChangeUserPasswordRequest("newPassword1");
         mockMvc.perform(post(baseUrl + "change-password")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -116,15 +111,6 @@ class UserControllerIntegrationTest {
      */
     @Test
     void changeEmailTest() throws Exception {
-        authRequest = new AuthRequest("change-email@email.com", "Password1");
-        ResultActions result = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/V1/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(authRequest)));
-        MvcResult mvcResult = result.andDo(print()).andReturn();
-        String contentAsString = mvcResult.getResponse().getContentAsString();
-        JSONObject jsonObject = new JSONObject(contentAsString);
-        this.token = "Bearer " + jsonObject.getString("jwtToken");
-
         ChangeUserEmailRequest request = new ChangeUserEmailRequest("success@email.com");
         mockMvc.perform(post(baseUrl + "change-email")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -145,8 +131,8 @@ class UserControllerIntegrationTest {
             " user-test@email.com",
             "user-test%@email.com",
             "user-test#@email.com",
-            "user-test.email.com"})
-//    TODO: add more email to test "change-email-test@email"
+            "user-test.email.com",
+            "change-email-test@email"})
     void changeEmailFailedWhenInvalidEmailGivenTest(String email) throws Exception {
         ChangeUserEmailRequest request = new ChangeUserEmailRequest(email);
         mockMvc.perform(post(baseUrl + "change-email")
