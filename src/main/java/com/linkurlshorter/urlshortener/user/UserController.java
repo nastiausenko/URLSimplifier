@@ -78,6 +78,7 @@ public class UserController {
     public ResponseEntity<UserModifyingResponse> changeEmail(@RequestBody @Valid ChangeUserEmailRequest emailRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String newEmail = emailRequest.getNewEmail();
+        //TODO: test for this exception
         if (userService.existsByEmail(newEmail)) {
             throw new EmailAlreadyTakenException(newEmail);
         }

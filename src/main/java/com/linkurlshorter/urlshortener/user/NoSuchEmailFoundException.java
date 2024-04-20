@@ -19,8 +19,4 @@ public class NoSuchEmailFoundException extends RuntimeException {
     public NoSuchEmailFoundException() {
         super(MSG);
     }
-
-    public NoSuchEmailFoundException(String msg) {
-        super(msg);
-    }
 }

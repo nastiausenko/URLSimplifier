@@ -1,5 +1,6 @@
 package com.linkurlshorter.urlshortener.link;
 
+import com.linkurlshorter.urlshortener.security.ForbiddenException;
 import com.linkurlshorter.urlshortener.user.User;
 import com.linkurlshorter.urlshortener.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;

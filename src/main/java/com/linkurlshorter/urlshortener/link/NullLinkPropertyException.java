@@ -15,8 +15,4 @@ public class NullLinkPropertyException extends RuntimeException {
     public NullLinkPropertyException() {
         super(DEFAULT_MSG);
     }
-
-    public NullLinkPropertyException(String msg) {
-        super(msg);
-    }
 }

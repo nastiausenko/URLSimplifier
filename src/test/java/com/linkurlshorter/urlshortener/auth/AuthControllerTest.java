@@ -1,11 +1,11 @@
 package com.linkurlshorter.urlshortener.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.dockerjava.api.exception.UnauthorizedException;
 import com.linkurlshorter.urlshortener.auth.dto.AuthRequest;
 import com.linkurlshorter.urlshortener.auth.exception.EmailAlreadyTakenException;
 import com.linkurlshorter.urlshortener.TestConfig;
 import com.linkurlshorter.urlshortener.security.SecurityConfig;
-//import com.linkurlshorter.urlshortener.security.UnauthorizedException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -13,6 +13,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -91,15 +94,15 @@ class AuthControllerTest {
     /**
      * Test case for the {@link AuthController#login(AuthRequest)} method when the user is not registered.
      */
-//    @Test
-//    void loginFailedTest() throws Exception {
-//        AuthRequest request = new AuthRequest("test3@email.com", "Password1");
-//        when(authService.loginUser(request)).thenThrow(UnauthorizedException.class);
-//
-//        ResultActions resultActions = mockMvc.perform(post("/api/V1/auth/login")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(objectMapper.writeValueAsString(request)));
-//
-//        resultActions.andExpect(status().isUnauthorized());
-//    }
+    @Test
+    void loginFailedTest() throws Exception {
+        AuthRequest request = new AuthRequest("test3@email.com", "Password1");
+        when(authService.loginUser(request)).thenThrow(UsernameNotFoundException.class);
+
+        ResultActions resultActions = mockMvc.perform(post("/api/V1/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+        resultActions.andExpect(status().isUnauthorized());
+    }
 }

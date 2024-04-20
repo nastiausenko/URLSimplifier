@@ -11,8 +11,4 @@ public class DeletedLinkException extends RuntimeException {
     public DeletedLinkException() {
         super(DEFAULT_MSG);
     }
-
-    public DeletedLinkException(String msg) {
-        super(msg);
-    }
 }
