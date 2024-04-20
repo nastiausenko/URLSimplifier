@@ -42,6 +42,9 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.3.0'
     implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.3.0'
+
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.12.0'
+
     testImplementation 'org.testcontainers:postgresql'
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
     testImplementation 'org.testcontainers:junit-jupiter'
