@@ -77,7 +77,8 @@ class AuthControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.statusCode").value(401))
-                .andExpect(jsonPath("$.message").value("Authentication failed!"))
+                .andExpect(jsonPath("$.message").value("Authentication failed!"));
+    }
 
     /**
      * Test case to verify login failure when password does not match.
