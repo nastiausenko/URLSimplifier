@@ -1,6 +1,7 @@
 package com.linkurlshorter.urlshortener.exception;
 
 import com.linkurlshorter.urlshortener.auth.exception.EmailAlreadyTakenException;
+import com.linkurlshorter.urlshortener.link.NoLinkFoundByIdException;
 import com.linkurlshorter.urlshortener.security.ForbiddenException;
 import com.linkurlshorter.urlshortener.user.NoSuchEmailFoundException;
 import com.linkurlshorter.urlshortener.user.NoUserFoundByEmailException;
@@ -101,12 +102,6 @@ public class GlobalExceptionHandler {
      * @param ex denied access error
      * @return {@link ResponseEntity} object with the corresponding status and error message
      */
-    @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<Object> handleForbiddenException(ForbiddenException ex) {
-        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.FORBIDDEN,
-                "Forbidden!", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
-    }
 
     /**
      * Handles no resource (404) exceptions for different types of requests.
@@ -152,21 +147,20 @@ public class GlobalExceptionHandler {
      * Returns a response with a 403 status and the corresponding error message.
      *
      * @param ex      forbidden exception
-     * @param request HttpServletRequest object representing the HTTP request
      * @return {@link ResponseEntity} object with the corresponding status and error message
      */
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<Object> handleForbiddenException(
-            ForbiddenException ex, HttpServletRequest request) {
-        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.FORBIDDEN,
-                ex.getMessage(), request.getRequestURI());
+            ForbiddenException ex) {
+        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.FORBIDDEN, "Operation forbidden!",
+                ex.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
     @ExceptionHandler(NoLinkFoundByIdException.class)
     public ResponseEntity<Object> handleNoLinkFoundByIdException(
-            NoLinkFoundByIdException ex, HttpServletRequest request) {
-        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.NOT_FOUND,
-                ex.getMessage(), request.getRequestURI());
+            NoLinkFoundByIdException ex) {
+        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.NOT_FOUND,"No link by provided id found",
+                ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 }
