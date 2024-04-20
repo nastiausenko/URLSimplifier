@@ -12,9 +12,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -32,6 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
 @Testcontainers
+@Transactional
+@Rollback
 class AuthControllerIntegrationTest {
     @Container
     @ServiceConnection
@@ -71,8 +75,8 @@ class AuthControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(401))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("No user by provided email found"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Email address entered incorrectly!"));
     }
 
     /**
@@ -122,8 +126,8 @@ class AuthControllerIntegrationTest {
             " user-test@example.com",
             "user-test%@example.com",
             "user-test#@example.com",
-            "user-test.example.com"})
-//    TODO: add more email to test "user-test@example"
+            "user-test.example.com",
+            "user-test@example"})
     void loginFailedWhenInvalidEmailGivenTest(String email) throws Exception {
         authRequest = new AuthRequest(email, "Pass1234");
         mockMvc.perform(post(baseUrl + "login")
@@ -132,6 +136,22 @@ class AuthControllerIntegrationTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Email address entered incorrectly!"));
+    }
+
+    /**
+     * Test case to verify successful user registration.
+     *
+     * @throws Exception if any error occurs during the test
+     */
+    @Test
+    void registerSuccessfulTest() throws Exception {
+        authRequest = new AuthRequest("user-test@example.com", "Pass1234");
+        this.mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(authRequest)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User registered successfully!"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.jwtToken").exists());
     }
 
     /**
@@ -165,8 +185,8 @@ class AuthControllerIntegrationTest {
             " user-test@example.com",
             "user-test%@example.com",
             "user-test#@example.com",
-            "user-test.example.com"})
-//    TODO: add more email to test "user-test@example"
+            "user-test.example.com",
+            "user-test@example"})
     void registerFailedWhenInvalidEmailGivenTest(String email) throws Exception {
         authRequest = new AuthRequest(email, "Pass1234");
         mockMvc.perform(post(baseUrl + "register")
