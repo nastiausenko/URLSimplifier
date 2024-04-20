@@ -3,6 +3,8 @@ package com.linkurlshorter.urlshortener.link;
 import com.linkurlshorter.urlshortener.security.ForbiddenException;
 import com.linkurlshorter.urlshortener.user.User;
 import com.linkurlshorter.urlshortener.user.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -57,6 +59,8 @@ public class LinkController {
      * @see InternalServerLinkException
      */
     @PostMapping("/create")
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "Create new link")
     public ResponseEntity<CreateLinkResponse> createLink(@RequestBody @Valid CreateLinkRequest createRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findByEmail(authentication.getName());
@@ -84,9 +88,11 @@ public class LinkController {
      * @throws ForbiddenException if the authenticated user does not have rights to delete the link
      */
     @PostMapping("/delete")
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "Delete link by ID")
     public ResponseEntity<LinkModifyingResponse> deleteLink(@RequestParam UUID id) {
         if (doesUserHaveRightsForLinkById(id)) {
-            linkService.deleteById(id);
+            linkService.deleteById(id);//TODO: add validations (id not null etc)
             return ResponseEntity.ok(new LinkModifyingResponse("ok"));
         } else {
             throw new ForbiddenException(OPERATION_FORBIDDEN_MSG);
@@ -102,6 +108,8 @@ public class LinkController {
      * @throws LinkStatusException if the status of the link is not ACTIVE
      */
     @PostMapping("/edit/content")
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "Edit link content")
     public ResponseEntity<LinkModifyingResponse> editLinkContent(@RequestBody EditLinkContentRequest request) {
         if (doesUserHaveRightsForLinkById(request.getId())) {
             Link oldLink = linkService.findById(request.getId());
@@ -125,6 +133,8 @@ public class LinkController {
      * @throws DeletedLinkException if the link is already deleted
      */
     @PostMapping("/edit/refresh")
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "Refresh link expiration time")
     public ResponseEntity<LinkModifyingResponse> refreshLink(@RequestParam UUID id) {
         if (doesUserHaveRightsForLinkById(id)) {
             Link oldLink = linkService.findById(id);
@@ -148,6 +158,8 @@ public class LinkController {
      * @throws ForbiddenException if the authenticated user does not have rights to access the link
      */
     @GetMapping("/info")
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "Get link info")
     public ResponseEntity<LinkInfoResponse> getInfoByShortLink(@RequestParam String shortLink) {
         Link link = linkService.findByShortLink(shortLink);
         if (doesUserHaveRightsForLinkById(link.getId())) {
@@ -165,6 +177,8 @@ public class LinkController {
      * @return a ResponseEntity containing the response object with information about all links for the user
      */
     @GetMapping("/all-links-info")
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "Get all links info")
     public ResponseEntity<LinkInfoResponse> getAllLinksForUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UUID requesterUserId = userService.findByEmail(authentication.getName()).getId();
@@ -184,6 +198,8 @@ public class LinkController {
      * links are sorted in descending order
      */
     @GetMapping("/url-usage-top-for-user")
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "Get all links usage statistics")
     public ResponseEntity<LinkStatisticsResponse> getLinksStatsForUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User requesterUser = userService.findByEmail(authentication.getName());
@@ -199,7 +215,7 @@ public class LinkController {
      */
     private String generateShortLink() {
         return RandomStringUtils.randomAlphanumeric(8);
-    }
+    } //TODO: extracted into a servicethis method into service.
 
     /**
      * Checks if the authenticated user has rights to perform operations on a given link.
@@ -207,7 +223,7 @@ public class LinkController {
      * @param linkId the UUID of the link to check
      * @return true if the user has rights, false otherwise
      */
-    private boolean doesUserHaveRightsForLinkById(UUID linkId) {              //TODO: may be transformed into @?
+    private boolean doesUserHaveRightsForLinkById(UUID linkId) {              //TODO: may be transformed into @? and extracted into a servicethis method into service.
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UUID linkUserId = linkService.findById(linkId).getUser().getId();
         UUID currentUserId = userService.findByEmail(authentication.getName()).getId();
