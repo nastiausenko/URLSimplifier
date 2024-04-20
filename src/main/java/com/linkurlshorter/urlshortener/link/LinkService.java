@@ -1,6 +1,5 @@
 package com.linkurlshorter.urlshortener.link;
 
-import com.linkurlshorter.urlshortener.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
