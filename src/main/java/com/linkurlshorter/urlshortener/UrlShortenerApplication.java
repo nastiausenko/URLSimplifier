@@ -2,6 +2,7 @@ package com.linkurlshorter.urlshortener;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * Main class for the URL Shortener application.
