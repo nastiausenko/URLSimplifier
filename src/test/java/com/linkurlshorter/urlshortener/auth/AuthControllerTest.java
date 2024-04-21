@@ -1,7 +1,6 @@
 package com.linkurlshorter.urlshortener.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.dockerjava.api.exception.UnauthorizedException;
 import com.linkurlshorter.urlshortener.auth.dto.AuthRequest;
 import com.linkurlshorter.urlshortener.auth.exception.EmailAlreadyTakenException;
 import com.linkurlshorter.urlshortener.TestConfig;
@@ -13,8 +12,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;

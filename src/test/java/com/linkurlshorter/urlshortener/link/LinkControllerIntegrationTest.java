@@ -96,8 +96,8 @@ class LinkControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(createLinkRequest)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.statusCode").value(400))
-                .andExpect(jsonPath("$.message").value("Validation failed!"))
-                .andExpect(jsonPath("$.exceptionMessage").value("Not valid format url!"));
+                .andExpect(jsonPath("$.message").value("Not valid format url!"))
+                .andExpect(jsonPath("$.path").value("/api/V1/link/create"));
     }
 
     @Test
@@ -118,14 +118,14 @@ class LinkControllerIntegrationTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.statusCode").value(404))
                 .andExpect(jsonPath("$.message").value("No link by provided id found"))
-                .andExpect(jsonPath("$.exceptionMessage").value("No link by provided id found"));
+                .andExpect(jsonPath("$.path").value("/api/V1/link/delete"));
     }
     @Test
     void deleteLinkFailsWhenIdIsNull() throws Exception {
         mockMvc.perform(post(baseUrl + "delete" + "?id=" + null)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", token))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().is4xxClientError());
     }
     @Test
     void deleteLinkFailsWhenUserHasNoRightsForThisLink() throws Exception {
@@ -144,6 +144,6 @@ class LinkControllerIntegrationTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.statusCode").value(403))
                 .andExpect(jsonPath("$.message").value("Operation forbidden!"))
-                .andExpect(jsonPath("$.exceptionMessage").value("Operation forbidden!"));
+                .andExpect(jsonPath("$.path").value("/api/V1/link/delete"));
     }
 }

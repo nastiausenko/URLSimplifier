@@ -11,5 +11,5 @@ public record ErrorResponse(
         LocalDateTime dateTime,
         int statusCode,
         String message,
-        String exceptionMessage
+        String path
 ) {}

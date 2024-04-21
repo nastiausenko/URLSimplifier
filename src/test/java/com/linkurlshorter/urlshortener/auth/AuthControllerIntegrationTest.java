@@ -22,7 +22,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -59,9 +58,9 @@ class AuthControllerIntegrationTest {
         this.mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("User logged in successfully!"))
-                .andExpect(jsonPath("$.jwtToken").exists());
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User logged in successfully!"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.jwtToken").exists());
     }
 
     /**
@@ -72,12 +71,12 @@ class AuthControllerIntegrationTest {
     @Test
     void loginFailedWhenUserDoesNotExistTest() throws Exception {
         authRequest = new AuthRequest("userNotFound@example.com", "Pass1234");
-        this.mockMvc.perform(post(baseUrl + "login")
+        this.mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authRequest)))
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.statusCode").value(401))
-                .andExpect(jsonPath("$.message").value("Authentication failed!"));
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(401))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("No user by provided email found"));
     }
 
     /**
@@ -88,12 +87,12 @@ class AuthControllerIntegrationTest {
     @Test
     void loginFailedWhenPasswordDoesNotMatchTest() throws Exception {
         authRequest = new AuthRequest("user1@example.com", "Pass12345");
-        this.mockMvc.perform(post(baseUrl + "login")
+        this.mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
-                .andExpect(jsonPath("$.statusCode").value(401))
-                .andExpect(jsonPath("$.message").value("Bad Credentials!"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(401))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Bad credentials"));
     }
 
     /**
@@ -110,8 +109,10 @@ class AuthControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.statusCode").value(400))
-                .andExpect(jsonPath("$.message").value("Validation failed!"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Password " +
+                        "must be at least 8 characters long and contain at least one digit, one uppercase letter, " +
+                        "and one lowercase letter. No spaces are allowed."));
     }
 
     /**
@@ -133,8 +134,8 @@ class AuthControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.statusCode").value(400))
-                .andExpect(jsonPath("$.message").value("Validation failed!"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Email address entered incorrectly!"));
     }
 
     /**
@@ -167,8 +168,10 @@ class AuthControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.statusCode").value(400))
-                .andExpect(jsonPath("$.message").value("Validation failed!"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Password " +
+                        "must be at least 8 characters long and contain at least one digit, one uppercase letter, " +
+                        "and one lowercase letter. No spaces are allowed."));
     }
 
     /**
@@ -190,7 +193,7 @@ class AuthControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.statusCode").value(400))
-                .andExpect(jsonPath("$.message").value("Validation failed!"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Email address entered incorrectly!"));
     }
 }

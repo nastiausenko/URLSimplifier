@@ -184,7 +184,7 @@ class LinkServiceTest {
      */
     @Test
     void findByShortLinkNotFoundTest() {
-        assertThatThrownBy(() ->  linkService.deleteByShortLink("http://link/short"))
+        assertThatThrownBy(() ->  linkService.deleteByShortLink("https://link/short"))
                 .isInstanceOf(NoLinkFoundByShortLinkException.class);
     }
 
