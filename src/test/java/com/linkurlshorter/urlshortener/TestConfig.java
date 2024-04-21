@@ -5,6 +5,7 @@ import com.linkurlshorter.urlshortener.jwt.JwtUtil;
 import com.linkurlshorter.urlshortener.link.LinkInfoDtoMapper;
 import com.linkurlshorter.urlshortener.link.LinkRepository;
 import com.linkurlshorter.urlshortener.link.LinkService;
+import com.linkurlshorter.urlshortener.link.ShortLinkGenerator;
 import com.linkurlshorter.urlshortener.security.CustomUserDetailsService;
 import com.linkurlshorter.urlshortener.user.UserRepository;
 import com.linkurlshorter.urlshortener.user.UserService;
@@ -114,5 +115,10 @@ public class TestConfig {
     @Bean
     public AuthService authService() {
         return mock(AuthService.class);
+    }
+
+    @Bean
+    public ShortLinkGenerator shortLinkGenerator() {
+        return new ShortLinkGenerator();
     }
 }

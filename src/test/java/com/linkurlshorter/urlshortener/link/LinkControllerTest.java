@@ -117,25 +117,25 @@ class LinkControllerTest {
     }
 
     /**
-     * Test case for the {@link LinkController#deleteLink(UUID)} method.
+     * Test case for the {@link LinkController#deleteLink(String)} method.
      */
     @Test
     @WithMockUser
     void deleteLinkTest() throws Exception {
         when(userService.findByEmail(any())).thenReturn(user);
-        when(linkService.findById(link.getId())).thenReturn(link);
-        doNothing().when(linkService).deleteById(link.getId());
+        when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
+        doNothing().when(linkService).deleteByShortLink(link.getShortLink());
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/link/delete")
                 .contentType(MediaType.APPLICATION_JSON)
-                .param("id", String.valueOf(link.getId())));
+                .param("shortLink", String.valueOf(link.getShortLink())));
 
         resultActions.andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value("ok"));
     }
 
     /**
-     * Test case for the {@link LinkController#deleteLink(UUID)} method when
+     * Test case for the {@link LinkController#deleteLink(String)} method when
      * the authenticated user does not have rights.
      */
     @Test
@@ -148,12 +148,12 @@ class LinkControllerTest {
                 .role(UserRole.USER)
                 .build();
         when(userService.findByEmail(any())).thenReturn(newUser);
-        when(linkService.findById(link.getId())).thenReturn(link);
-        doNothing().when(linkService).deleteById(link.getId());
+        when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
+        doNothing().when(linkService).deleteByShortLink(link.getShortLink());
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/link/delete")
                 .contentType(MediaType.APPLICATION_JSON)
-                .param("id", String.valueOf(link.getId())));
+                .param("shortLink", String.valueOf(link.getShortLink())));
 
         resultActions.andExpect(status().isForbidden());
     }
@@ -165,9 +165,9 @@ class LinkControllerTest {
     @WithMockUser
     void editLinkContentTest() throws Exception {
         when(userService.findByEmail(any())).thenReturn(user);
-        when(linkService.findById(link.getId())).thenReturn(link);
+        when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
 
-        EditLinkContentRequest request = new EditLinkContentRequest(link.getId(), "short-link-2");
+        EditLinkContentRequest request = new EditLinkContentRequest(link.getShortLink(), "short-link-2");
         when(linkService.update(link)).thenReturn(link);
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/link/edit/content")
@@ -193,14 +193,14 @@ class LinkControllerTest {
                 .role(UserRole.USER)
                 .build();
         when(userService.findByEmail(any())).thenReturn(newUser);
-        when(linkService.findById(link.getId())).thenReturn(link);
+        when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
 
-        EditLinkContentRequest request = new EditLinkContentRequest(link.getId(), "short-link-2");
+        EditLinkContentRequest request = new EditLinkContentRequest(link.getShortLink(), "short-link-2");
         when(linkService.update(link)).thenReturn(link);
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/link/edit/content")
                 .contentType(MediaType.APPLICATION_JSON)
-                .param("id", String.valueOf(link.getId()))
+                .param("shortLink", String.valueOf(link.getShortLink()))
                 .content(objectMapper.writeValueAsString(request)));
 
         resultActions.andExpect(status().isForbidden());
@@ -215,14 +215,14 @@ class LinkControllerTest {
     void editDeletedLinkContentTest() throws Exception {
         link.setStatus(LinkStatus.DELETED);
         when(userService.findByEmail(any())).thenReturn(user);
-        when(linkService.findById(link.getId())).thenReturn(link);
+        when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
 
-        EditLinkContentRequest request = new EditLinkContentRequest(link.getId(), "short-link-2");
+        EditLinkContentRequest request = new EditLinkContentRequest(link.getShortLink(), "short-link-2");
         when(linkService.update(link)).thenReturn(link);
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/link/edit/content")
                 .contentType(MediaType.APPLICATION_JSON)
-                .param("id", String.valueOf(link.getId()))
+                .param("shortLink", String.valueOf(link.getShortLink()))
                 .content(objectMapper.writeValueAsString(request)));
 
         resultActions.andExpect(status().isBadRequest())
@@ -231,25 +231,25 @@ class LinkControllerTest {
     }
 
     /**
-     * Test case for the {@link LinkController#refreshLink(UUID)} method.
+     * Test case for the {@link LinkController#refreshLink(String)} method.
      */
     @Test
     @WithMockUser
     void refreshLinkTest() throws Exception {
         when(userService.findByEmail(any())).thenReturn(user);
-        when(linkService.findById(link.getId())).thenReturn(link);
+        when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
         when(linkService.update(link)).thenReturn(link);
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/link/edit/refresh")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("id", String.valueOf(link.getId())));
+                        .param("shortLink", String.valueOf(link.getShortLink())));
 
         resultActions.andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value("ok"));
     }
 
     /**
-     * Test case for the {@link LinkController#refreshLink(UUID)} method when
+     * Test case for the {@link LinkController#refreshLink(String)} method when
      * the authenticated user does not have rights.
      */
     @Test
@@ -262,12 +262,12 @@ class LinkControllerTest {
                 .role(UserRole.USER)
                 .build();
         when(userService.findByEmail(any())).thenReturn(newUser);
-        when(linkService.findById(link.getId())).thenReturn(link);
+        when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
         when(linkService.update(link)).thenReturn(link);
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/link/edit/refresh")
                 .contentType(MediaType.APPLICATION_JSON)
-                .param("id", String.valueOf(link.getId())));
+                .param("shortLink", String.valueOf(link.getShortLink())));
 
         resultActions.andExpect(status().isForbidden());
     }
@@ -281,12 +281,12 @@ class LinkControllerTest {
     void refreshDeletedLinkTest() throws Exception {
         link.setStatus(LinkStatus.DELETED);
         when(userService.findByEmail(any())).thenReturn(user);
-        when(linkService.findById(link.getId())).thenReturn(link);
+        when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
         when(linkService.update(link)).thenReturn(link);
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/link/edit/refresh")
                 .contentType(MediaType.APPLICATION_JSON)
-                .param("id", String.valueOf(link.getId())));
+                .param("shortLink", String.valueOf(link.getShortLink())));
 
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("The link has already been deleted, " +
@@ -301,7 +301,6 @@ class LinkControllerTest {
     @WithMockUser
     void getInfoByShortLinkTest() throws Exception {
         when(userService.findByEmail(any())).thenReturn(user);
-        when(linkService.findById(any())).thenReturn(link);
         when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
 
         ResultActions resultActions = mockMvc.perform(get("/api/V1/link/info")
@@ -327,7 +326,6 @@ class LinkControllerTest {
                 .role(UserRole.USER)
                 .build();
         when(userService.findByEmail(any())).thenReturn(newUser);
-        when(linkService.findById(any())).thenReturn(link);
         when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
 
         ResultActions resultActions = mockMvc.perform(get("/api/V1/link/info")
