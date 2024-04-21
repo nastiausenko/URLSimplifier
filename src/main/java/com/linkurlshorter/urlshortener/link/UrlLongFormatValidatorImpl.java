@@ -2,10 +2,11 @@ package com.linkurlshorter.urlshortener.link;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
+import java.io.IOException;
 
 /**
  * Implementation {@link ConstraintValidator} of a validator to check the URL format.
@@ -31,10 +32,18 @@ public class UrlLongFormatValidatorImpl implements ConstraintValidator<UrlLongFo
             return false;
         }
         if (validateUrl(url)) {
+            context.buildConstraintViolationWithTemplate("Invalid URL format!")
+                    .addConstraintViolation();
             context.disableDefaultConstraintViolation();
             return false;
         }
-        return isUrlActive(url);
+        if (!isUrlActive(url)) {
+            context.buildConstraintViolationWithTemplate("Url not active!")
+                    .addConstraintViolation();
+            context.disableDefaultConstraintViolation();
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -65,23 +74,14 @@ public class UrlLongFormatValidatorImpl implements ConstraintValidator<UrlLongFo
      * @return {@code true} if the URL is active (responds with a 200 status code), {@code false} otherwise.
      */
     private boolean isUrlActive(String urlStr) {
-        HttpURLConnection connection = null;
-        try {
-            URL url = new URI(urlStr).toURL();
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(3000);
-            connection.setReadTimeout(3000);
-            connection.connect();
-            int responseCode = connection.getResponseCode();
-            return (responseCode == 200);
-        } catch (Exception e) {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(urlStr)
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            return response.isSuccessful();
+        } catch (IOException e) {
             return false;
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
         }
     }
 }
-
