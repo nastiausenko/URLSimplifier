@@ -1,8 +1,7 @@
 package com.linkurlshorter.urlshortener.exception;
 
 import com.linkurlshorter.urlshortener.auth.exception.EmailAlreadyTakenException;
-import com.linkurlshorter.urlshortener.link.ForbiddenException;
-import com.linkurlshorter.urlshortener.link.NoLinkFoundByIdException;
+import com.linkurlshorter.urlshortener.link.*;
 import com.linkurlshorter.urlshortener.user.NoSuchEmailFoundException;
 import com.linkurlshorter.urlshortener.user.NoUserFoundByEmailException;
 import com.linkurlshorter.urlshortener.user.NoUserFoundByIdException;
@@ -133,6 +132,30 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.NOT_FOUND,
                 ex.getMessage(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(DeletedLinkException.class)
+    public ResponseEntity<Object> handleDeletedLinkException(
+            DeletedLinkException ex, HttpServletRequest request) {
+        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST,
+                ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(LinkStatusException.class)
+    public ResponseEntity<Object> handleLinkStatusException(
+            LinkStatusException ex, HttpServletRequest request) {
+        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST,
+                ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(InternalServerLinkException.class)
+    public ResponseEntity<Object> handleInternalServerLinkException(
+            InternalServerLinkException ex, HttpServletRequest request) {
+        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
+                ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 }
 

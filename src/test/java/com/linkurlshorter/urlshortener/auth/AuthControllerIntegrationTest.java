@@ -70,13 +70,13 @@ class AuthControllerIntegrationTest {
      */
     @Test
     void loginFailedWhenUserDoesNotExistTest() throws Exception {
-        authRequest = new AuthRequest("user-not-found@example.com", "Pass1234");
+        authRequest = new AuthRequest("userNotFound@example.com", "Pass1234");
         this.mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Email address entered incorrectly!"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(401))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("No user by provided email found"));
     }
 
     /**

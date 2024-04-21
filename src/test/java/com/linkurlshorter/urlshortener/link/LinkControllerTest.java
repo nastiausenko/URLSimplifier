@@ -225,8 +225,9 @@ class LinkControllerTest {
                 .param("id", String.valueOf(link.getId()))
                 .content(objectMapper.writeValueAsString(request)));
 
-        resultActions.andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.exceptionMessage").value("Link status is invalid for the operation"));
+        resultActions.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Link status is invalid for the operation"))
+                .andExpect(jsonPath("$.path").value("/api/V1/link/edit/content"));
     }
 
     /**
@@ -287,9 +288,10 @@ class LinkControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .param("id", String.valueOf(link.getId())));
 
-        resultActions.andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.exceptionMessage").value("The link has already been deleted, " +
-                                                       "no operations are allowed"));
+        resultActions.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("The link has already been deleted, " +
+                                                       "no operations are allowed"))
+                .andExpect(jsonPath("$.path").value("/api/V1/link/edit/refresh"));
     }
 
     /**
