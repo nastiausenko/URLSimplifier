@@ -19,8 +19,4 @@ public class NoUserFoundByIdException extends RuntimeException {
     public NoUserFoundByIdException() {
         super(DEFAULT_MSG);
     }
-
-    public NoUserFoundByIdException(String msg) {
-        super(msg);
-    }
 }

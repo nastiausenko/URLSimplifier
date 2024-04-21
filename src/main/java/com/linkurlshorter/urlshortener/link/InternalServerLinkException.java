@@ -12,8 +12,4 @@ public class InternalServerLinkException extends RuntimeException {
     public InternalServerLinkException() {
         super(DEFAULT_MSG);
     }
-
-    public InternalServerLinkException(String msg) {
-        super(msg);
-    }
 }

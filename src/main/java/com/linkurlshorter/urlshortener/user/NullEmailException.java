@@ -21,8 +21,4 @@ public class NullEmailException extends NullUserPropertyException {
     public NullEmailException() {
         super(MSG);
     }
-
-    public NullEmailException(String msg) {
-        super(msg);
-    }
 }
