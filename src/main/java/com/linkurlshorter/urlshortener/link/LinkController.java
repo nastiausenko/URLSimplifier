@@ -183,7 +183,7 @@ public class LinkController {
      */
     @GetMapping("/all-links-info")
     @SecurityRequirement(name = "JWT")
-    @Operation(summary = "Get all links info")
+    @Operation(summary = "Get all User's links info")
     public ResponseEntity<LinkInfoResponse> getAllLinksForUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UUID requesterUserId = userService.findByEmail(authentication.getName()).getId();
