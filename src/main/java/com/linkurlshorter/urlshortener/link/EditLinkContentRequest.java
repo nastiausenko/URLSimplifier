@@ -21,6 +21,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EditLinkContentRequest {
-    private UUID id;
+    private String oldShortLink;
     private String newShortLink;
 }

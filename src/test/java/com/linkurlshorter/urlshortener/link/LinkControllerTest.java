@@ -86,7 +86,7 @@ class LinkControllerTest {
         when(userService.findByEmail(any())).thenReturn(user);
         when(linkService.save(any())).thenReturn(link);
 
-        CreateLinkRequest request = new CreateLinkRequest("https://www.example.com");
+        CreateLinkRequest request = new CreateLinkRequest("https://www.example.com", null); //TODO: Artem has added null here to match the new method signature
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/link/create")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -104,7 +104,7 @@ class LinkControllerTest {
     @Test
     @WithMockUser
     void createLinkFailedTest() throws Exception {
-        CreateLinkRequest request = new CreateLinkRequest("https://www.example.com");
+        CreateLinkRequest request = new CreateLinkRequest("https://www.example.com", null);
 
         when(userService.findByEmail(any())).thenReturn(user);
         when(linkService.save(any())).thenThrow(new RuntimeException("Short link already exists"));

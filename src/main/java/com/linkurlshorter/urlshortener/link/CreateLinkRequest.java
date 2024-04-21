@@ -27,4 +27,5 @@ import lombok.NoArgsConstructor;
 public class CreateLinkRequest {
     @UrlLongFormatValidator
     private String longLink;
+    private String shortLinkName;
 }

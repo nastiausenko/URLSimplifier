@@ -73,7 +73,7 @@ class LinkControllerIntegrationTest {
             "https://www.google.com",
             "https://www.facebook.com"})
     void createShortLinkWorksCorrectly(String url) throws Exception {
-        CreateLinkRequest createLinkRequest = new CreateLinkRequest(url);
+        CreateLinkRequest createLinkRequest = new CreateLinkRequest(url, null); //TODO: Artem has added null here to match the new method signature
         mockMvc.perform(post(baseUrl + "create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", token)
@@ -89,7 +89,7 @@ class LinkControllerIntegrationTest {
             "https://www.google.com@",
             "https://www.facebook.com%"})
     void createShortLinkFailsWhenUrlIsInvalid(String url) throws Exception {
-        CreateLinkRequest createLinkRequest = new CreateLinkRequest(url);
+        CreateLinkRequest createLinkRequest = new CreateLinkRequest(url, null);
         mockMvc.perform(post(baseUrl + "create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", token)
