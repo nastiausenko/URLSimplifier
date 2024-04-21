@@ -1,8 +1,23 @@
 package com.linkurlshorter.urlshortener.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.linkurlshorter.urlshortener.link.Link;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.List;
@@ -34,22 +49,15 @@ public class User {
     @Column(name = "email")
     private String email;
     @Column(name = "password")
+    @JsonIgnore
     private String password;
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private UserRole role = UserRole.USER;
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private List<Link> links;
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", role=" + role +
-                '}';
-    }
 }
