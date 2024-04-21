@@ -111,6 +111,7 @@ public class GlobalExceptionHandler {
     private ErrorResponse buildErrorResponse(HttpStatus status, String message, String requestURI) {
         return new ErrorResponse(LocalDateTime.now(), status.value(), message, requestURI);
     }
+
     /**
      * Handles Forbidden (403) exceptions for different types of requests.
      * Returns a response with a 403 status and the corresponding error message.
@@ -126,9 +127,10 @@ public class GlobalExceptionHandler {
                 ex.getMessage(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
-    @ExceptionHandler(NoLinkFoundByIdException.class)
+
+    @ExceptionHandler({NoLinkFoundByIdException.class, NoLinkFoundByShortLinkException.class})
     public ResponseEntity<Object> handleNoLinkFoundByIdException(
-            NoLinkFoundByIdException ex, HttpServletRequest request) {
+            RuntimeException ex, HttpServletRequest request) {
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.NOT_FOUND,
                 ex.getMessage(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
