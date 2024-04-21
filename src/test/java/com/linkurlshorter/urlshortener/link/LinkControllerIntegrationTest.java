@@ -24,8 +24,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.UUID;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -102,22 +100,22 @@ class LinkControllerIntegrationTest {
 
     @Test
     void deleteLinkWorksCorrectly() throws Exception {
-        UUID id = UUID.fromString("3053e49b-6da3-4389-9d06-23b2d57b6f25");
-        mockMvc.perform(post(baseUrl + "delete" + "?id=" + id)
+        String shortLink = "short-link-1";
+        mockMvc.perform(post(baseUrl + "delete" + "?shortLink=" + shortLink)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value("ok"));
     }
     @Test
-    void deleteLinkFailsWhenIdIsInvalid() throws Exception {
-        UUID id = UUID.randomUUID();
-        mockMvc.perform(post(baseUrl + "delete" + "?id=" + id)
+    void deleteLinkFailsWhenShortLinkIsInvalid() throws Exception {
+        String shortLink = "short";
+        mockMvc.perform(post(baseUrl + "delete" + "?shortLink=" + shortLink)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", token))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.statusCode").value(404))
-                .andExpect(jsonPath("$.message").value("No link by provided id found"))
+                .andExpect(jsonPath("$.message").value("No link by provided short link found"))
                 .andExpect(jsonPath("$.path").value("/api/V1/link/delete"));
     }
     @Test
@@ -137,8 +135,8 @@ class LinkControllerIntegrationTest {
         String contentAsString = mvcResult.getResponse().getContentAsString();
         JSONObject jsonObject = new JSONObject(contentAsString);
         this.token = "Bearer " + jsonObject.getString("jwtToken");
-        UUID id = UUID.fromString("3053e49b-6da3-4389-9d06-23b2d57b6f25");
-        mockMvc.perform(post(baseUrl + "delete" + "?id=" + id)
+        String shortLink = "short-link-1";
+        mockMvc.perform(post(baseUrl + "delete" + "?shortLink=" + shortLink)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", token))
                 .andExpect(status().is4xxClientError())
