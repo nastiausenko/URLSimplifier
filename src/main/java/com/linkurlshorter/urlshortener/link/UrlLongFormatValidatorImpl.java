@@ -17,8 +17,8 @@ import java.util.regex.Pattern;
  */
 
 public class UrlLongFormatValidatorImpl implements ConstraintValidator<UrlLongFormatValidator, String> {
-    private static final Pattern URL_PATTERN = Pattern
-            .compile("https?://\\w+\\.\\w+\\.(?:[a-zA-Z]{2,4})(?:/.*)?");// TODO: needs to be redone!
+    private static final Pattern URL_REGEX = Pattern
+            .compile("https?://[\\w.-]+\\.(?:[a-zA-Z]{2,4})(?:/.*)?");
     /**
      * Checks if the entered string matches the URL format.
      *
@@ -55,7 +55,7 @@ public class UrlLongFormatValidatorImpl implements ConstraintValidator<UrlLongFo
      * @return true if the URL string matches the standard URL format, false otherwise.
      */
     private static boolean validateUrl(String url) {
-        return url.matches(URL_PATTERN.pattern());
+        return url.matches(URL_REGEX.pattern());
     }
 
         /**
