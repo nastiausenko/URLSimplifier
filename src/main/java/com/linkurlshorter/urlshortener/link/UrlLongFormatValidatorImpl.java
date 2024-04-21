@@ -7,6 +7,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 /**
  * Implementation {@link ConstraintValidator} of a validator to check the URL format.
@@ -16,6 +17,8 @@ import java.io.IOException;
  */
 
 public class UrlLongFormatValidatorImpl implements ConstraintValidator<UrlLongFormatValidator, String> {
+    private static final Pattern URL_PATTERN = Pattern
+            .compile("https?://\\w+\\.\\w+\\.(?:[a-zA-Z]{2,4})(?:/.*)?");// TODO: needs to be redone!
     /**
      * Checks if the entered string matches the URL format.
      *
@@ -31,16 +34,15 @@ public class UrlLongFormatValidatorImpl implements ConstraintValidator<UrlLongFo
             context.disableDefaultConstraintViolation();
             return false;
         }
-        if (validateUrl(url)) {
-            context.buildConstraintViolationWithTemplate("Invalid URL format!")
+        if (!validateUrl(url)) {
+            context.buildConstraintViolationWithTemplate("Not valid format url!")
                     .addConstraintViolation();
             context.disableDefaultConstraintViolation();
             return false;
         }
         if (!isUrlActive(url)) {
-            context.buildConstraintViolationWithTemplate("Url not active!")
+            context.buildConstraintViolationWithTemplate("Url is not active!")
                     .addConstraintViolation();
-            context.disableDefaultConstraintViolation();
             return false;
         }
         return true;
@@ -53,35 +55,34 @@ public class UrlLongFormatValidatorImpl implements ConstraintValidator<UrlLongFo
      * @return true if the URL string matches the standard URL format, false otherwise.
      */
     private static boolean validateUrl(String url) {
-        String urlRegex = "^https?://\\S+$";
-        return !url.matches(urlRegex);
+        return url.matches(URL_PATTERN.pattern());
     }
 
-    /**
-     * Checks if the provided URL is null or empty.
-     *
-     * @param url The URL string to be checked.
-     * @return true if the URL string is null or empty, false otherwise.
-     */
-    private static boolean isUrlNullOrEmpty(String url) {
-        return url == null || url.isEmpty();
-    }
+        /**
+         * Checks if the provided URL is null or empty.
+         *
+         * @param url The URL string to be checked.
+         * @return true if the URL string is null or empty, false otherwise.
+         */
+        private static boolean isUrlNullOrEmpty (String url){
+            return url == null || url.isEmpty();
+        }
 
-    /**
-     * Checks if the provided URL is active by attempting to establish a connection.
-     *
-     * @param urlStr The URL string to check for activity.
-     * @return {@code true} if the URL is active (responds with a 200 status code), {@code false} otherwise.
-     */
-    private boolean isUrlActive(String urlStr) {
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(urlStr)
-                .build();
-        try (Response response = client.newCall(request).execute()) {
-            return response.isSuccessful();
-        } catch (IOException e) {
-            return false;
+        /**
+         * Checks if the provided URL is active by attempting to establish a connection.
+         *
+         * @param urlStr The URL string to check for activity.
+         * @return {@code true} if the URL is active (responds with a 200 status code), {@code false} otherwise.
+         */
+        private boolean isUrlActive (String urlStr){
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url(urlStr)
+                    .build();
+            try (Response response = client.newCall(request).execute()) {
+                return response.isSuccessful();
+            } catch (IOException e) {
+                return false;
+            }
         }
     }
-}
