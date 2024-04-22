@@ -1,4 +1,4 @@
-package com.linkurlshorter.urlshortener.swagger;
+package com.linkurlshorter.urlshortener.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 
 @OpenAPIDefinition(
         info = @Info(
-                title="URL shortener",
+                title = "URL shortener",
                 description = "API URL shortener",
                 version = "1.0.0"
         )
@@ -31,5 +31,4 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
         scheme = "bearer"
 )
 public class SwaggerConfig {
-
 }
