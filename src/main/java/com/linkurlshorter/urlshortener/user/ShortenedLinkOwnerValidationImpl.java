@@ -34,7 +34,7 @@ public class ShortenedLinkOwnerValidationImpl implements ConstraintValidator<Sho
             return false;
         }
         UUID currentUserId = getCurrentUserId();
-        UUID linkUserId = linkService.findByShortLink(shortLink).getId();
+        UUID linkUserId = linkService.findByShortLink(shortLink).getUser().getId();
         if (!Objects.equals(currentUserId, linkUserId)) {
             context.buildConstraintViolationWithTemplate("You cannot do this!")
                     .addConstraintViolation();
