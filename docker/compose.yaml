@@ -1,21 +1,28 @@
-services:
-  postgres:
-    image: 'postgres:14'
-    container_name: prod_postgres
-    restart: always
-    ports:
-      #      - '${PROD_DATABASE_PORT}:5432'
-      - "5432:5432"
-    environment:
-#      - 'POSTGRES_DB=${PROD_DATABASE_USERNAME}'
-#      - 'POSTGRES_PASSWORD=${PROD_DATABASE_PASSWORD}'
-#      - 'POSTGRES_USER=${PROD_DATABASE_NAME}'
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: StrongPass01
-      POSTGRES_DB: prodDb
+version: '3.7'
 
+services:
+
+  redis:
+    image: 'redis/redis-stack:latest'
+    container_name: redis
+    environment:
+      REDIS_HOST: ${REDIS_HOST:-localhost}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+
+  postgres:
+    image: 'postgres:16.0-alpine'
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-mydatabase}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
 
 volumes:
-    postgres_data:
+  postgres-data:

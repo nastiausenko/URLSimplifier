@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linkurlshorter.urlshortener.link.Link;
 import com.linkurlshorter.urlshortener.link.LinkService;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatusCode;
@@ -49,7 +50,6 @@ public class LinkRedirectController {
             Link link = jedis.exists(shortLink)
                     ? mapper.readValue(jedis.get(shortLink), Link.class)
                     : linkService.findByShortLink(shortLink);
-
             updateLinkStats(link, jedis);
             return redirectToLongLink(link);
         }
