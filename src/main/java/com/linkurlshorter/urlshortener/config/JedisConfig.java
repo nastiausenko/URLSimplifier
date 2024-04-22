@@ -24,10 +24,10 @@ import java.time.Duration;
 @Configuration
 public class JedisConfig {
 
-    @Value("${REDIS_HOST:}")
+    @Value("${REDIS_HOST:localhost}")
     private String host;
 
-    @Value("${REDIS_PORT:0}")
+    @Value("${REDIS_PORT:6379}")
     private int port;
 
     /**
