@@ -29,13 +29,15 @@ public class ShortenedLinkOwnerValidationImpl implements ConstraintValidator<Sho
     @Override
     public boolean isValid(String shortLink, ConstraintValidatorContext context) {
         if (shortLink == null || shortLink.isEmpty()) {
-            context.buildConstraintViolationWithTemplate("Invalid short link!");
+            context.buildConstraintViolationWithTemplate("Invalid short link!")
+                    .addConstraintViolation();
             return false;
         }
         UUID currentUserId = getCurrentUserId();
         UUID linkUserId = linkService.findByShortLink(shortLink).getId();
         if (!Objects.equals(currentUserId, linkUserId)) {
-            context.buildConstraintViolationWithTemplate("You cannot do this!");
+            context.buildConstraintViolationWithTemplate("You cannot do this!")
+                    .addConstraintViolation();
             return false;
         }
         return true;
