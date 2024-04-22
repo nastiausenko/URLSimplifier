@@ -282,4 +282,24 @@ class LinkServiceTest {
         assertThatThrownBy(() -> linkService.deleteById(null))
                 .isInstanceOf(NullLinkPropertyException.class);
     }
+
+    @Test
+    void findByExistUniqueLinkTest() {
+        when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.ofNullable(link));
+        linkService.findByExistUniqueLink(link.getShortLink());
+        assertThat(LinkStatus.ACTIVE).isEqualTo(link.getStatus());
+    }
+
+    @Test
+    void findByExistUniqueLinkNotFoundTest() {
+        assertThatThrownBy(() -> linkService.findByExistUniqueLink("short"))
+                .isInstanceOf(NoLinkFoundByShortLinkException.class);
+    }
+
+    @Test
+    void findByExistUniqueLinkNullTest() {
+        Link link = Link.builder().shortLink("short-link-2").status(LinkStatus.INACTIVE).build();
+        assertThatThrownBy(() -> linkService.findByExistUniqueLink(link.getShortLink()))
+                .isInstanceOf(NullLinkPropertyException.class);
+    }
 }
