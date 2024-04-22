@@ -1,9 +1,8 @@
 package com.linkurlshorter.urlshortener.redirect;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linkurlshorter.urlshortener.TestConfig;
-import com.linkurlshorter.urlshortener.link.Link;
-import com.linkurlshorter.urlshortener.link.LinkService;
-import com.linkurlshorter.urlshortener.link.LinkStatus;
+import com.linkurlshorter.urlshortener.link.*;
 import com.linkurlshorter.urlshortener.security.SecurityConfig;
 import com.linkurlshorter.urlshortener.user.User;
 import com.linkurlshorter.urlshortener.user.UserRole;
@@ -16,14 +15,15 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Unit tests for {@link LinkRedirectController} class.
@@ -37,8 +37,14 @@ class LinkRedirectControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-//    @MockBean
-//    private LinkCache linkCache;
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private JedisPool jedisPool;
+
+    @MockBean
+    private Jedis jedis;
 
     @MockBean
     private LinkService linkService;
@@ -71,31 +77,33 @@ class LinkRedirectControllerTest {
      * Test case for the {@link LinkRedirectController#redirectToOriginalLink(String)} method
      * when there is a short link in the cache.
      */
-//    @Test
-//    void redirectToOriginalLinkTest() throws Exception {
-//        when(linkCache.containsShortLink(link.getShortLink())).thenReturn(true);
-//        when(linkCache.getByShortLink(link.getShortLink())).thenReturn(link);
-//
-//        ResultActions resultActions = mockMvc.perform(get("/" + link.getShortLink())
-//                .contentType(MediaType.APPLICATION_JSON));
-//
-//        resultActions.andExpect(status().is3xxRedirection())
-//                .andExpect(redirectedUrl(link.getLongLink()));
-//    }
+    @Test
+    void redirectToOriginalLinkInLinkCacheTest() throws Exception {
+        when(jedisPool.getResource()).thenReturn(jedis);
+        when(jedis.exists(link.getShortLink())).thenReturn(true);
+        when(jedis.get(link.getShortLink())).thenReturn(objectMapper.writeValueAsString(link));
+
+        ResultActions resultActions = mockMvc.perform(get("/" + link.getShortLink())
+                .contentType(MediaType.APPLICATION_JSON));
+
+        resultActions.andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(link.getLongLink()));
+    }
 
     /**
      * Test case for the {@link LinkRedirectController#redirectToOriginalLink(String)} method
      * when there is no short link in the cache.
      */
-//    @Test
-//    void redirectToOriginalLinkNotInLinkCacheTest() throws Exception {
-//        when(linkCache.containsShortLink(link.getShortLink())).thenReturn(false);
-//        when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
-//
-//        ResultActions resultActions = mockMvc.perform(get("/" + link.getShortLink())
-//                .contentType(MediaType.APPLICATION_JSON));
-//
-//        resultActions.andExpect(status().is3xxRedirection())
-//                .andExpect(redirectedUrl(link.getLongLink()));
-//    }
+    @Test
+    void redirectToOriginalLinkNotInLinkCacheTest() throws Exception {
+        when(jedisPool.getResource()).thenReturn(jedis);
+        when(jedis.exists(link.getShortLink())).thenReturn(false);
+        when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
+
+        ResultActions resultActions = mockMvc.perform(get("/" + link.getShortLink())
+                .contentType(MediaType.APPLICATION_JSON));
+
+        resultActions.andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(link.getLongLink()));
+    }
 }

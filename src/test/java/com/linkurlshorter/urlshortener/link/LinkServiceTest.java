@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.annotation.Profile;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -281,5 +280,18 @@ class LinkServiceTest {
     void deleteByNullIdTest() {
         assertThatThrownBy(() -> linkService.deleteById(null))
                 .isInstanceOf(NullLinkPropertyException.class);
+    }
+
+    @Test
+    void findByExistUniqueLinkTest() {
+        when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.ofNullable(link));
+        linkService.findByExistUniqueLink(link.getShortLink());
+        assertThat(LinkStatus.ACTIVE).isEqualTo(link.getStatus());
+    }
+
+    @Test
+    void findByExistUniqueLinkNotFoundTest() {
+        assertThatThrownBy(() -> linkService.findByExistUniqueLink("short"))
+                .isInstanceOf(NoLinkFoundByShortLinkException.class);
     }
 }

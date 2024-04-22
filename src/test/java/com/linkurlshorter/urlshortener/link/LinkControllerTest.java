@@ -273,7 +273,7 @@ class LinkControllerTest {
     }
 
     /**
-     * Test case for the {@link LinkController#refreshLink(UUID)} method when
+     * Test case for the {@link LinkController#refreshLink(String)} method when
      * the status of the link is not ACTIVE.
      */
     @Test

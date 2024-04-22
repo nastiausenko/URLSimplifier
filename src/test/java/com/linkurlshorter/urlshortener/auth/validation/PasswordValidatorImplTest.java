@@ -46,6 +46,6 @@ class PasswordValidatorImplTest {
      */
     @Test
     void checkingEmptyPassword() {
-        assertThat(passwordValidator.isValid("null", null)).isFalse();
+        assertThat(passwordValidator.isValid(null, null)).isFalse();
     }
 }
