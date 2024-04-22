@@ -68,7 +68,7 @@ class LinkControllerTest {
         link = Link.builder()
                 .id(UUID.fromString("3053e49b-6da3-4389-9d06-23b2d57b6f25"))
                 .longLink("https://www.youtube.com")
-                .shortLink("short-link-1")
+                .shortLink("shortLink1")
                 .user(user)
                 .createdTime(LocalDateTime.of(2024, 4, 13, 10, 0))
                 .expirationTime(LocalDateTime.of(2024, 5, 16, 8, 0))
@@ -167,7 +167,7 @@ class LinkControllerTest {
         when(userService.findByEmail(any())).thenReturn(user);
         when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
 
-        EditLinkContentRequest request = new EditLinkContentRequest(link.getShortLink(), "short-link-2");
+        EditLinkContentRequest request = new EditLinkContentRequest(link.getShortLink(), "shortLink2");
         when(linkService.update(link)).thenReturn(link);
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/link/edit/content")
@@ -195,7 +195,7 @@ class LinkControllerTest {
         when(userService.findByEmail(any())).thenReturn(newUser);
         when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
 
-        EditLinkContentRequest request = new EditLinkContentRequest(link.getShortLink(), "short-link-2");
+        EditLinkContentRequest request = new EditLinkContentRequest(link.getShortLink(), "shortLink2");
         when(linkService.update(link)).thenReturn(link);
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/link/edit/content")
@@ -217,7 +217,7 @@ class LinkControllerTest {
         when(userService.findByEmail(any())).thenReturn(user);
         when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
 
-        EditLinkContentRequest request = new EditLinkContentRequest(link.getShortLink(), "short-link-2");
+        EditLinkContentRequest request = new EditLinkContentRequest(link.getShortLink(), "shortLink2");
         when(linkService.update(link)).thenReturn(link);
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/link/edit/content")
@@ -273,7 +273,7 @@ class LinkControllerTest {
     }
 
     /**
-     * Test case for the {@link LinkController#refreshLink(UUID)} method when
+     * Test case for the {@link LinkController#refreshLink(String)} method when
      * the status of the link is not ACTIVE.
      */
     @Test

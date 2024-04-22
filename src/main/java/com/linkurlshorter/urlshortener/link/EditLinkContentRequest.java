@@ -1,10 +1,10 @@
 package com.linkurlshorter.urlshortener.link;
 
+import com.linkurlshorter.urlshortener.user.ShortenedLinkOwnerValidation;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.UUID;
 
 /**
  * Represents a request to edit the content of a link.
@@ -21,6 +21,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EditLinkContentRequest {
+    @ShortenedLinkOwnerValidation
     private String oldShortLink;
+    @UrlNewShortValidator
+    @NotNull
     private String newShortLink;
 }

@@ -42,7 +42,7 @@ class LinkServiceTest {
         link = Link.builder()
                 .id(UUID.fromString("3053e49b-6da3-4389-9d06-23b2d57b6f25"))
                 .longLink("https://www.youtube.com")
-                .shortLink("short-link-1")
+                .shortLink("shortLink1")
                 .user(User.builder()
                         .id(UUID.fromString("84991c79-f6a9-4b7b-b1b4-0d66c0b92c81"))
                         .email("user1@example.com")
@@ -82,7 +82,7 @@ class LinkServiceTest {
      */
     @Test
     void updateSuccessfulTest() {
-        when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.of(link));
+        when(linkRepository.findById(link.getId())).thenReturn(Optional.of(link));
         when(linkRepository.save(any(Link.class))).thenReturn(link);
 
         Link savedLink = linkService.update(link);
@@ -104,8 +104,7 @@ class LinkServiceTest {
     @Test
     void updateDeletedLinkTest() {
         link.setStatus(LinkStatus.DELETED);
-        when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.of(link));
-
+        when(linkRepository.findById(link.getId())).thenReturn(Optional.of(link));
         assertThatThrownBy(() -> linkService.update(link))
                 .isInstanceOf(DeletedLinkException.class);
     }

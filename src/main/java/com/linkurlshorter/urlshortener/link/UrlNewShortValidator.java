@@ -6,15 +6,16 @@ import jakarta.validation.Payload;
 import java.lang.annotation.*;
 
 /**
- * An annotation {@link UrlShortValidator} used to validate short URLs.
+ * An annotation {@link UrlNewShortValidator} used to validate short URLs.
+ * Primarily validates new short links such as in edit content and create operations.
  * Can be applied to fields, methods, or other annotations.
- * Uses the {@link UrlShortValidatorImpl} implementation to perform the validation.
+ * Uses the {@link UrlNewShortValidatorImpl} implementation to perform the validation.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
-@Constraint(validatedBy = UrlShortValidatorImpl.class)
-public @interface UrlShortValidator {
+@Constraint(validatedBy = UrlNewShortValidatorImpl.class)
+public @interface UrlNewShortValidator {
 
     /**
      * The message to be used to inform about the failed validation.

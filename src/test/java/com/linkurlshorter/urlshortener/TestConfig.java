@@ -118,7 +118,7 @@ public class TestConfig {
     }
 
     @Bean
-    public ShortLinkGenerator shortLinkGenerator() {
-        return new ShortLinkGenerator();
+    public ShortLinkGenerator shortLinkGenerator(LinkService linkService) {
+        return new ShortLinkGenerator(linkService);
     }
 }

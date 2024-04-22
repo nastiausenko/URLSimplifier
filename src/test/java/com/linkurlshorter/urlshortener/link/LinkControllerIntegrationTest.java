@@ -71,7 +71,7 @@ class LinkControllerIntegrationTest {
             "https://www.google.com",
             "https://www.facebook.com"})
     void createShortLinkWorksCorrectly(String url) throws Exception {
-        CreateLinkRequest createLinkRequest = new CreateLinkRequest(url, null); //TODO: Artem has added null here to match the new method signature
+        CreateLinkRequest createLinkRequest = new CreateLinkRequest(url, "MockShortLink");
         mockMvc.perform(post(baseUrl + "create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", token)
@@ -100,7 +100,7 @@ class LinkControllerIntegrationTest {
 
     @Test
     void deleteLinkWorksCorrectly() throws Exception {
-        String shortLink = "short-link-1";
+        String shortLink = "shortLink1";
         mockMvc.perform(post(baseUrl + "delete" + "?shortLink=" + shortLink)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", token))
@@ -135,7 +135,7 @@ class LinkControllerIntegrationTest {
         String contentAsString = mvcResult.getResponse().getContentAsString();
         JSONObject jsonObject = new JSONObject(contentAsString);
         this.token = "Bearer " + jsonObject.getString("jwtToken");
-        String shortLink = "short-link-1";
+        String shortLink = "shortLink1";
         mockMvc.perform(post(baseUrl + "delete" + "?shortLink=" + shortLink)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", token))

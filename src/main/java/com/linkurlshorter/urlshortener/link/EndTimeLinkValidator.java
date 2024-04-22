@@ -16,7 +16,7 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
-@Constraint(validatedBy = UrlShortValidatorImpl.class)
+@Constraint(validatedBy = UrlNewShortValidatorImpl.class)
 public @interface EndTimeLinkValidator {
 
     /**

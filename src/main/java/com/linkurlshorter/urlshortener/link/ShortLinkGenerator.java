@@ -1,12 +1,21 @@
 package com.linkurlshorter.urlshortener.link;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ShortLinkGenerator {
+    private final LinkService linkService;
 
     public String generate() {
-        return RandomStringUtils.randomAlphanumeric(8);
+        for (int i = 0; i < 5; i++) {
+            String newShortLink = RandomStringUtils.randomAlphanumeric(8);
+            if (linkService.countLinksByShortLink(newShortLink)<=0) {
+                return newShortLink;
+            }
+        }
+        throw new InternalServerLinkException();
     }
 }
