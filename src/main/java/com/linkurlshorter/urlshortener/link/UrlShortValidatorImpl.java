@@ -4,8 +4,6 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Objects;
-
 /**
  * The UrlShortValidatorImpl class implements the {@link ConstraintValidator} interface for annotating an UrlShortValidator.
  * Used to validate short links to ensure that they are unique and active.
@@ -26,9 +24,12 @@ public class UrlShortValidatorImpl implements ConstraintValidator<UrlShortValida
      */
     @Override
     public boolean isValid(String shortLink, ConstraintValidatorContext context) {
+        if (shortLink == null || shortLink.isEmpty()) {
+            context.buildConstraintViolationWithTemplate("Invalid short link!")
+                    .addConstraintViolation();
+            return false;
+        }
         Link link = linkService.findByShortLink(shortLink);
-        Objects.requireNonNull(link, "This link cannot be null!");
-
         if (link.getStatus() == LinkStatus.INACTIVE) {
             context.buildConstraintViolationWithTemplate("This link is inactive!")
                     .addConstraintViolation();
