@@ -1,5 +1,6 @@
 package com.linkurlshorter.urlshortener.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import redis.clients.jedis.JedisPool;
@@ -10,9 +11,15 @@ import java.time.Duration;
 @Configuration
 public class JedisConfig {
 
+    @Value("${REDIS_HOST:}")
+    private String host;
+
+    @Value("${REDIS_PORT:0}")
+    private int port;
+
     @Bean
     public JedisPool jedisPool() {
-        return new JedisPool(buildPoolConfig(), "localhost", 6379);
+        return new JedisPool(buildPoolConfig(), host, port);
     }
 
     private JedisPoolConfig buildPoolConfig() {
