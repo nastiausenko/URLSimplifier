@@ -82,7 +82,7 @@ class LinkServiceTest {
     @Test
     void updateSuccessfulTest() {
         when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.of(link));
-        when(linkRepository.save(any(Link.class))).thenReturn(link);
+        when(linkRepository.save(link)).thenReturn(link);
 
         Link savedLink = linkService.update(link);
         assertThat(savedLink).isNotNull().isEqualTo(link);
@@ -103,8 +103,6 @@ class LinkServiceTest {
     @Test
     void updateDeletedLinkTest() {
         link.setStatus(LinkStatus.DELETED);
-        when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.of(link));
-
         assertThatThrownBy(() -> linkService.update(link))
                 .isInstanceOf(DeletedLinkException.class);
     }
@@ -184,7 +182,7 @@ class LinkServiceTest {
      */
     @Test
     void findByShortLinkNotFoundTest() {
-        assertThatThrownBy(() ->  linkService.deleteByShortLink("http://link/short"))
+        assertThatThrownBy(() ->  linkService.deleteByShortLink("https://link/short"))
                 .isInstanceOf(NoLinkFoundByShortLinkException.class);
     }
 
@@ -282,6 +280,10 @@ class LinkServiceTest {
                 .isInstanceOf(NullLinkPropertyException.class);
     }
 
+
+    /**
+     * Test case for the {@link LinkService#findByExistUniqueLink(String)} method.
+     */
     @Test
     void findByExistUniqueLinkTest() {
         when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.ofNullable(link));
@@ -289,9 +291,26 @@ class LinkServiceTest {
         assertThat(LinkStatus.ACTIVE).isEqualTo(link.getStatus());
     }
 
+    /**
+     * Test case for the {@link LinkService#findByExistUniqueLink(String)} method when there is no link
+     * found by short link.
+     */
     @Test
     void findByExistUniqueLinkNotFoundTest() {
         assertThatThrownBy(() -> linkService.findByExistUniqueLink("short"))
                 .isInstanceOf(NoLinkFoundByShortLinkException.class);
+    }
+
+    /**
+     * Test case for the {@link LinkService#findByExistUniqueLink(String)} method when the provided link status
+     * is not active.
+     */
+    @Test
+    void findByExistUniqueLinkInactiveTest() {
+        link.setStatus(LinkStatus.INACTIVE);
+        when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.ofNullable(link));
+
+        assertThatThrownBy(() -> linkService.findByExistUniqueLink(link.getShortLink()))
+                .isInstanceOf(NullLinkPropertyException.class);
     }
 }
