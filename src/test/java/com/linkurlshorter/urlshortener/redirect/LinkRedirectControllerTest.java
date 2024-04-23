@@ -1,6 +1,5 @@
 package com.linkurlshorter.urlshortener.redirect;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linkurlshorter.urlshortener.TestConfig;
 import com.linkurlshorter.urlshortener.link.*;
 import com.linkurlshorter.urlshortener.security.SecurityConfig;
@@ -36,9 +35,6 @@ class LinkRedirectControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private JedisPool jedisPool;
@@ -80,25 +76,7 @@ class LinkRedirectControllerTest {
     @Test
     void redirectToOriginalLinkInLinkCacheTest() throws Exception {
         when(jedisPool.getResource()).thenReturn(jedis);
-        when(jedis.exists(link.getShortLink())).thenReturn(true);
-        when(jedis.get(link.getShortLink())).thenReturn(objectMapper.writeValueAsString(link));
-
-        ResultActions resultActions = mockMvc.perform(get("/" + link.getShortLink())
-                .contentType(MediaType.APPLICATION_JSON));
-
-        resultActions.andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(link.getLongLink()));
-    }
-
-    /**
-     * Test case for the {@link LinkRedirectController#redirectToOriginalLink(String)} method
-     * when there is no short link in the cache.
-     */
-    @Test
-    void redirectToOriginalLinkNotInLinkCacheTest() throws Exception {
-        when(jedisPool.getResource()).thenReturn(jedis);
-        when(jedis.exists(link.getShortLink())).thenReturn(false);
-        when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
+        when(linkService.getLongLinkFromShortLink(link.getShortLink())).thenReturn(link.getLongLink());
 
         ResultActions resultActions = mockMvc.perform(get("/" + link.getShortLink())
                 .contentType(MediaType.APPLICATION_JSON));

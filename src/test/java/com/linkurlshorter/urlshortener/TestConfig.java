@@ -1,5 +1,6 @@
 package com.linkurlshorter.urlshortener;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linkurlshorter.urlshortener.auth.AuthService;
 import com.linkurlshorter.urlshortener.jwt.JwtUtil;
 import com.linkurlshorter.urlshortener.link.LinkInfoDtoMapper;
@@ -12,6 +13,7 @@ import com.linkurlshorter.urlshortener.user.UserService;
 import jakarta.persistence.EntityManager;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import redis.clients.jedis.JedisPool;
 
 import static org.mockito.Mockito.mock;
 
@@ -72,8 +74,8 @@ public class TestConfig {
      * @return LinkService bean with mocked LinkRepository dependency
      */
     @Bean
-    public LinkService linkService(LinkRepository linkRepository) {
-        return new LinkService(linkRepository);
+    public LinkService linkService(LinkRepository linkRepository, JedisPool jedisPool, ObjectMapper objectMapper) {
+        return new LinkService(linkRepository, jedisPool, objectMapper);
     }
 
     /**
@@ -121,4 +123,10 @@ public class TestConfig {
     public ShortLinkGenerator shortLinkGenerator() {
         return new ShortLinkGenerator();
     }
+
+    @Bean
+    public JedisPool jedisPool() {
+        return new JedisPool();
+    }
+
 }
