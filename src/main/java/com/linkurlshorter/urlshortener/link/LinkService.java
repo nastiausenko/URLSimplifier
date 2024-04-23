@@ -100,6 +100,22 @@ public class LinkService {
         return linkRepository.save(link);
     }
 
+    public void updateRedisShortLink(String shortLink, String newShortLink) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            if (jedis.exists(shortLink)) {
+                jedis.rename(shortLink, newShortLink);
+            }
+        }
+    }
+
+    @SneakyThrows
+    public void updateRedisLink(String shortLink, Link link) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            if (jedis.exists(shortLink)) {
+                jedis.set(shortLink, mapper.writeValueAsString(link));
+            }
+        }
+    }
 
     /**
      * Retrieves a link entity by its ID.

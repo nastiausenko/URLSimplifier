@@ -117,12 +117,13 @@ public class LinkController {
     @Operation(summary = "Edit link content")
     public ResponseEntity<LinkModifyingResponse> editLinkContent(@RequestBody EditLinkContentRequest request) {
         if (doesUserHaveRightsForLinkByShortLink(request.getOldShortLink())) {
-            Link oldLink = linkService.findByShortLink(request.getOldShortLink());
-            if (oldLink.getStatus() != LinkStatus.ACTIVE) {
+            Link link = linkService.findByShortLink(request.getOldShortLink());
+            if (link.getStatus() != LinkStatus.ACTIVE) {
                 throw new LinkStatusException();
             }
-            oldLink.setShortLink(request.getNewShortLink());    //TODO: add short link validation
-            linkService.update(oldLink);
+            link.setShortLink(request.getNewShortLink());    //TODO: add short link validation
+            linkService.updateRedisShortLink(request.getOldShortLink(), request.getNewShortLink());
+            linkService.update(link);
             return ResponseEntity.ok(new LinkModifyingResponse("ok"));
         } else {
             throw new ForbiddenException(OPERATION_FORBIDDEN_MSG);
@@ -142,13 +143,14 @@ public class LinkController {
     @Operation(summary = "Refresh link expiration time")
     public ResponseEntity<LinkModifyingResponse> refreshLink(@RequestParam String shortLink) {
         if (doesUserHaveRightsForLinkByShortLink(shortLink)) {
-            Link oldLink = linkService.findByShortLink(shortLink);
-            if (oldLink.getStatus() == LinkStatus.DELETED) {
+            Link link = linkService.findByShortLink(shortLink);
+            if (link.getStatus() == LinkStatus.DELETED) {
                 throw new DeletedLinkException();
             }
-            oldLink.setExpirationTime(LocalDateTime.now().plusDays(SHORT_LINK_LIFETIME_IN_DAYS));
-            oldLink.setStatus(LinkStatus.ACTIVE);
-            linkService.update(oldLink);
+            link.setExpirationTime(LocalDateTime.now().plusDays(SHORT_LINK_LIFETIME_IN_DAYS));
+            link.setStatus(LinkStatus.ACTIVE);
+            linkService.updateRedisLink(shortLink, link);
+            linkService.update(link);
             return ResponseEntity.ok(new LinkModifyingResponse("ok"));
         } else {
             throw new ForbiddenException(OPERATION_FORBIDDEN_MSG);
