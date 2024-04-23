@@ -170,9 +170,9 @@ public class LinkService {
         Link link = findByShortLink(shortLink);
         link.setStatus(LinkStatus.DELETED);
 
-//        try (Jedis jedis = jedisPool.getResource()) {
-//            jedis.unlink(shortLink);
-//        }                  //TODO BUG BUG
+        try (Jedis jedis = jedisPool.getResource()) {
+            jedis.unlink(shortLink);
+        }
         linkRepository.save(link);
     }
 
