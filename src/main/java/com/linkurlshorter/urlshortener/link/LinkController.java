@@ -79,7 +79,7 @@ public class LinkController {
                             .shortLink(newShortUrl)
                             .expirationTime(LocalDateTime.now().plusDays(SHORT_LINK_LIFETIME_IN_DAYS))
                             .user(user)
-                            .build()  //TODO: add validations (short link being unique etc)
+                            .build()
             );
         } catch (Exception e) {
             throw new InternalServerLinkException();
