@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 @Transactional
 @Rollback
-public class LinkRedirectControllerIntegrationTest {
+class LinkRedirectControllerIntegrationTest {
     @Container
     @ServiceConnection
     static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:16.0-alpine");

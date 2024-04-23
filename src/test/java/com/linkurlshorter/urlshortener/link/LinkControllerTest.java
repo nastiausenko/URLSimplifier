@@ -78,7 +78,7 @@ class LinkControllerTest {
     }
 
     /**
-     * Test case for the {@link LinkController#createLink(CreateLinkRequest)} method.
+     * Test case for the {@link LinkController#createLink(CreateLinkRequest)} method when the short link is provided.
      */
     @Test
     @WithMockUser
@@ -86,7 +86,27 @@ class LinkControllerTest {
         when(userService.findByEmail(any())).thenReturn(user);
         when(linkService.save(any())).thenReturn(link);
 
-        CreateLinkRequest request = new CreateLinkRequest("https://www.example.com", null); //TODO: Artem has added null here to match the new method signature
+        CreateLinkRequest request = new CreateLinkRequest("https://www.example.com", "example");
+
+        ResultActions resultActions = mockMvc.perform(post("/api/V1/link/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.error").value("ok"))
+                .andExpect(jsonPath("$.shortLink").value("example"));
+    }
+
+    /**
+     * Test case for the {@link LinkController#createLink(CreateLinkRequest)} method when the short link is not provided.
+     */
+    @Test
+    @WithMockUser
+    void createLinkNotProvidedShortLinkTest() throws Exception {
+        when(userService.findByEmail(any())).thenReturn(user);
+        when(linkService.save(any())).thenReturn(link);
+
+        CreateLinkRequest request = new CreateLinkRequest("https://www.example.com", null);
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/link/create")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -104,7 +124,7 @@ class LinkControllerTest {
     @Test
     @WithMockUser
     void createLinkFailedTest() throws Exception {
-        CreateLinkRequest request = new CreateLinkRequest("https://www.example.com", null);
+        CreateLinkRequest request = new CreateLinkRequest("https://www.example.com", "example");
 
         when(userService.findByEmail(any())).thenReturn(user);
         when(linkService.save(any())).thenThrow(new RuntimeException("Short link already exists"));
