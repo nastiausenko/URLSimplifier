@@ -1,5 +1,7 @@
 package com.linkurlshorter.urlshortener.link;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linkurlshorter.urlshortener.user.User;
 import com.linkurlshorter.urlshortener.user.UserRole;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +40,9 @@ class LinkServiceTest {
 
     @Mock
     private Jedis jedis;
+
+    @Mock
+    private ObjectMapper mapper;
 
     private Link link;
 
@@ -115,50 +120,63 @@ class LinkServiceTest {
     }
 
     /**
-     * Test case for the {@link LinkService#findById(UUID)} method.
+     * Test case for the {@link LinkService#updateRedisShortLink(String, String)} method.
      */
     @Test
-    void findByIdTest() {
-        when(linkRepository.findById(link.getId())).thenReturn(Optional.ofNullable(link));
-        Link foundLink = linkService.findById(link.getId());
+    void updateRedisShortLinkTest() {
+        String shortLink = link.getShortLink();
+        String newShortLink = "short-link-2";
 
-        assertThat(foundLink).isNotNull().isEqualTo(link);
-        verify(linkRepository, times(1)).findById(link.getId());
+        when(jedisPool.getResource()).thenReturn(jedis);
+        when(jedis.exists(anyString())).thenReturn(true);
+        linkService.updateRedisShortLink(shortLink, newShortLink);
+
+        verify(jedis, times(1)).rename(shortLink, newShortLink);
     }
 
     /**
-     * Test case for the {@link LinkService#findById(UUID)} method when the link with provided id
-     * does not exist.
+     * Test case for the {@link LinkService#updateRedisLink(String, Link)} method.
      */
     @Test
-    void findByIdNotFoundTest() {
-        UUID nonExistentUserId = UUID.randomUUID();
-        when(linkRepository.findById(nonExistentUserId)).thenReturn(Optional.empty());
+    void updateRedisLinkTest() throws JsonProcessingException {
+        String shortLink = link.getShortLink();
 
-        assertThatThrownBy(() -> linkService.findById(nonExistentUserId))
-                .isInstanceOf(NoLinkFoundByIdException.class);
+        when(jedisPool.getResource()).thenReturn(jedis);
+        when(jedis.exists(anyString())).thenReturn(true);
+        linkService.updateRedisLink(shortLink, link);
+
+        verify(jedis, times(1)).set(shortLink, mapper.writeValueAsString(link));
     }
 
     /**
-     * Test case for the {@link LinkService#findById(UUID)} method when the link with provided id
-     * is deleted.
+     * Test case for the {@link LinkService#getLongLinkFromShortLink(String)} method.
      */
     @Test
-    void findByIdDeletedTest() {
-        link.setStatus(LinkStatus.DELETED);
-        when(linkRepository.findById(link.getId())).thenReturn(Optional.of(link));
+    void getLongLinkFromShortLinkTest() throws JsonProcessingException {
+        when(jedisPool.getResource()).thenReturn(jedis);
+        when(jedis.exists(anyString())).thenReturn(true);
+        when(jedis.get(anyString())).thenReturn("{}");
+        when(mapper.readValue(anyString(), eq(Link.class))).thenReturn(link);
 
-        assertThatThrownBy(() -> linkService.findById(link.getId()))
-                .isInstanceOf(DeletedLinkException.class);
+        String actualLongLink = linkService.getLongLinkFromShortLink(link.getShortLink());
+
+        assertThat(actualLongLink).isEqualTo(link.getLongLink());
     }
 
     /**
-     * Test case for the {@link LinkService#findById(UUID)} method when the provided id is null.
+     * Test case for the {@link LinkService#getLongLinkFromShortLink(String)} method when link status
+     * is inactive.
      */
     @Test
-    void findByNullIdTest() {
-        assertThatThrownBy(() -> linkService.findById(null))
-                .isInstanceOf(NullLinkPropertyException.class);
+    void getLongLinkFromShortLinkInactiveTest() throws JsonProcessingException {
+        link.setStatus(LinkStatus.INACTIVE);
+        when(jedisPool.getResource()).thenReturn(jedis);
+        when(jedis.exists(anyString())).thenReturn(true);
+        when(jedis.get(anyString())).thenReturn("{}");
+        when(mapper.readValue(anyString(), eq(Link.class))).thenReturn(link);
+
+        assertThatThrownBy(() -> linkService.getLongLinkFromShortLink(link.getShortLink()))
+                .isInstanceOf(InactiveLinkException.class);
     }
 
     /**
@@ -189,8 +207,20 @@ class LinkServiceTest {
      */
     @Test
     void findByShortLinkNotFoundTest() {
-        assertThatThrownBy(() ->  linkService.deleteByShortLink("https://link/short"))
+        assertThatThrownBy(() ->  linkService.findByShortLink("short-link-2"))
                 .isInstanceOf(NoLinkFoundByShortLinkException.class);
+    }
+
+    /**
+     * Test case for the {@link LinkService#findByShortLink(String)} method when the
+     * provided short link is deleted.
+     */
+    @Test
+    void findByShortLinkDeletedTest() {
+        when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.of(link));
+        link.setStatus(LinkStatus.DELETED);
+        assertThatThrownBy(() ->  linkService.findByShortLink(link.getShortLink()))
+                .isInstanceOf(DeletedLinkException.class);
     }
 
     /**
@@ -268,26 +298,6 @@ class LinkServiceTest {
         assertThatThrownBy(() -> linkService.deleteByShortLink(null))
                 .isInstanceOf(NullLinkPropertyException.class);
     }
-
-    /**
-     * Test case for the {@link LinkService#deleteById(UUID)} method.
-     */
-    @Test
-    void deleteByIdTest() {
-        assertAll(() -> linkService.deleteById(link.getId()));
-        verify(linkRepository, times(1)).deleteById(link.getId());
-    }
-
-    /**
-     * Test case for the {@link LinkService#deleteById(UUID)} method when the
-     * provided id is null.
-     */
-    @Test
-    void deleteByNullIdTest() {
-        assertThatThrownBy(() -> linkService.deleteById(null))
-                .isInstanceOf(NullLinkPropertyException.class);
-    }
-
 
     /**
      * Test case for the {@link LinkService#findByExistUniqueLink(String)} method.
