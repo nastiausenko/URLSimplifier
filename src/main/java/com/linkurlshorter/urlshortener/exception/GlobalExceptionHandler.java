@@ -120,9 +120,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
-    @ExceptionHandler(DeletedLinkException.class)
-    public ResponseEntity<Object> handleDeletedLinkException(
-            DeletedLinkException ex, HttpServletRequest request) {
+    @ExceptionHandler({DeletedLinkException.class, InactiveLinkException.class})
+    public ResponseEntity<Object> handleDeletedAndInactiveLinkException(
+            RuntimeException ex, HttpServletRequest request) {
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST,
                 ex.getMessage(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);

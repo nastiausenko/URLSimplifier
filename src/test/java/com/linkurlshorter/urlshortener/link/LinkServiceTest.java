@@ -8,6 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -30,6 +32,12 @@ class LinkServiceTest {
 
     @InjectMocks
     private LinkService linkService;
+
+    @Mock
+    private JedisPool jedisPool;
+
+    @Mock
+    private Jedis jedis;
 
     private Link link;
 
@@ -245,6 +253,7 @@ class LinkServiceTest {
      */
     @Test
     void deleteByShortLinkTest() {
+        when(jedisPool.getResource()).thenReturn(jedis);
         when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.of(link));
         linkService.deleteByShortLink(link.getShortLink());
         assertThat(LinkStatus.DELETED).isEqualTo(link.getStatus());
