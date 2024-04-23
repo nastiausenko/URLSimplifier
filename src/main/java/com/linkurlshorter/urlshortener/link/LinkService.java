@@ -201,6 +201,9 @@ public class LinkService {
         }
         linkRepository.deleteById(id);
     }
+    public Optional<Link> findByUniqueShortLink(String shortLink) {
+        return linkRepository.findByShortLink(shortLink);
+    }
 
     /**
      * Searches for a unique existing link by a short link and returns true if such link exists, false otherwise
