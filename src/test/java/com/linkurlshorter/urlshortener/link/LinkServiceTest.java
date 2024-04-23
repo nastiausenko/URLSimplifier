@@ -256,7 +256,7 @@ class LinkServiceTest {
      */
     @Test
     void deleteByShortLinkTest() {
-        when(jedisPool.getResource()).thenReturn(jedis);
+//        when(jedisPool.getResource()).thenReturn(jedis);  TODO
         when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.of(link));
         linkService.deleteByShortLink(link.getShortLink());
         assertThat(LinkStatus.DELETED).isEqualTo(link.getStatus());
