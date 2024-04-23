@@ -120,26 +120,6 @@ public class LinkService {
     }
 
     /**
-     * Retrieves a link entity by its ID.
-     *
-     * @param id The ID of the link entity to retrieve.
-     * @return The retrieved link entity.
-     * @throws NullLinkPropertyException If the 'id' parameter is null.
-     * @throws NoLinkFoundByIdException  If no link is found with the given ID.
-     * @throws DeletedLinkException      If the retrieved link has been marked as deleted.
-     */
-    public Link findById(UUID id) { // **Unused method**
-        if (Objects.isNull(id)) {
-            throw new NullLinkPropertyException();
-        }
-        Link link = linkRepository.findById(id).orElseThrow(NoLinkFoundByIdException::new);
-        if (link.getStatus() == LinkStatus.DELETED) {
-            throw new DeletedLinkException();
-        }
-        return link;
-    }
-
-    /**
      * Retrieves a link entity by its short link.
      *
      * @param shortLink The short link of the link entity to retrieve.
@@ -192,13 +172,6 @@ public class LinkService {
             jedis.unlink(shortLink);
         }
         linkRepository.save(link);
-    }
-
-    public void deleteById(UUID id) { // **Unused method**
-        if (Objects.isNull(id)) {
-            throw new NullLinkPropertyException();
-        }
-        linkRepository.deleteById(id);
     }
 
     /**
