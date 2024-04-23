@@ -5,7 +5,6 @@ import com.linkurlshorter.urlshortener.link.Link;
 import com.linkurlshorter.urlshortener.link.LinkService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatusCode;
@@ -66,6 +65,7 @@ public class LinkRedirectController {
     private void updateLinkStats(Link link, Jedis jedis) {
         link.setStatistics(link.getStatistics() + 1);
         link.setExpirationTime(LocalDateTime.now().plusMonths(1));
+        linkService.update(link);
 
         jedis.set(link.getShortLink(), mapper.writeValueAsString(link));
     }
