@@ -4,6 +4,7 @@ import com.linkurlshorter.urlshortener.user.User;
 import com.linkurlshorter.urlshortener.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,7 @@ import java.util.UUID;
  */
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Link", description = "The Link API")
 @RequestMapping("/api/V1/link")
 public class LinkController {
     private static final int SHORT_LINK_LIFETIME_IN_DAYS = 30;

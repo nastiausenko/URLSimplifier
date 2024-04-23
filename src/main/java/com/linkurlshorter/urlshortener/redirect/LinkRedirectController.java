@@ -3,6 +3,7 @@ package com.linkurlshorter.urlshortener.redirect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linkurlshorter.urlshortener.link.Link;
 import com.linkurlshorter.urlshortener.link.LinkService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ import java.time.LocalDateTime;
  */
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Link Redirect", description = "The Link Redirect API")
 public class LinkRedirectController {
 
     private final LinkService linkService;
