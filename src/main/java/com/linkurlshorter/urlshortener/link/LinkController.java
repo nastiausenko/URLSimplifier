@@ -1,10 +1,10 @@
 package com.linkurlshorter.urlshortener.link;
 
+import com.linkurlshorter.urlshortener.user.ShortenedLinkOwnerValidation;
 import com.linkurlshorter.urlshortener.user.User;
 import com.linkurlshorter.urlshortener.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,11 +31,9 @@ import java.util.UUID;
  */
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Link", description = "The Link API")
 @RequestMapping("/api/V1/link")
 public class LinkController {
     private static final int SHORT_LINK_LIFETIME_IN_DAYS = 30;
-    private static final String OPERATION_FORBIDDEN_MSG = "Operation forbidden!";
 
     private final LinkService linkService;
     private final UserService userService;
@@ -97,13 +95,10 @@ public class LinkController {
     @PostMapping("/delete")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "Delete link by short link")
-    public ResponseEntity<LinkModifyingResponse> deleteLink(@RequestParam String shortLink) {
-        if (doesUserHaveRightsForLinkByShortLink(shortLink)) {
-            linkService.deleteByShortLink(shortLink);//TODO: add validations (id not null etc)
-            return ResponseEntity.ok(new LinkModifyingResponse("ok"));
-        } else {
-            throw new ForbiddenException(OPERATION_FORBIDDEN_MSG);
-        }
+    public ResponseEntity<LinkModifyingResponse> deleteLink(
+            @Valid @RequestParam @ShortenedLinkOwnerValidation String shortLink) {
+        linkService.deleteByShortLink(shortLink);
+        return ResponseEntity.ok(new LinkModifyingResponse("ok"));
     }
 
     /**
@@ -117,18 +112,14 @@ public class LinkController {
     @PostMapping("/edit/content")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "Edit link content")
-    public ResponseEntity<LinkModifyingResponse> editLinkContent(@RequestBody EditLinkContentRequest request) {
-        if (doesUserHaveRightsForLinkByShortLink(request.getOldShortLink())) {
-            Link oldLink = linkService.findByShortLink(request.getOldShortLink());
-            if (oldLink.getStatus() != LinkStatus.ACTIVE) {
-                throw new LinkStatusException();
-            }
-            oldLink.setShortLink(request.getNewShortLink());    //TODO: add short link validation
-            linkService.update(oldLink);
-            return ResponseEntity.ok(new LinkModifyingResponse("ok"));
-        } else {
-            throw new ForbiddenException(OPERATION_FORBIDDEN_MSG);
+    public ResponseEntity<LinkModifyingResponse> editLinkContent(@RequestBody @Valid EditLinkContentRequest request) {
+        Link oldLink = linkService.findByShortLink(request.getOldShortLink());
+        if (oldLink.getStatus() != LinkStatus.ACTIVE) {
+            throw new LinkStatusException();
         }
+        oldLink.setShortLink(request.getNewShortLink());
+        linkService.update(oldLink);
+        return ResponseEntity.ok(new LinkModifyingResponse("ok"));
     }
 
     /**
@@ -142,19 +133,16 @@ public class LinkController {
     @PostMapping("/edit/refresh")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "Refresh link expiration time")
-    public ResponseEntity<LinkModifyingResponse> refreshLink(@RequestParam String shortLink) {
-        if (doesUserHaveRightsForLinkByShortLink(shortLink)) {
-            Link oldLink = linkService.findByShortLink(shortLink);
-            if (oldLink.getStatus() == LinkStatus.DELETED) {
-                throw new DeletedLinkException();
-            }
-            oldLink.setExpirationTime(LocalDateTime.now().plusDays(SHORT_LINK_LIFETIME_IN_DAYS));
-            oldLink.setStatus(LinkStatus.ACTIVE);
-            linkService.update(oldLink);
-            return ResponseEntity.ok(new LinkModifyingResponse("ok"));
-        } else {
-            throw new ForbiddenException(OPERATION_FORBIDDEN_MSG);
+    public ResponseEntity<LinkModifyingResponse> refreshLink(
+            @RequestParam @Valid @ShortenedLinkOwnerValidation String shortLink) {
+        Link oldLink = linkService.findByShortLink(shortLink);
+        if (oldLink.getStatus() == LinkStatus.DELETED) {
+            throw new DeletedLinkException();
         }
+        oldLink.setExpirationTime(LocalDateTime.now().plusDays(SHORT_LINK_LIFETIME_IN_DAYS));
+        oldLink.setStatus(LinkStatus.ACTIVE);
+        linkService.update(oldLink);
+        return ResponseEntity.ok(new LinkModifyingResponse("ok"));
     }
 
     /**
@@ -167,15 +155,12 @@ public class LinkController {
     @GetMapping("/info")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "Get link info")
-    public ResponseEntity<LinkInfoResponse> getInfoByShortLink(@RequestParam String shortLink) {
-        if (doesUserHaveRightsForLinkByShortLink(shortLink)) {
-            Link link = linkService.findByShortLink(shortLink);
-            LinkInfoDto dto = linkDtoMapper.mapLinkToDto(link);
-            LinkInfoResponse response = new LinkInfoResponse(List.of(dto), "ok");
-            return ResponseEntity.ok(response);
-        } else {
-            throw new ForbiddenException(OPERATION_FORBIDDEN_MSG);
-        }
+    public ResponseEntity<LinkInfoResponse> getInfoByShortLink(
+            @RequestParam @Valid @ShortenedLinkOwnerValidation String shortLink) {
+        Link link = linkService.findByShortLink(shortLink);
+        LinkInfoDto dto = linkDtoMapper.mapLinkToDto(link);
+        LinkInfoResponse response = new LinkInfoResponse(List.of(dto), "ok");
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -185,7 +170,7 @@ public class LinkController {
      */
     @GetMapping("/all-links-info")
     @SecurityRequirement(name = "JWT")
-    @Operation(summary = "Get all User's links info")
+    @Operation(summary = "Get all links info")
     public ResponseEntity<LinkInfoResponse> getAllLinksForUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UUID requesterUserId = userService.findByEmail(authentication.getName()).getId();
@@ -213,18 +198,5 @@ public class LinkController {
         List<LinkStatisticsDto> stats = linkService.getLinkUsageStatsByUserId(requesterUser.getId());
         stats.sort(Comparator.comparing(LinkStatisticsDto::getUsageStatistics).reversed());
         return ResponseEntity.ok(new LinkStatisticsResponse(stats, "ok"));
-    }
-
-    /**
-     * Checks if the authenticated user has rights to perform operations on a given link.
-     *
-     * @param shortLink the String short link of the link to check
-     * @return true if the user has rights, false otherwise
-     */
-    private boolean doesUserHaveRightsForLinkByShortLink(String shortLink) {              //TODO: may be transformed into @? and extracted into a servicethis method into service.
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID linkUserId = linkService.findByShortLink(shortLink).getUser().getId();
-        UUID currentUserId = userService.findByEmail(authentication.getName()).getId();
-        return linkUserId.equals(currentUserId);
     }
 }

@@ -44,4 +44,7 @@ public interface LinkRepository extends JpaRepository<Link, UUID> {
      * @param id The ID of the link entity to delete.
      */
     void deleteById(UUID id);
+
+    @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM links WHERE short_link = :shortLink")
+    int countLinksByShortLink(@Param(value = "shortLink") String shortLink);
 }

@@ -197,8 +197,15 @@ public class LinkService {
         if (existingLink.getStatus() == LinkStatus.ACTIVE) {
             return existingLink;
         } else {
+            throw new NullLinkPropertyException(); //TODO
+        }
+    }
+
+    public int countLinksByShortLink(String shortLink) {
+        if(Objects.isNull(shortLink)){
             throw new NullLinkPropertyException();
         }
+        return linkRepository.countLinksByShortLink(shortLink);
     }
 
     /**

@@ -44,8 +44,7 @@ public class UrlNewShortValidatorImpl implements ConstraintValidator<UrlNewShort
                         .addConstraintViolation();
                 return false;
             }
-            Link byExistUniqueLink = linkService.findByExistUniqueLink(shortLink);
-            if (byExistUniqueLink != null) {
+            if (linkService.countLinksByShortLink(shortLink)>0) {
                 context.buildConstraintViolationWithTemplate(ALREADY_EXISTS_MSG)
                         .addConstraintViolation();
                 return false;
