@@ -5,7 +5,6 @@ import com.linkurlshorter.urlshortener.link.*;
 import com.linkurlshorter.urlshortener.user.NoSuchEmailFoundException;
 import com.linkurlshorter.urlshortener.user.NoUserFoundByEmailException;
 import com.linkurlshorter.urlshortener.user.NoUserFoundByIdException;
-import com.linkurlshorter.urlshortener.user.NullEmailException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,21 +37,6 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 Objects.requireNonNull(ex.getFieldError()).getDefaultMessage(),
                 request.getRequestURI());
-        return ResponseEntity.badRequest().body(errorResponse);
-    }
-
-    /**
-     * Handles the null email error (400).
-     * Returns a response with a 400 status and the corresponding error message.
-     *
-     * @param ex null email error
-     * @return {@link ResponseEntity} object with the corresponding status and error message
-     */
-    @ExceptionHandler(NullEmailException.class)
-    public ResponseEntity<Object> handleNullEmailException(
-            NullEmailException ex, HttpServletRequest request) {
-        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST,
-                ex.getMessage(), request.getRequestURI());
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
