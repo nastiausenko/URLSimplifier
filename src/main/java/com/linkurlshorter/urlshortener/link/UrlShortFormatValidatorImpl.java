@@ -26,11 +26,6 @@ public class UrlShortFormatValidatorImpl implements ConstraintValidator<UrlShort
      */
     @Override
     public boolean isValid(String shortUrl, ConstraintValidatorContext context) {
-        if (shortUrl == null || shortUrl.isEmpty()) {
-            context.buildConstraintViolationWithTemplate("Invalid short link!")
-                    .addConstraintViolation();
-            return false;
-        }
         if (!shortUrl.matches(SHORT_URL.pattern())) {
             context.buildConstraintViolationWithTemplate("The following characters are not allowed!")
                     .addConstraintViolation();

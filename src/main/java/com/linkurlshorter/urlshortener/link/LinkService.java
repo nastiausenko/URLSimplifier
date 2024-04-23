@@ -10,6 +10,7 @@ import redis.clients.jedis.JedisPool;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -199,6 +200,9 @@ public class LinkService {
             throw new NullLinkPropertyException();
         }
         linkRepository.deleteById(id);
+    }
+    public Optional<Link> findByUniqueShortLink(String shortLink) {
+        return linkRepository.findByShortLink(shortLink);
     }
 
     /**
