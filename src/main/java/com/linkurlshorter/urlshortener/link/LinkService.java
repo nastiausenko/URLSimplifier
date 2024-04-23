@@ -96,7 +96,9 @@ public class LinkService {
             throw new NullLinkPropertyException();
         }
 
-        throwIfDeleted(link);
+        if (link.getStatus() == LinkStatus.DELETED) {
+            throw new DeletedLinkException();
+        }
         return linkRepository.save(link);
     }
 
@@ -198,18 +200,6 @@ public class LinkService {
             return existingLink;
         } else {
             throw new NullLinkPropertyException();
-        }
-    }
-
-    /**
-     * Throws a DeletedLinkException if the link has been marked as deleted.
-     *
-     * @param link The link entity to check.
-     * @throws DeletedLinkException If the link has been marked as deleted.
-     */
-    private void throwIfDeleted(Link link) {
-        if (findByShortLink(link.getShortLink()).getStatus() == LinkStatus.DELETED) {
-            throw new DeletedLinkException();
         }
     }
 }
