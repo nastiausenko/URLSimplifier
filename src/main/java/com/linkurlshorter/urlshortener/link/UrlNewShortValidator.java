@@ -23,7 +23,7 @@ public @interface UrlNewShortValidator {
      *
      * @return Error message.
      */
-    String message() default "";
+    String message() default "This link already exists!";
 
     /**
      * Groups to which this constraint belongs. Default: empty array.

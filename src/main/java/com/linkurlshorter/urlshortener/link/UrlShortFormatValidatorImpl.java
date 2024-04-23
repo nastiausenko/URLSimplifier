@@ -35,8 +35,7 @@ public class UrlShortFormatValidatorImpl implements ConstraintValidator<UrlShort
     }
 
     private boolean isExistShortLink(String shortUrl, ConstraintValidatorContext context) {
-        Link link = linkService.findByExistUniqueLink(shortUrl);
-        if (link != null) {
+        if (linkService.doesLinkExist(shortUrl)) {
             context.buildConstraintViolationWithTemplate("This link already exists!")
                     .addConstraintViolation();
             return false;

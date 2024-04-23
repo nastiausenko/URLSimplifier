@@ -290,35 +290,12 @@ class LinkServiceTest {
 
 
     /**
-     * Test case for the {@link LinkService#findByExistUniqueLink(String)} method.
+     * Test case for the {@link LinkService#doesLinkExist(String)} method.
      */
     @Test
     void findByExistUniqueLinkTest() {
         when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.ofNullable(link));
-        linkService.findByExistUniqueLink(link.getShortLink());
+        linkService.doesLinkExist(link.getShortLink());
         assertThat(LinkStatus.ACTIVE).isEqualTo(link.getStatus());
-    }
-
-    /**
-     * Test case for the {@link LinkService#findByExistUniqueLink(String)} method when there is no link
-     * found by short link.
-     */
-    @Test
-    void findByExistUniqueLinkNotFoundTest() {
-        assertThatThrownBy(() -> linkService.findByExistUniqueLink("short"))
-                .isInstanceOf(NoLinkFoundByShortLinkException.class);
-    }
-
-    /**
-     * Test case for the {@link LinkService#findByExistUniqueLink(String)} method when the provided link status
-     * is not active.
-     */
-    @Test
-    void findByExistUniqueLinkInactiveTest() {
-        link.setStatus(LinkStatus.INACTIVE);
-        when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.ofNullable(link));
-
-        assertThatThrownBy(() -> linkService.findByExistUniqueLink(link.getShortLink()))
-                .isInstanceOf(NullLinkPropertyException.class);
     }
 }

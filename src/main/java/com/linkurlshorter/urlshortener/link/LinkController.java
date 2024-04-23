@@ -79,7 +79,7 @@ public class LinkController {
                             .shortLink(newShortUrl)
                             .expirationTime(LocalDateTime.now().plusDays(SHORT_LINK_LIFETIME_IN_DAYS))
                             .user(user)
-                            .build()  //TODO: add validations (short link being unique etc)
+                            .build()
             );
         } catch (Exception e) {
             throw new InternalServerLinkException();
@@ -99,7 +99,7 @@ public class LinkController {
     @Operation(summary = "Delete link by short link")
     public ResponseEntity<LinkModifyingResponse> deleteLink(@RequestParam String shortLink) {
         if (doesUserHaveRightsForLinkByShortLink(shortLink)) {
-            linkService.deleteByShortLink(shortLink);//TODO: add validations (id not null etc)
+            linkService.deleteByShortLink(shortLink);
             return ResponseEntity.ok(new LinkModifyingResponse("ok"));
         } else {
             throw new ForbiddenException(OPERATION_FORBIDDEN_MSG);
@@ -117,13 +117,13 @@ public class LinkController {
     @PostMapping("/edit/content")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "Edit link content")
-    public ResponseEntity<LinkModifyingResponse> editLinkContent(@RequestBody EditLinkContentRequest request) {
+    public ResponseEntity<LinkModifyingResponse> editLinkContent(@RequestBody @Valid EditLinkContentRequest request) {
         if (doesUserHaveRightsForLinkByShortLink(request.getOldShortLink())) {
             Link link = linkService.findByShortLink(request.getOldShortLink());
             if (link.getStatus() != LinkStatus.ACTIVE) {
                 throw new LinkStatusException();
             }
-            link.setShortLink(request.getNewShortLink());    //TODO: add short link validation
+            link.setShortLink(request.getNewShortLink());
             linkService.updateRedisShortLink(request.getOldShortLink(), request.getNewShortLink());
             linkService.update(link);
             return ResponseEntity.ok(new LinkModifyingResponse("ok"));
@@ -223,7 +223,7 @@ public class LinkController {
      * @param shortLink the String short link of the link to check
      * @return true if the user has rights, false otherwise
      */
-    private boolean doesUserHaveRightsForLinkByShortLink(String shortLink) {              //TODO: may be transformed into @? and extracted into a servicethis method into service.
+    private boolean doesUserHaveRightsForLinkByShortLink(String shortLink) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UUID linkUserId = linkService.findByShortLink(shortLink).getUser().getId();
         UUID currentUserId = userService.findByEmail(authentication.getName()).getId();

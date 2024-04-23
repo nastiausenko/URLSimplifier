@@ -1,5 +1,6 @@
 package com.linkurlshorter.urlshortener.link;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,5 +23,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class EditLinkContentRequest {
     private String oldShortLink;
+    @NotNull
+    @UrlNewShortValidator
     private String newShortLink;
 }
