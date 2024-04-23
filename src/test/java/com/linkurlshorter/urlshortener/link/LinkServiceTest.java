@@ -81,7 +81,6 @@ class LinkServiceTest {
      */
     @Test
     void updateSuccessfulTest() {
-        when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.of(link));
         when(linkRepository.save(link)).thenReturn(link);
 
         Link savedLink = linkService.update(link);
