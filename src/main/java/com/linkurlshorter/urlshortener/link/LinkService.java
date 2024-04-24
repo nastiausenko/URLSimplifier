@@ -16,6 +16,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -149,6 +150,7 @@ public class LinkService {
         if (link.getStatus() == LinkStatus.DELETED) {
             throw new DeletedLinkException();
         }
+        fixLinkStatusesAndReturnFixed(List.of(link));
         return link;
     }
 
@@ -156,7 +158,29 @@ public class LinkService {
         if (Objects.isNull(userId)) {
             throw new NullLinkPropertyException();
         }
-        return linkRepository.findAllByUserId(userId);
+        List<Link> allByUserId = linkRepository.findAllByUserId(userId);
+        fixLinkStatusesAndReturnFixed(allByUserId);
+        return allByUserId;
+    }
+
+    /**
+     * Retrieves a list of active links associated with the specified user ID and updates the status of expired links.
+     * This method first checks if the provided user ID is null. If so, it throws a NullLinkPropertyException.
+     * It then retrieves all active links associated with the given user ID from the LinkRepository.
+     * Any links with expiration times before the current time are marked as inactive. All the rest truly active links are then returned.
+     *
+     * @param userId The ID of the user whose active links are to be retrieved.
+     * @return A list of active Link objects associated with the specified user ID.
+     * @throws NullLinkPropertyException if the provided user ID is null.
+     */
+    public List<Link> findAllActiveByUserId(UUID userId) {
+        if (Objects.isNull(userId)) {
+            throw new NullLinkPropertyException();
+        }
+        List<Link> allActiveByUserId = linkRepository.findAllActiveByUserId(userId);
+        List<Link> fixedToInactive = fixLinkStatusesAndReturnFixed(allActiveByUserId);
+        allActiveByUserId.removeAll(fixedToInactive);
+        return allActiveByUserId;
     }
 
     public List<LinkStatisticsDto> getLinkUsageStatsByUserId(UUID userId) {
@@ -195,5 +219,16 @@ public class LinkService {
      */
     public boolean doesLinkExist(String shortLink) {
         return linkRepository.findByShortLink(shortLink).isPresent();
+    }
+
+    private List<Link> fixLinkStatusesAndReturnFixed(List<Link> allActiveByUserId) {
+        List<Link> toBeStatusFixed = new ArrayList<>();
+        for (Link link : allActiveByUserId) {
+            if (link.getExpirationTime().isBefore(LocalDateTime.now())) {
+                link.setStatus(LinkStatus.INACTIVE);
+                toBeStatusFixed.add(link);
+            }
+        }
+        return toBeStatusFixed;
     }
 }
