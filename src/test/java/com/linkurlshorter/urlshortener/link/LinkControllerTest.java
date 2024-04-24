@@ -137,6 +137,25 @@ class LinkControllerTest {
     }
 
     /**
+     * Test case for the {@link LinkController#createLink(CreateLinkRequest)} method when
+     * an error occurs during the short link generation process.
+     */
+    @Test
+    @WithMockUser
+    void createLinkInternalErrorTest() throws Exception {
+        when(userService.findByEmail(any())).thenReturn(user);
+        when(linkService.doesLinkExist(any())).thenReturn(true);
+
+        CreateLinkRequest request = new CreateLinkRequest("https://www.example.com", null);
+
+        ResultActions resultActions = mockMvc.perform(post("/api/V1/link/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+        resultActions.andExpect(status().isInternalServerError());
+    }
+
+    /**
      * Test case for the {@link LinkController#deleteLink(String)} method.
      */
     @Test
