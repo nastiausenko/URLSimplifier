@@ -184,6 +184,22 @@ class LinkServiceTest {
     }
 
     /**
+     * Test case for the {@link LinkService#getLongLinkFromShortLink(String)} method when link expiration time
+     * has passed.
+     */
+    @Test
+    void getLongLinkFromShortLinkExpiredTest() throws JsonProcessingException {
+        link.setExpirationTime(LocalDateTime.now().minusDays(1));
+        when(jedisPool.getResource()).thenReturn(jedis);
+        when(jedis.exists(anyString())).thenReturn(true);
+        when(jedis.get(anyString())).thenReturn("{}");
+        when(mapper.readValue(anyString(), eq(Link.class))).thenReturn(link);
+
+        assertThatThrownBy(() -> linkService.getLongLinkFromShortLink(link.getShortLink()))
+                .isInstanceOf(InactiveLinkException.class);
+    }
+
+    /**
      * Test case for the {@link LinkService#findByShortLink(String)} method.
      */
     @Test
