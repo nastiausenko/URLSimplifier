@@ -1,6 +1,6 @@
 package com.linkurlshorter.urlshortener.security;
 
-import com.linkurlshorter.urlshortener.user.User;
+import com.linkurlshorter.urlshortener.user.model.User;
 import com.linkurlshorter.urlshortener.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

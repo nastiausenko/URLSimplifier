@@ -1,7 +1,7 @@
-package com.linkurlshorter.urlshortener.user;
+package com.linkurlshorter.urlshortener.user.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.linkurlshorter.urlshortener.link.Link;
+import com.linkurlshorter.urlshortener.link.model.Link;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,7 +12,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

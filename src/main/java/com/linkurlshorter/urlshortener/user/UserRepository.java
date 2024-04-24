@@ -1,6 +1,6 @@
 package com.linkurlshorter.urlshortener.user;
 
-import org.springframework.data.jpa.repository.EntityGraph;
+import com.linkurlshorter.urlshortener.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

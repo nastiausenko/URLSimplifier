@@ -4,6 +4,7 @@ import com.linkurlshorter.urlshortener.auth.exception.EmailAlreadyTakenException
 import com.linkurlshorter.urlshortener.jwt.JwtUtil;
 import com.linkurlshorter.urlshortener.security.CustomUserDetailsService;
 import com.linkurlshorter.urlshortener.user.exception.NoSuchEmailFoundException;
+import com.linkurlshorter.urlshortener.user.model.User;
 import com.linkurlshorter.urlshortener.user.request.ChangeUserEmailRequest;
 import com.linkurlshorter.urlshortener.user.request.ChangeUserPasswordRequest;
 import com.linkurlshorter.urlshortener.user.responce.UserModifyingResponse;

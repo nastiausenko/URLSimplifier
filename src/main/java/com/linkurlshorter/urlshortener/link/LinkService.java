@@ -6,6 +6,8 @@ import com.linkurlshorter.urlshortener.link.exception.DeletedLinkException;
 import com.linkurlshorter.urlshortener.link.exception.InactiveLinkException;
 import com.linkurlshorter.urlshortener.link.exception.NoLinkFoundByShortLinkException;
 import com.linkurlshorter.urlshortener.link.exception.NullLinkPropertyException;
+import com.linkurlshorter.urlshortener.link.model.Link;
+import com.linkurlshorter.urlshortener.link.model.LinkStatus;
 import com.linkurlshorter.urlshortener.link.validation.EndTimeLinkValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
