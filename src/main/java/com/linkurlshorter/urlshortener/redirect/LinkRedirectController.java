@@ -1,6 +1,7 @@
 package com.linkurlshorter.urlshortener.redirect;
 
 import com.linkurlshorter.urlshortener.link.LinkService;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class LinkRedirectController {
      */
     @SneakyThrows
     @GetMapping("/{shortLink}")
+    @ApiResponse(responseCode = "302", description = "Redirect to original link")
     public RedirectView redirectToOriginalLink(@PathVariable @NotBlank String shortLink) {
         String longLink = linkService.getLongLinkFromShortLink(shortLink);
         return buildRedirectView(longLink);

@@ -44,7 +44,6 @@ public class LinkService {
             Link link = jedis.exists(shortLink)
                     ? mapper.readValue(jedis.get(shortLink), Link.class)
                     : findByShortLink(shortLink);
-
             if (link.getStatus() == LinkStatus.INACTIVE) {
                 throw new InactiveLinkException(shortLink);
             }
