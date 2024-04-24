@@ -4,6 +4,7 @@ import com.linkurlshorter.urlshortener.link.LinkService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatusCode;
@@ -36,13 +37,14 @@ public class LinkRedirectController {
     @SneakyThrows
     @GetMapping("/{shortLink}")
     @ApiResponse(responseCode = "302", description = "Redirect to original link")
-    public RedirectView redirectToOriginalLink(@PathVariable @NotBlank String shortLink) {
+    public RedirectView redirectToOriginalLink(@PathVariable @NotBlank @Size(min = 3, max = 20) String shortLink) {
         String longLink = linkService.getLongLinkFromShortLink(shortLink);
         return buildRedirectView(longLink);
     }
 
     /**
      * Builds RedirectView to the provided url with 302 status code.
+     *
      * @param url the url to redirect to
      * @return a RedirectView object directing the user to the url
      */
