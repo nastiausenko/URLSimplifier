@@ -234,10 +234,11 @@ class LinkServiceTest {
     void findByAllByUserIdTest() {
         UUID userId = UUID.fromString("84991c79-f6a9-4b7b-b1b4-0d66c0b92c81");
         User user = User.builder().id(userId).build();
+        LocalDateTime expirationTime = LocalDateTime.now().plusDays(1);
         List<Link> userLinks = Arrays.asList(
-                Link.builder().id(UUID.randomUUID()).user(user).build(),
-                Link.builder().id(UUID.randomUUID()).user(user).build(),
-                Link.builder().id(UUID.randomUUID()).user(user).build()
+                Link.builder().id(UUID.randomUUID()).user(user).expirationTime(expirationTime).build(),
+                Link.builder().id(UUID.randomUUID()).user(user).expirationTime(expirationTime).build(),
+                Link.builder().id(UUID.randomUUID()).user(user).expirationTime(expirationTime).build()
         );
 
         when(linkRepository.findAllByUserId(userId)).thenReturn(userLinks);
