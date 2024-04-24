@@ -1,7 +1,8 @@
 package com.linkurlshorter.urlshortener.link;
 
 import com.linkurlshorter.urlshortener.link.dto.LinkStatisticsDto;
-import com.linkurlshorter.urlshortener.user.User;
+import com.linkurlshorter.urlshortener.link.model.Link;
+import com.linkurlshorter.urlshortener.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;

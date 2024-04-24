@@ -6,7 +6,7 @@ import com.linkurlshorter.urlshortener.jwt.JwtUtil;
 import com.linkurlshorter.urlshortener.link.dto.LinkInfoDtoMapper;
 import com.linkurlshorter.urlshortener.link.LinkRepository;
 import com.linkurlshorter.urlshortener.link.LinkService;
-import com.linkurlshorter.urlshortener.link.ShortLinkGenerator;
+import com.linkurlshorter.urlshortener.link.generator.ShortLinkGenerator;
 import com.linkurlshorter.urlshortener.security.CustomUserDetailsService;
 import com.linkurlshorter.urlshortener.user.UserRepository;
 import com.linkurlshorter.urlshortener.user.UserService;

@@ -1,10 +1,10 @@
-package com.linkurlshorter.urlshortener.link;
+package com.linkurlshorter.urlshortener.link.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.linkurlshorter.urlshortener.user.User;
+import com.linkurlshorter.urlshortener.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

@@ -1,4 +1,4 @@
-package com.linkurlshorter.urlshortener.redirect;
+package com.linkurlshorter.urlshortener.link.redirect;
 
 import com.linkurlshorter.urlshortener.link.LinkService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

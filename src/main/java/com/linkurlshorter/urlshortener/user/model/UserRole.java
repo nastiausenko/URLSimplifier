@@ -1,4 +1,4 @@
-package com.linkurlshorter.urlshortener.user;
+package com.linkurlshorter.urlshortener.user.model;
 
 /**
  * Enumerates the roles that a user can have in the system.
@@ -6,7 +6,7 @@ package com.linkurlshorter.urlshortener.user;
  *
  * @author Artem Poliakov
  * @version 1.0
- * @see com.linkurlshorter.urlshortener.user.User
+ * @see User
  */
 public enum UserRole {
     USER,

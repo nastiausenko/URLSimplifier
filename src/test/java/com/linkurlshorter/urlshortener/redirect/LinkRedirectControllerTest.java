@@ -2,9 +2,12 @@ package com.linkurlshorter.urlshortener.redirect;
 
 import com.linkurlshorter.urlshortener.TestConfig;
 import com.linkurlshorter.urlshortener.link.*;
+import com.linkurlshorter.urlshortener.link.model.Link;
+import com.linkurlshorter.urlshortener.link.model.LinkStatus;
+import com.linkurlshorter.urlshortener.link.redirect.LinkRedirectController;
 import com.linkurlshorter.urlshortener.security.SecurityConfig;
-import com.linkurlshorter.urlshortener.user.User;
-import com.linkurlshorter.urlshortener.user.UserRole;
+import com.linkurlshorter.urlshortener.user.model.User;
+import com.linkurlshorter.urlshortener.user.model.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
