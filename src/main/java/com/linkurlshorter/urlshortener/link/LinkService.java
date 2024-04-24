@@ -116,6 +116,15 @@ public class LinkService {
         return linkRepository.save(link);
     }
 
+    /**
+     * Updates the short link stored in Redis with a new short link.
+     *
+     * <p>This method updates the short link stored in Redis with a new short link. It first checks if the
+     * short link exists in Redis. If the short link exists, it renames the key with the new short link.
+     *
+     * @param shortLink    The current short link.
+     * @param newShortLink The new short link.
+     */
     public void updateRedisShortLink(String shortLink, String newShortLink) {
         try (Jedis jedis = jedisPool.getResource()) {
             if (jedis.exists(shortLink)) {
@@ -124,6 +133,16 @@ public class LinkService {
         }
     }
 
+    /**
+     * Updates the link stored in Redis with a new link entity.
+     *
+     * <p>This method updates the link stored in Redis with a new link entity. It first checks if the
+     * short link exists in Redis. If the short link exists, it serializes the new link entity using the
+     * ObjectMapper and updates the value associated with the short link key in Redis.
+     *
+     * @param shortLink The short link associated with the link entity.
+     * @param link      The new link entity.
+     */
     @SneakyThrows
     public void updateRedisLink(String shortLink, Link link) {
         try (Jedis jedis = jedisPool.getResource()) {
@@ -154,6 +173,13 @@ public class LinkService {
         return link;
     }
 
+    /**
+     * Retrieves all links associated with a specific user.
+     *
+     * @param userId The ID of the user to retrieve links for.
+     * @return A list of link entities associated with the user.
+     * @throws NullLinkPropertyException If the 'userId' parameter is null.
+     */
     public List<Link> findAllByUserId(UUID userId) {
         if (Objects.isNull(userId)) {
             throw new NullLinkPropertyException();
@@ -183,6 +209,13 @@ public class LinkService {
         return allActiveByUserId;
     }
 
+    /**
+     * Retrieves usage statistics for links associated with a specific user.
+     *
+     * @param userId The ID of the user to retrieve link usage statistics for.
+     * @return A list of LinkStatisticsDto objects containing usage statistics for the user's links.
+     * @throws NullLinkPropertyException If the 'userId' parameter is null.
+     */
     public List<LinkStatisticsDto> getLinkUsageStatsByUserId(UUID userId) {
         if (Objects.isNull(userId)) {
             throw new NullLinkPropertyException();
