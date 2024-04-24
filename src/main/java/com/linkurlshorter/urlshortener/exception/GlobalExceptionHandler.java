@@ -76,7 +76,7 @@ public class GlobalExceptionHandler {
      * @return {@link ResponseEntity} object with the corresponding status and error message
      */
     @ExceptionHandler({NoSuchEmailFoundException.class,
-            NoUserFoundByEmailException.class, NoUserFoundByIdException.class})
+            NoUserFoundByEmailException.class, NoUserFoundByIdException.class, NoLinkFoundByShortLinkException.class})
     public ResponseEntity<Object> handleNotFoundExceptions(
             RuntimeException ex, HttpServletRequest request) {
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.NOT_FOUND,
@@ -110,14 +110,6 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.FORBIDDEN,
                 ex.getMessage(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
-    }
-
-    @ExceptionHandler({NoLinkFoundByIdException.class, NoLinkFoundByShortLinkException.class})
-    public ResponseEntity<Object> handleNoLinkFoundByIdException(
-            RuntimeException ex, HttpServletRequest request) {
-        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.NOT_FOUND,
-                ex.getMessage(), request.getRequestURI());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler({DeletedLinkException.class, InactiveLinkException.class})
