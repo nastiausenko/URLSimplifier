@@ -1,10 +1,11 @@
 package com.linkurlshorter.urlshortener.security;
 
-import com.linkurlshorter.urlshortener.user.model.User;
-import com.linkurlshorter.urlshortener.user.UserService;
+
+import com.linkurlshorter.urlshortener.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
  *
  * @author Egor Sivenko
  * @see org.springframework.security.core.userdetails.UserDetailsService
- * @see UserService
+ * @see UserRepository
  * @see SecurityUserDetails
  */
 @Service
@@ -24,9 +25,9 @@ import org.springframework.stereotype.Service;
 public class CustomUserDetailsService implements UserDetailsService {
 
     /**
-     * Service for managing user-related operations.
+     * Repository for managing user-related operations.
      */
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     /**
      * Loads user details by their email address.
@@ -36,7 +37,9 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String email) {
-        User user = userService.findByEmail(email);
-        return new SecurityUserDetails(user);
+        return userRepository
+                .findByEmail(email)
+                .map(SecurityUserDetails::new)
+                .orElseThrow(() -> new UsernameNotFoundException(email));
     }
 }

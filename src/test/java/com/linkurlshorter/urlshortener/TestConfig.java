@@ -37,14 +37,14 @@ public class TestConfig {
     }
 
     /**
-     * Creates a bean for CustomUserDetailsService with a mocked UserService dependency.
+     * Creates a bean for CustomUserDetailsService with a mocked UserRepository dependency.
      *
-     * @param userService UserService mock bean
-     * @return CustomUserDetailsService bean with mocked UserService dependency
+     * @param userRepository UserRepository mock bean
+     * @return CustomUserDetailsService bean with mocked UserRepository dependency
      */
     @Bean
-    public CustomUserDetailsService customUserDetailsService(UserService userService) {
-        return new CustomUserDetailsService(userService);
+    public CustomUserDetailsService customUserDetailsService(UserRepository userRepository) {
+        return new CustomUserDetailsService(userRepository);
     }
 
     /**
