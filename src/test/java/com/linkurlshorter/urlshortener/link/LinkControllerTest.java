@@ -68,7 +68,7 @@ class LinkControllerTest {
         link = Link.builder()
                 .id(UUID.fromString("3053e49b-6da3-4389-9d06-23b2d57b6f25"))
                 .longLink("https://www.youtube.com")
-                .shortLink("short-link-1")
+                .shortLink("shortLink1")
                 .user(user)
                 .createdTime(LocalDateTime.of(2024, 4, 13, 10, 0))
                 .expirationTime(LocalDateTime.of(2024, 5, 16, 8, 0))
@@ -78,7 +78,7 @@ class LinkControllerTest {
     }
 
     /**
-     * Test case for the {@link LinkController#createLink(CreateLinkRequest)} method.
+     * Test case for the {@link LinkController#createLink(CreateLinkRequest)} method when the short link is provided.
      */
     @Test
     @WithMockUser
@@ -86,7 +86,27 @@ class LinkControllerTest {
         when(userService.findByEmail(any())).thenReturn(user);
         when(linkService.save(any())).thenReturn(link);
 
-        CreateLinkRequest request = new CreateLinkRequest("https://www.example.com", null); //TODO: Artem has added null here to match the new method signature
+        CreateLinkRequest request = new CreateLinkRequest("https://www.example.com", "example");
+
+        ResultActions resultActions = mockMvc.perform(post("/api/V1/link/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.error").value("ok"))
+                .andExpect(jsonPath("$.shortLink").value("example"));
+    }
+
+    /**
+     * Test case for the {@link LinkController#createLink(CreateLinkRequest)} method when the short link is not provided.
+     */
+    @Test
+    @WithMockUser
+    void createLinkNotProvidedShortLinkTest() throws Exception {
+        when(userService.findByEmail(any())).thenReturn(user);
+        when(linkService.save(any())).thenReturn(link);
+
+        CreateLinkRequest request = new CreateLinkRequest("https://www.example.com", null);
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/link/create")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -104,10 +124,29 @@ class LinkControllerTest {
     @Test
     @WithMockUser
     void createLinkFailedTest() throws Exception {
-        CreateLinkRequest request = new CreateLinkRequest("https://www.example.com", null);
+        CreateLinkRequest request = new CreateLinkRequest("https://www.example.com", "example");
 
         when(userService.findByEmail(any())).thenReturn(user);
         when(linkService.save(any())).thenThrow(new RuntimeException("Short link already exists"));
+
+        ResultActions resultActions = mockMvc.perform(post("/api/V1/link/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+        resultActions.andExpect(status().isInternalServerError());
+    }
+
+    /**
+     * Test case for the {@link LinkController#createLink(CreateLinkRequest)} method when
+     * an error occurs during the short link generation process.
+     */
+    @Test
+    @WithMockUser
+    void createLinkInternalErrorTest() throws Exception {
+        when(userService.findByEmail(any())).thenReturn(user);
+        when(linkService.doesLinkExist(any())).thenReturn(true);
+
+        CreateLinkRequest request = new CreateLinkRequest("https://www.example.com", null);
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/link/create")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -167,12 +206,11 @@ class LinkControllerTest {
         when(userService.findByEmail(any())).thenReturn(user);
         when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
 
-        EditLinkContentRequest request = new EditLinkContentRequest(link.getShortLink(), "short-link-2");
+        EditLinkContentRequest request = new EditLinkContentRequest(link.getShortLink(), "shortLink2");
         when(linkService.update(link)).thenReturn(link);
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/link/edit/content")
                 .contentType(MediaType.APPLICATION_JSON)
-                .param("id", String.valueOf(link.getId()))
                 .content(objectMapper.writeValueAsString(request)));
 
         resultActions.andExpect(status().isOk())
@@ -195,12 +233,11 @@ class LinkControllerTest {
         when(userService.findByEmail(any())).thenReturn(newUser);
         when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
 
-        EditLinkContentRequest request = new EditLinkContentRequest(link.getShortLink(), "short-link-2");
+        EditLinkContentRequest request = new EditLinkContentRequest(link.getShortLink(), "shortLink2");
         when(linkService.update(link)).thenReturn(link);
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/link/edit/content")
                 .contentType(MediaType.APPLICATION_JSON)
-                .param("shortLink", String.valueOf(link.getShortLink()))
                 .content(objectMapper.writeValueAsString(request)));
 
         resultActions.andExpect(status().isForbidden());
@@ -217,12 +254,11 @@ class LinkControllerTest {
         when(userService.findByEmail(any())).thenReturn(user);
         when(linkService.findByShortLink(link.getShortLink())).thenReturn(link);
 
-        EditLinkContentRequest request = new EditLinkContentRequest(link.getShortLink(), "short-link-2");
+        EditLinkContentRequest request = new EditLinkContentRequest(link.getShortLink(), "shortLink2");
         when(linkService.update(link)).thenReturn(link);
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/link/edit/content")
                 .contentType(MediaType.APPLICATION_JSON)
-                .param("shortLink", String.valueOf(link.getShortLink()))
                 .content(objectMapper.writeValueAsString(request)));
 
         resultActions.andExpect(status().isBadRequest())

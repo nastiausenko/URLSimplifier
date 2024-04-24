@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -25,6 +24,7 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -143,5 +143,27 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound());
+    }
+
+
+    /**
+     * Test case for the {@link UserController#changeEmail(ChangeUserEmailRequest)} method when the user with the
+     * provided email is already taken.
+     */
+    @Test
+    @WithMockUser
+    void changeEmailAlreadyTakenTest() throws Exception {
+        String newEmail = "existing@example.com";
+        ChangeUserEmailRequest request = new ChangeUserEmailRequest();
+        request.setNewEmail(newEmail);
+        when(userService.existsByEmail(newEmail)).thenReturn(true);
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(post("/api/V1/user/change-email")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+        // Assert
+        resultActions.andExpect(status().isBadRequest());
     }
 }

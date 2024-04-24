@@ -5,6 +5,8 @@ import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Optional;
+
 /**
  * The UrlShortValidatorImpl class implements the {@link ConstraintValidator} interface for annotating an UrlShortValidator.
  * Used to validate short links to ensure that they are unique and their length does not exceed the set maximum
@@ -44,12 +46,13 @@ public class UrlNewShortValidatorImpl implements ConstraintValidator<UrlNewShort
                         .addConstraintViolation();
                 return false;
             }
-            Link byExistUniqueLink = linkService.findByExistUniqueLink(shortLink);
-            if (byExistUniqueLink != null) {
+
+            if (linkService.doesLinkExist(shortLink)) {
                 context.buildConstraintViolationWithTemplate(ALREADY_EXISTS_MSG)
                         .addConstraintViolation();
                 return false;
             }
+
         }
         return true;
     }

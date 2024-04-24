@@ -43,7 +43,6 @@ public class LinkRedirectController {
 
     /**
      * Builds RedirectView to the provided url with 302 status code.
-     *
      * @param url the url to redirect to
      * @return a RedirectView object directing the user to the url
      */

@@ -36,8 +36,7 @@ public class UrlShortValidatorImpl implements ConstraintValidator<UrlShortValida
             return false;
         }
 
-        Link existLink = linkService.findByExistUniqueLink(shortLink);
-        if (existLink != null) {
+        if (linkService.doesLinkExist(shortLink)) {
             context.buildConstraintViolationWithTemplate("This link already exists!")
                     .addConstraintViolation();
             return false;

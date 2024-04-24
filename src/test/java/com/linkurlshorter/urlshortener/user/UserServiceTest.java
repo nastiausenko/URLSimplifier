@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.annotation.Profile;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -193,5 +192,11 @@ class UserServiceTest {
     void deleteByIdNullTest() {
         assertThatThrownBy(() -> userService.deleteById(null))
                 .isInstanceOf(NullUserPropertyException.class);
+    }
+
+    @Test
+    void existByEmailNullTest() {
+        assertThatThrownBy(() -> userService.existsByEmail(null))
+                .isInstanceOf(NullEmailException.class);
     }
 }

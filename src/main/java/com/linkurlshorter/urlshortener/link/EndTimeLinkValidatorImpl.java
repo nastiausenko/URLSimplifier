@@ -16,14 +16,19 @@ public class EndTimeLinkValidatorImpl implements ConstraintValidator<EndTimeLink
     /**
      * Checks if the time to which the reference is valid is greater than the current time.
      *
-     * @param value   LocalDateTime The value to be validated.
-     * @param context The context to validate.
+     * @param timeLink LocalDateTime The value to be validated.
+     * @param context  The context to validate.
      * @return true if the time to which the reference is valid is greater than the current time; false otherwise.
      */
     @Override
-    public boolean isValid(LocalDateTime value, ConstraintValidatorContext context) {
+    public boolean isValid(LocalDateTime timeLink, ConstraintValidatorContext context) {
         LocalDateTime currentTime = LocalDateTime.now();
-        return value.isAfter(currentTime);
+        if (timeLink.isBefore(currentTime)) {
+            context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
+                    .addConstraintViolation();
+            return false;
+        }
+        return true;
     }
 }
 
