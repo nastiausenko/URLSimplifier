@@ -214,6 +214,23 @@ public class LinkController {
     }
 
     /**
+     * Retrieves a list of active links associated with the currently authenticated user.
+     * This method first fetches the user ID of the currently authenticated user using the UserService.
+     * Then, it calls the LinkService to retrieve all active links associated with the user identified by the user ID.
+     *
+     * @return A list of active LinkDto objects associated with the currently authenticated user.
+     */
+    @GetMapping("/active-links")
+    public List<LinkInfoDto> getOnlyActiveLinks(){
+        UUID userId = userService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getId();
+        return linkService
+                .findAllActiveByUserId(userId)
+                .stream()
+                .map(linkDtoMapper::mapLinkToDto)
+                .toList();
+    }
+
+    /**
      * Retrieves usage statistics for all links associated with the authenticated user.
      *
      * @return a ResponseEntity containing the response object with usage statistics for all links for the user,

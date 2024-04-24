@@ -31,14 +31,35 @@ public interface LinkRepository extends JpaRepository<Link, UUID> {
      */
     Optional<Link> findByShortLink(String shortLink);
 
+    /**
+     * Retrieves a list of links associated with the specified user ID, excluding those with a status of 'DELETED'.
+     * This method executes a JPQL query to fetch all links associated with the given user ID,
+     * excluding those with a status set to 'DELETED'.
+     *
+     * @param userId The ID of the user whose links are to be retrieved.
+     * @return A list of Link objects associated with the specified user ID, excluding links with a status of 'DELETED'.
+     */
     @Query("SELECT l from Link l WHERE l.user.id = :userId AND l.status <> 'DELETED'")
     List<Link> findAllByUserId(@Param(value = "userId") UUID userId);
+
+    /**
+     * Retrieves a list of active links associated with the specified user ID.
+     * <p>
+     * This method executes a JPQL query to fetch all active links associated with the given user ID.
+     * Active links are those whose status is set to 'ACTIVE'.
+     *
+     * @param userId The ID of the user whose active links are to be retrieved.
+     * @return A list of active Link objects associated with the specified user ID.
+     */
+    @Query("SELECT l FROM Link l WHERE l.user.id = :userId AND l.status = 'ACTIVE'")
+    List<Link> findAllActiveByUserId(@Param("userId") UUID userId);
 
     List<Link> findAllByUser(User user);
 
     @Query("SELECT new com.linkurlshorter.urlshortener.link.dto.LinkStatisticsDto(l.id, l.shortLink, l.statistics)" +
             " FROM Link l WHERE l.user.id = :userId AND l.status <> 'DELETED'")
     List<LinkStatisticsDto> getLinkUsageStatsForUser(@Param(value = "userId") UUID userId);
+
     /**
      * Deletes a link entity by its ID.
      *
