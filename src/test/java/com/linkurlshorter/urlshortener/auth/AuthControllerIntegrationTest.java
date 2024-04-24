@@ -76,7 +76,7 @@ class AuthControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(401))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("No user by provided email found"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Bad credentials"));
     }
 
     /**
