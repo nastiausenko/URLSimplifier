@@ -47,6 +47,12 @@ public class LinkService {
             if (link.getStatus() == LinkStatus.INACTIVE) {
                 throw new InactiveLinkException(shortLink);
             }
+            if (link.getExpirationTime().isBefore(LocalDateTime.now())) {
+                link.setStatus(LinkStatus.INACTIVE);
+                jedis.set(link.getShortLink(), mapper.writeValueAsString(link));
+                save(link);
+                throw new InactiveLinkException(shortLink);
+            }
             updateLinkStatsAndSave(link, jedis);
             return link.getLongLink();
         }
@@ -60,7 +66,7 @@ public class LinkService {
      * @param link the link to be updated
      */
     @SneakyThrows
-    private void updateLinkStatsAndSave(Link link, Jedis jedis) {
+    private void updateLinkStatsAndSave(@EndTimeLinkValidator Link link, Jedis jedis) {
         link.setStatistics(link.getStatistics() + 1);
         link.setExpirationTime(LocalDateTime.now().plusMonths(1));
 
