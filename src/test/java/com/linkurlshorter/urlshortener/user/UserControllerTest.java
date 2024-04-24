@@ -20,7 +20,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.UUID;
@@ -30,7 +29,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Unit tests for {@link UserController} class.
@@ -91,7 +91,7 @@ class UserControllerTest {
     }
 
     /**
-     * Test case for the {@link UserController#changePassword(ChangeUserPasswordRequest)} method when the user with the 
+     * Test case for the {@link UserController#changePassword(ChangeUserPasswordRequest)} method when the user with the
      * provided email is not found.
      */
     @Test
@@ -102,8 +102,8 @@ class UserControllerTest {
         given(userService.updateByEmailDynamically(any(User.class), any(String.class))).willReturn(0);
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/user/change-password")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
 
         resultActions.andExpect(status().isNotFound());
     }

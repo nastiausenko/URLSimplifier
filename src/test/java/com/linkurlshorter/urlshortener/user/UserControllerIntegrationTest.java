@@ -53,13 +53,12 @@ class UserControllerIntegrationTest {
     private MockMvc mockMvc;
     private String token;
     private final String baseUrl = "/api/V1/user/";
-    private AuthRequest authRequest;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
 
     @BeforeEach
     void setUp() throws Exception {
-        authRequest = new AuthRequest("user1@example.com", "Pass1234");
+        AuthRequest authRequest = new AuthRequest("user1@example.com", "Pass1234");
         ResultActions result = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/V1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(authRequest)));

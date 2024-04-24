@@ -3,9 +3,9 @@ package com.linkurlshorter.urlshortener;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linkurlshorter.urlshortener.auth.AuthService;
 import com.linkurlshorter.urlshortener.jwt.JwtUtil;
-import com.linkurlshorter.urlshortener.link.dto.LinkInfoDtoMapper;
 import com.linkurlshorter.urlshortener.link.LinkRepository;
 import com.linkurlshorter.urlshortener.link.LinkService;
+import com.linkurlshorter.urlshortener.link.dto.LinkInfoDtoMapper;
 import com.linkurlshorter.urlshortener.link.generator.ShortLinkGenerator;
 import com.linkurlshorter.urlshortener.security.CustomUserDetailsService;
 import com.linkurlshorter.urlshortener.user.UserRepository;
@@ -119,14 +119,24 @@ public class TestConfig {
         return mock(AuthService.class);
     }
 
+    /**
+     * Creates a bean for ShortLinkGenerator with a mocked LinkService dependency.
+     *
+     * @param linkService LinkService mock bean
+     * @return ShortLinkGenerator bean with mocked LinkService dependency
+     */
     @Bean
     public ShortLinkGenerator shortLinkGenerator(LinkService linkService) {
         return new ShortLinkGenerator(linkService);
     }
 
+    /**
+     * Creates a bean for JedisPool.
+     *
+     * @return JedisPool bean
+     */
     @Bean
     public JedisPool jedisPool() {
         return new JedisPool();
     }
-
 }

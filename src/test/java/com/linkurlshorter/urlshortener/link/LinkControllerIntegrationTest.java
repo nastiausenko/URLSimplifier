@@ -108,6 +108,7 @@ class LinkControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value("ok"));
     }
+
     @Test
     void deleteLinkFailsWhenShortLinkIsInvalid() throws Exception {
         String shortLink = "short";
@@ -119,6 +120,7 @@ class LinkControllerIntegrationTest {
                 .andExpect(jsonPath("$.message").value("No link by provided short link found"))
                 .andExpect(jsonPath("$.path").value("/api/V1/link/delete"));
     }
+
     @Test
     void deleteLinkFailsWhenIdIsNull() throws Exception {
         mockMvc.perform(post(baseUrl + "delete" + "?id=" + null)
@@ -126,6 +128,7 @@ class LinkControllerIntegrationTest {
                         .header("Authorization", token))
                 .andExpect(status().is4xxClientError());
     }
+
     @Test
     void deleteLinkFailsWhenUserHasNoRightsForThisLink() throws Exception {
         authRequest = new AuthRequest("user-test@example.com", "Pass1234");

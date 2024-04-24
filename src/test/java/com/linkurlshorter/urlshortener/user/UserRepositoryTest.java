@@ -58,7 +58,7 @@ class UserRepositoryTest {
      */
     @Test
     void thatFindByEmailWorksCorrectly() {
-        User userForFind = userRepository.findByEmail("user1@example.com").get();
+        User userForFind = userRepository.findByEmail("user1@example.com").orElseThrow();
         assertThat(userForFind)
                 .isNotNull()
                 .isEqualTo(user);
@@ -75,11 +75,11 @@ class UserRepositoryTest {
         User userForUpdate = User.builder()
                 .id(UUID.fromString("84991c79-f6a9-4b7b-b1b4-0d66c0b92c81"))
                 .email("newuser@example.com")
-                .password("newpassword")
+                .password("new-password")
                 .role(UserRole.ADMIN)
                 .build();
         userRepository.updateUserByEmailDynamically(userForUpdate, user.getEmail());
-        User userForFind = userRepository.findByEmail("newuser@example.com").get();
+        User userForFind = userRepository.findByEmail("newuser@example.com").orElseThrow();
         assertThat(userForFind)
                 .isNotNull()
                 .isEqualTo(userForUpdate);
@@ -98,7 +98,7 @@ class UserRepositoryTest {
                 .build();
         userRepository.updateUserByEmailDynamically(userForUpdate, user.getEmail());
         user.setEmail(email);
-        User userForFind = userRepository.findByEmail(email).get();
+        User userForFind = userRepository.findByEmail(email).orElseThrow();
         assertThat(userForFind)
                 .isNotNull()
                 .isEqualTo(user);
@@ -111,13 +111,13 @@ class UserRepositoryTest {
      */
     @Test
     void thatUpdateUserByEmailDynamicallyWorksCorrectlyWhenGivenOnlyPassword() {
-        String password = "newpassword";
+        String password = "new-password";
         User userForUpdate = User.builder()
                 .password(password)
                 .build();
         userRepository.updateUserByEmailDynamically(userForUpdate, user.getEmail());
         user.setPassword(password);
-        User userForFind = userRepository.findByEmail(user.getEmail()).get();
+        User userForFind = userRepository.findByEmail(user.getEmail()).orElseThrow();
         assertThat(userForFind)
                 .isNotNull()
                 .isEqualTo(user);
@@ -135,7 +135,7 @@ class UserRepositoryTest {
                 .build();
         userRepository.updateUserByEmailDynamically(userForUpdate, user.getEmail());
         user.setRole(UserRole.ADMIN);
-        User userForFind = userRepository.findByEmail(user.getEmail()).get();
+        User userForFind = userRepository.findByEmail(user.getEmail()).orElseThrow();
         assertThat(userForFind)
                 .isNotNull()
                 .isEqualTo(user);
@@ -150,7 +150,7 @@ class UserRepositoryTest {
     void thatUpdateUserByEmailDynamicallyWorksCorrectlyWhenGivenNull() {
         User userForUpdate = User.builder().build();
         userRepository.updateUserByEmailDynamically(userForUpdate, user.getEmail());
-        User userForFind = userRepository.findByEmail(user.getEmail()).get();
+        User userForFind = userRepository.findByEmail(user.getEmail()).orElseThrow();
         assertThat(userForFind)
                 .isNotNull()
                 .isEqualTo(user);

@@ -1,7 +1,7 @@
 package com.linkurlshorter.urlshortener.redirect;
 
 import com.linkurlshorter.urlshortener.TestConfig;
-import com.linkurlshorter.urlshortener.link.*;
+import com.linkurlshorter.urlshortener.link.LinkService;
 import com.linkurlshorter.urlshortener.link.model.Link;
 import com.linkurlshorter.urlshortener.link.model.LinkStatus;
 import com.linkurlshorter.urlshortener.link.redirect.LinkRedirectController;
@@ -23,9 +23,10 @@ import redis.clients.jedis.JedisPool;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Unit tests for {@link LinkRedirectController} class.

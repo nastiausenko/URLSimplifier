@@ -2,11 +2,10 @@ package com.linkurlshorter.urlshortener.link;
 
 import com.linkurlshorter.urlshortener.link.dto.LinkStatisticsDto;
 import com.linkurlshorter.urlshortener.link.model.Link;
-import com.linkurlshorter.urlshortener.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -55,8 +54,16 @@ public interface LinkRepository extends JpaRepository<Link, UUID> {
     @Query("SELECT l FROM Link l WHERE l.user.id = :userId AND l.status = 'ACTIVE'")
     List<Link> findAllActiveByUserId(@Param("userId") UUID userId);
 
-    List<Link> findAllByUser(User user);
-
+    /**
+     * Retrieves a list of link usage statistics for a specific user.
+     *
+     * <p>This method executes a JPQL query to fetch the link usage statistics for the user with the given ID.
+     * It retrieves statistics for all links associated with the specified user ID, excluding links with a status set to 'DELETED'.
+     * The method constructs and returns a list of LinkStatisticsDto objects containing link ID, short link, and usage statistics.
+     *
+     * @param userId The ID of the user whose link usage statistics are to be retrieved.
+     * @return A list of LinkStatisticsDto objects containing link usage statistics for the specified user.
+     */
     @Query("SELECT new com.linkurlshorter.urlshortener.link.dto.LinkStatisticsDto(l.id, l.shortLink, l.statistics)" +
             " FROM Link l WHERE l.user.id = :userId AND l.status <> 'DELETED'")
     List<LinkStatisticsDto> getLinkUsageStatsForUser(@Param(value = "userId") UUID userId);

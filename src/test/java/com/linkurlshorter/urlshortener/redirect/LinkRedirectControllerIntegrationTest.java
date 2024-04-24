@@ -16,7 +16,9 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Integration tests for the LinkRedirectController class.
@@ -48,6 +50,7 @@ class LinkRedirectControllerIntegrationTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(originalLink));
     }
+
     @Test
     void redirectToOriginalLinkFailedWithInvalidLink() throws Exception {
         String shortLink = "invalid-link";
@@ -55,15 +58,15 @@ class LinkRedirectControllerIntegrationTest {
                 .andExpect(status().is(404))
                 .andExpect(jsonPath("$.statusCode").value(404))
                 .andExpect(jsonPath("$.message").value("No link by provided short link found"))
-        .andExpect(jsonPath("$.path").value("/" + shortLink));
+                .andExpect(jsonPath("$.path").value("/" + shortLink));
     }
+
     @Test
     void redirectToOriginalLinkFailedWithNull() throws Exception {
-        String shortLink = null;
-        mockMvc.perform(get("/" + shortLink))
+        mockMvc.perform(get("/" + null))
                 .andExpect(status().is(404))
                 .andExpect(jsonPath("$.statusCode").value(404))
                 .andExpect(jsonPath("$.message").value("No link by provided short link found"))
-                .andExpect(jsonPath("$.path").value("/" + shortLink));
+                .andExpect(jsonPath("$.path").value("/" + null));
     }
 }
