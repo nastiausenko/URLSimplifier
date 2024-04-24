@@ -6,6 +6,8 @@ import com.linkurlshorter.urlshortener.link.exception.DeletedLinkException;
 import com.linkurlshorter.urlshortener.link.exception.InactiveLinkException;
 import com.linkurlshorter.urlshortener.link.exception.NoLinkFoundByShortLinkException;
 import com.linkurlshorter.urlshortener.link.exception.NullLinkPropertyException;
+import com.linkurlshorter.urlshortener.link.model.Link;
+import com.linkurlshorter.urlshortener.link.model.LinkStatus;
 import com.linkurlshorter.urlshortener.link.validation.EndTimeLinkValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -14,6 +16,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -113,6 +116,15 @@ public class LinkService {
         return linkRepository.save(link);
     }
 
+    /**
+     * Updates the short link stored in Redis with a new short link.
+     *
+     * <p>This method updates the short link stored in Redis with a new short link. It first checks if the
+     * short link exists in Redis. If the short link exists, it renames the key with the new short link.
+     *
+     * @param shortLink    The current short link.
+     * @param newShortLink The new short link.
+     */
     public void updateRedisShortLink(String shortLink, String newShortLink) {
         try (Jedis jedis = jedisPool.getResource()) {
             if (jedis.exists(shortLink)) {
@@ -121,6 +133,16 @@ public class LinkService {
         }
     }
 
+    /**
+     * Updates the link stored in Redis with a new link entity.
+     *
+     * <p>This method updates the link stored in Redis with a new link entity. It first checks if the
+     * short link exists in Redis. If the short link exists, it serializes the new link entity using the
+     * ObjectMapper and updates the value associated with the short link key in Redis.
+     *
+     * @param shortLink The short link associated with the link entity.
+     * @param link      The new link entity.
+     */
     @SneakyThrows
     public void updateRedisLink(String shortLink, Link link) {
         try (Jedis jedis = jedisPool.getResource()) {
@@ -147,16 +169,53 @@ public class LinkService {
         if (link.getStatus() == LinkStatus.DELETED) {
             throw new DeletedLinkException();
         }
+        fixLinkStatusesAndReturnFixed(List.of(link));
         return link;
     }
 
+    /**
+     * Retrieves all links associated with a specific user.
+     *
+     * @param userId The ID of the user to retrieve links for.
+     * @return A list of link entities associated with the user.
+     * @throws NullLinkPropertyException If the 'userId' parameter is null.
+     */
     public List<Link> findAllByUserId(UUID userId) {
         if (Objects.isNull(userId)) {
             throw new NullLinkPropertyException();
         }
-        return linkRepository.findAllByUserId(userId);
+        List<Link> allByUserId = linkRepository.findAllByUserId(userId);
+        fixLinkStatusesAndReturnFixed(allByUserId);
+        return allByUserId;
     }
 
+    /**
+     * Retrieves a list of active links associated with the specified user ID and updates the status of expired links.
+     * This method first checks if the provided user ID is null. If so, it throws a NullLinkPropertyException.
+     * It then retrieves all active links associated with the given user ID from the LinkRepository.
+     * Any links with expiration times before the current time are marked as inactive. All the rest truly active links are then returned.
+     *
+     * @param userId The ID of the user whose active links are to be retrieved.
+     * @return A list of active Link objects associated with the specified user ID.
+     * @throws NullLinkPropertyException if the provided user ID is null.
+     */
+    public List<Link> findAllActiveByUserId(UUID userId) {
+        if (Objects.isNull(userId)) {
+            throw new NullLinkPropertyException();
+        }
+        List<Link> allActiveByUserId = linkRepository.findAllActiveByUserId(userId);
+        List<Link> fixedToInactive = fixLinkStatusesAndReturnFixed(allActiveByUserId);
+        allActiveByUserId.removeAll(fixedToInactive);
+        return allActiveByUserId;
+    }
+
+    /**
+     * Retrieves usage statistics for links associated with a specific user.
+     *
+     * @param userId The ID of the user to retrieve link usage statistics for.
+     * @return A list of LinkStatisticsDto objects containing usage statistics for the user's links.
+     * @throws NullLinkPropertyException If the 'userId' parameter is null.
+     */
     public List<LinkStatisticsDto> getLinkUsageStatsByUserId(UUID userId) {
         if (Objects.isNull(userId)) {
             throw new NullLinkPropertyException();
@@ -193,5 +252,16 @@ public class LinkService {
      */
     public boolean doesLinkExist(String shortLink) {
         return linkRepository.findByShortLink(shortLink).isPresent();
+    }
+
+    private List<Link> fixLinkStatusesAndReturnFixed(List<Link> allActiveByUserId) {
+        List<Link> toBeStatusFixed = new ArrayList<>();
+        for (Link link : allActiveByUserId) {
+            if (link.getExpirationTime().isBefore(LocalDateTime.now())) {
+                link.setStatus(LinkStatus.INACTIVE);
+                toBeStatusFixed.add(link);
+            }
+        }
+        return toBeStatusFixed;
     }
 }

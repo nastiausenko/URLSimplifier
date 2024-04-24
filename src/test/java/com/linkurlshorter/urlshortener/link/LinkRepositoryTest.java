@@ -1,21 +1,21 @@
 package com.linkurlshorter.urlshortener.link;
 
-import com.linkurlshorter.urlshortener.user.User;
-import com.linkurlshorter.urlshortener.user.UserRole;
+import com.linkurlshorter.urlshortener.link.model.Link;
+import com.linkurlshorter.urlshortener.link.model.LinkStatus;
+import com.linkurlshorter.urlshortener.user.model.User;
+import com.linkurlshorter.urlshortener.user.model.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.context.annotation.Profile;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;

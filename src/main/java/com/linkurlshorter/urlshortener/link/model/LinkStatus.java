@@ -1,4 +1,4 @@
-package com.linkurlshorter.urlshortener.link;
+package com.linkurlshorter.urlshortener.link.model;
 
 /**
  * Enumerates the status of a link in the system.
@@ -7,7 +7,7 @@ package com.linkurlshorter.urlshortener.link;
  *
  * @author Artem Poliakov
  * @version 1.0
- * @see com.linkurlshorter.urlshortener.link.Link
+ * @see Link
  */
 public enum LinkStatus {
     ACTIVE,

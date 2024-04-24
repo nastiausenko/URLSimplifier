@@ -1,6 +1,6 @@
 package com.linkurlshorter.urlshortener.link.dto;
 
-import com.linkurlshorter.urlshortener.link.LinkStatus;
+import com.linkurlshorter.urlshortener.link.model.LinkStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

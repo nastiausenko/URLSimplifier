@@ -7,13 +7,16 @@ import com.linkurlshorter.urlshortener.link.exception.DeletedLinkException;
 import com.linkurlshorter.urlshortener.link.exception.ForbiddenException;
 import com.linkurlshorter.urlshortener.link.exception.InternalServerLinkException;
 import com.linkurlshorter.urlshortener.link.exception.LinkStatusException;
+import com.linkurlshorter.urlshortener.link.generator.ShortLinkGenerator;
+import com.linkurlshorter.urlshortener.link.model.Link;
+import com.linkurlshorter.urlshortener.link.model.LinkStatus;
 import com.linkurlshorter.urlshortener.link.request.CreateLinkRequest;
 import com.linkurlshorter.urlshortener.link.request.EditLinkContentRequest;
 import com.linkurlshorter.urlshortener.link.response.CreateLinkResponse;
 import com.linkurlshorter.urlshortener.link.response.LinkInfoResponse;
 import com.linkurlshorter.urlshortener.link.response.LinkModifyingResponse;
 import com.linkurlshorter.urlshortener.link.response.LinkStatisticsResponse;
-import com.linkurlshorter.urlshortener.user.User;
+import com.linkurlshorter.urlshortener.user.model.User;
 import com.linkurlshorter.urlshortener.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -211,6 +214,23 @@ public class LinkController {
                 .sorted(Comparator.comparing(LinkInfoDto::getUsageStatistics).reversed())
                 .toList();
         return ResponseEntity.ok(new LinkInfoResponse(linksDto, "ok"));
+    }
+
+    /**
+     * Retrieves a list of active links associated with the currently authenticated user.
+     * This method first fetches the user ID of the currently authenticated user using the UserService.
+     * Then, it calls the LinkService to retrieve all active links associated with the user identified by the user ID.
+     *
+     * @return A list of active LinkDto objects associated with the currently authenticated user.
+     */
+    @GetMapping("/active-links")
+    public List<LinkInfoDto> getOnlyActiveLinks(){
+        UUID userId = userService.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getId();
+        return linkService
+                .findAllActiveByUserId(userId)
+                .stream()
+                .map(linkDtoMapper::mapLinkToDto)
+                .toList();
     }
 
     /**

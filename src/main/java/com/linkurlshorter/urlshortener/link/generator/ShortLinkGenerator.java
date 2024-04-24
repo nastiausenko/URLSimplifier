@@ -1,5 +1,6 @@
-package com.linkurlshorter.urlshortener.link;
+package com.linkurlshorter.urlshortener.link.generator;
 
+import com.linkurlshorter.urlshortener.link.LinkService;
 import com.linkurlshorter.urlshortener.link.exception.InternalServerLinkException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;

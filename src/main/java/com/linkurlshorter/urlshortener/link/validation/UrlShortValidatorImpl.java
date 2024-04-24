@@ -1,9 +1,8 @@
 package com.linkurlshorter.urlshortener.link.validation;
 
-import com.linkurlshorter.urlshortener.link.Link;
+import com.linkurlshorter.urlshortener.link.model.Link;
 import com.linkurlshorter.urlshortener.link.LinkService;
-import com.linkurlshorter.urlshortener.link.LinkStatus;
-import com.linkurlshorter.urlshortener.link.validation.UrlShortValidator;
+import com.linkurlshorter.urlshortener.link.model.LinkStatus;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;

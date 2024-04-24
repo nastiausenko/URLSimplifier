@@ -7,8 +7,10 @@ import com.linkurlshorter.urlshortener.link.exception.DeletedLinkException;
 import com.linkurlshorter.urlshortener.link.exception.InactiveLinkException;
 import com.linkurlshorter.urlshortener.link.exception.NoLinkFoundByShortLinkException;
 import com.linkurlshorter.urlshortener.link.exception.NullLinkPropertyException;
-import com.linkurlshorter.urlshortener.user.User;
-import com.linkurlshorter.urlshortener.user.UserRole;
+import com.linkurlshorter.urlshortener.link.model.Link;
+import com.linkurlshorter.urlshortener.link.model.LinkStatus;
+import com.linkurlshorter.urlshortener.user.model.User;
+import com.linkurlshorter.urlshortener.user.model.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -184,6 +186,22 @@ class LinkServiceTest {
     }
 
     /**
+     * Test case for the {@link LinkService#getLongLinkFromShortLink(String)} method when link expiration time
+     * has passed.
+     */
+    @Test
+    void getLongLinkFromShortLinkExpiredTest() throws JsonProcessingException {
+        link.setExpirationTime(LocalDateTime.now().minusDays(1));
+        when(jedisPool.getResource()).thenReturn(jedis);
+        when(jedis.exists(anyString())).thenReturn(true);
+        when(jedis.get(anyString())).thenReturn("{}");
+        when(mapper.readValue(anyString(), eq(Link.class))).thenReturn(link);
+
+        assertThatThrownBy(() -> linkService.getLongLinkFromShortLink(link.getShortLink()))
+                .isInstanceOf(InactiveLinkException.class);
+    }
+
+    /**
      * Test case for the {@link LinkService#findByShortLink(String)} method.
      */
     @Test
@@ -234,10 +252,11 @@ class LinkServiceTest {
     void findByAllByUserIdTest() {
         UUID userId = UUID.fromString("84991c79-f6a9-4b7b-b1b4-0d66c0b92c81");
         User user = User.builder().id(userId).build();
+        LocalDateTime expirationTime = LocalDateTime.now().plusDays(1);
         List<Link> userLinks = Arrays.asList(
-                Link.builder().id(UUID.randomUUID()).user(user).build(),
-                Link.builder().id(UUID.randomUUID()).user(user).build(),
-                Link.builder().id(UUID.randomUUID()).user(user).build()
+                Link.builder().id(UUID.randomUUID()).user(user).expirationTime(expirationTime).build(),
+                Link.builder().id(UUID.randomUUID()).user(user).expirationTime(expirationTime).build(),
+                Link.builder().id(UUID.randomUUID()).user(user).expirationTime(expirationTime).build()
         );
 
         when(linkRepository.findAllByUserId(userId)).thenReturn(userLinks);

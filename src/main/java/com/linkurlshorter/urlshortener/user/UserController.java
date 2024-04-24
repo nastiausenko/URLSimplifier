@@ -4,6 +4,7 @@ import com.linkurlshorter.urlshortener.auth.exception.EmailAlreadyTakenException
 import com.linkurlshorter.urlshortener.jwt.JwtUtil;
 import com.linkurlshorter.urlshortener.security.CustomUserDetailsService;
 import com.linkurlshorter.urlshortener.user.exception.NoSuchEmailFoundException;
+import com.linkurlshorter.urlshortener.user.model.User;
 import com.linkurlshorter.urlshortener.user.request.ChangeUserEmailRequest;
 import com.linkurlshorter.urlshortener.user.request.ChangeUserPasswordRequest;
 import com.linkurlshorter.urlshortener.user.responce.UserModifyingResponse;
@@ -73,7 +74,7 @@ public class UserController {
      * Handles POST requests to change a user's email address.
      *
      * @param emailRequest the request payload containing the new email address.
-     * @return a {@link ResponseEntity} indicating the result of the operation and including a new JWT token in the response headers.
+     * @return a {@link ResponseEntity} indicating the result of the operation, including a new JWT token.
      * @throws NoSuchEmailFoundException if the user's email is not found.
      */
     @PostMapping("/change-email")
@@ -100,6 +101,12 @@ public class UserController {
         }
     }
 
+    /**
+     * Generates a new JWT token after successfully updating the user's email address.
+     *
+     * @param newEmail The new email address of the user.
+     * @return The newly generated JWT token with updated user details.
+     */
     private String getRefreshedToken(String newEmail) {
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(newEmail);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(

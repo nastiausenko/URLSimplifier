@@ -1,7 +1,6 @@
 package com.linkurlshorter.urlshortener.link.dto;
 
-import com.linkurlshorter.urlshortener.link.Link;
-import com.linkurlshorter.urlshortener.link.dto.LinkInfoDto;
+import com.linkurlshorter.urlshortener.link.model.Link;
 import org.springframework.stereotype.Component;
 
 /**
