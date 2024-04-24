@@ -2,6 +2,7 @@ package com.linkurlshorter.urlshortener.link;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linkurlshorter.urlshortener.auth.dto.AuthRequest;
+import com.linkurlshorter.urlshortener.link.request.CreateLinkRequest;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

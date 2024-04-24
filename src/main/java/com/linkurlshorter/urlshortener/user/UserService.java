@@ -1,5 +1,9 @@
 package com.linkurlshorter.urlshortener.user;
 
+import com.linkurlshorter.urlshortener.user.exception.NoUserFoundByEmailException;
+import com.linkurlshorter.urlshortener.user.exception.NoUserFoundByIdException;
+import com.linkurlshorter.urlshortener.user.exception.NullEmailException;
+import com.linkurlshorter.urlshortener.user.exception.NullUserPropertyException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

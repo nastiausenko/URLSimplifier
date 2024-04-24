@@ -1,5 +1,6 @@
 package com.linkurlshorter.urlshortener.link;
 
+import com.linkurlshorter.urlshortener.link.exception.InternalServerLinkException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;

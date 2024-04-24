@@ -1,6 +1,12 @@
 package com.linkurlshorter.urlshortener.link;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.linkurlshorter.urlshortener.link.dto.LinkStatisticsDto;
+import com.linkurlshorter.urlshortener.link.exception.DeletedLinkException;
+import com.linkurlshorter.urlshortener.link.exception.InactiveLinkException;
+import com.linkurlshorter.urlshortener.link.exception.NoLinkFoundByShortLinkException;
+import com.linkurlshorter.urlshortener.link.exception.NullLinkPropertyException;
+import com.linkurlshorter.urlshortener.link.validation.EndTimeLinkValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -44,8 +50,13 @@ public class LinkService {
             Link link = jedis.exists(shortLink)
                     ? mapper.readValue(jedis.get(shortLink), Link.class)
                     : findByShortLink(shortLink);
-
             if (link.getStatus() == LinkStatus.INACTIVE) {
+                throw new InactiveLinkException(shortLink);
+            }
+            if (link.getExpirationTime().isBefore(LocalDateTime.now())) {
+                link.setStatus(LinkStatus.INACTIVE);
+                jedis.set(link.getShortLink(), mapper.writeValueAsString(link));
+                save(link);
                 throw new InactiveLinkException(shortLink);
             }
             updateLinkStatsAndSave(link, jedis);
@@ -61,7 +72,7 @@ public class LinkService {
      * @param link the link to be updated
      */
     @SneakyThrows
-    private void updateLinkStatsAndSave(Link link, Jedis jedis) {
+    private void updateLinkStatsAndSave(@EndTimeLinkValidator Link link, Jedis jedis) {
         link.setStatistics(link.getStatistics() + 1);
         link.setExpirationTime(LocalDateTime.now().plusMonths(1));
 

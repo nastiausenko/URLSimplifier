@@ -1,10 +1,10 @@
 package com.linkurlshorter.urlshortener.exception;
 
 import com.linkurlshorter.urlshortener.auth.exception.EmailAlreadyTakenException;
-import com.linkurlshorter.urlshortener.link.*;
-import com.linkurlshorter.urlshortener.user.NoSuchEmailFoundException;
-import com.linkurlshorter.urlshortener.user.NoUserFoundByEmailException;
-import com.linkurlshorter.urlshortener.user.NoUserFoundByIdException;
+import com.linkurlshorter.urlshortener.link.exception.*;
+import com.linkurlshorter.urlshortener.user.exception.NoSuchEmailFoundException;
+import com.linkurlshorter.urlshortener.user.exception.NoUserFoundByEmailException;
+import com.linkurlshorter.urlshortener.user.exception.NoUserFoundByIdException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
