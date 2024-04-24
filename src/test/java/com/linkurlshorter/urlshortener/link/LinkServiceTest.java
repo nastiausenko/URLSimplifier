@@ -21,12 +21,20 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link LinkService} class.
@@ -229,7 +237,7 @@ class LinkServiceTest {
      */
     @Test
     void findByShortLinkNotFoundTest() {
-        assertThatThrownBy(() ->  linkService.findByShortLink("short-link-2"))
+        assertThatThrownBy(() -> linkService.findByShortLink("short-link-2"))
                 .isInstanceOf(NoLinkFoundByShortLinkException.class);
     }
 
@@ -241,7 +249,7 @@ class LinkServiceTest {
     void findByShortLinkDeletedTest() {
         when(linkRepository.findByShortLink(link.getShortLink())).thenReturn(Optional.of(link));
         link.setStatus(LinkStatus.DELETED);
-        assertThatThrownBy(() ->  linkService.findByShortLink(link.getShortLink()))
+        assertThatThrownBy(() -> linkService.findByShortLink(link.getShortLink()))
                 .isInstanceOf(DeletedLinkException.class);
     }
 

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * Test class for{@link PasswordValidatorImpl}.
  * This class contains unit tests to verify the functionality of the {@link PasswordValidatorImpl} class.
@@ -24,11 +25,11 @@ class PasswordValidatorImplTest {
 
     /**
      * Test method to verify the validation of a valid password.
-     * The password "Hogvards_15F" is considered valid.
+     * The password "Hogwarts_15F" is considered valid.
      */
     @Test
     void verificationOfValidPassword() {
-        assertThat(passwordValidator.isValid("Hogvards_15F", null)).isTrue();
+        assertThat(passwordValidator.isValid("Hogwarts_15F", null)).isTrue();
     }
 
     /**

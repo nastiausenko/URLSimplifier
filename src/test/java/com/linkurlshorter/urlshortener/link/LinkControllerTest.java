@@ -8,7 +8,7 @@ import com.linkurlshorter.urlshortener.link.model.LinkStatus;
 import com.linkurlshorter.urlshortener.link.request.CreateLinkRequest;
 import com.linkurlshorter.urlshortener.link.request.EditLinkContentRequest;
 import com.linkurlshorter.urlshortener.security.SecurityConfig;
-import com.linkurlshorter.urlshortener.user.*;
+import com.linkurlshorter.urlshortener.user.UserService;
 import com.linkurlshorter.urlshortener.user.model.User;
 import com.linkurlshorter.urlshortener.user.model.UserRole;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,8 +30,8 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -284,8 +284,8 @@ class LinkControllerTest {
         when(linkService.update(link)).thenReturn(link);
 
         ResultActions resultActions = mockMvc.perform(post("/api/V1/link/edit/refresh")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("shortLink", String.valueOf(link.getShortLink())));
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("shortLink", String.valueOf(link.getShortLink())));
 
         resultActions.andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value("ok"));
@@ -333,7 +333,7 @@ class LinkControllerTest {
 
         resultActions.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("The link has already been deleted, " +
-                                                       "no operations are allowed"))
+                        "no operations are allowed"))
                 .andExpect(jsonPath("$.path").value("/api/V1/link/edit/refresh"));
     }
 
@@ -409,8 +409,8 @@ class LinkControllerTest {
     @WithMockUser
     void getLinksStatsForUserTest() throws Exception {
         List<LinkStatisticsDto> stats = Arrays.asList(
-                new LinkStatisticsDto(UUID.randomUUID(),"link1", 10),
-                new LinkStatisticsDto(UUID.randomUUID(),"link2", 20)
+                new LinkStatisticsDto(UUID.randomUUID(), "link1", 10),
+                new LinkStatisticsDto(UUID.randomUUID(), "link2", 20)
         );
 
         when(userService.findByEmail(any())).thenReturn(user);

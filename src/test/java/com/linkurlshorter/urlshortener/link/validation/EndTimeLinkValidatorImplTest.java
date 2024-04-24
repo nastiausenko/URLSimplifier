@@ -1,6 +1,5 @@
 package com.linkurlshorter.urlshortener.link.validation;
 
-import com.linkurlshorter.urlshortener.link.validation.EndTimeLinkValidatorImpl;
 import jakarta.validation.ConstraintValidatorContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

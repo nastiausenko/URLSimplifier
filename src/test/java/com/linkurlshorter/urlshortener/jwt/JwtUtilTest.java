@@ -2,10 +2,8 @@ package com.linkurlshorter.urlshortener.jwt;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-
 
 import static org.assertj.core.api.Assertions.assertThat;
 

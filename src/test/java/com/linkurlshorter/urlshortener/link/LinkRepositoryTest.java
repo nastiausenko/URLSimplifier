@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for the {@link LinkRepository} class.
@@ -96,6 +96,7 @@ class LinkRepositoryTest {
         assertThat(links).isNotNull()
                 .hasSize(5);
     }
+
     /**
      * Test to verify the {@link LinkRepository#deleteById(UUID)} method.
      * It ensures that the deleteById method removes the link with the specified ID from the database.
